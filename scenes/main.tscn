@@ -19,7 +19,7 @@ position = Vector2(160, 160)
 layer = 10
 
 [node name="GameInfo" parent="UI" instance=ExtResource("2_gameinfo")]
-offset_left = 160.0
-offset_top = 1460.0
-offset_right = 1440.0
-offset_bottom = 1580.0
+offset_left = 0.0
+offset_top = 1450.0
+offset_right = 1600.0
+offset_bottom = 1550.0

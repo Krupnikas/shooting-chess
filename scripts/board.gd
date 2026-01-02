@@ -271,9 +271,6 @@ func _input(event):
 	if GameManager.game_phase == GameManager.GamePhase.GAME_OVER:
 		return
 
-	if GameManager.game_phase != GameManager.GamePhase.MOVING:
-		return
-
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		# Convert global mouse position to local board position
 		var local_pos = get_global_transform().affine_inverse() * event.position
@@ -283,12 +280,13 @@ func _input(event):
 			cursor_pos = board_pos
 			update_cursor()
 
-			# Try to move if we have a piece selected
-			if GameManager.selected_piece != null:
-				if GameManager.try_move_to(board_pos):
-					return
+			# Try to move if we have a piece selected (only during MOVING phase)
+			if GameManager.game_phase == GameManager.GamePhase.MOVING:
+				if GameManager.selected_piece != null:
+					if GameManager.try_move_to(board_pos):
+						return
 
-			# Otherwise, try to select a piece at this position
+			# Allow piece selection during any phase (except GAME_OVER)
 			var piece = GameManager.get_piece_at(board_pos)
 			if piece != null:
 				GameManager.select_piece(piece)

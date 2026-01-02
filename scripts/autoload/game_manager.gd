@@ -91,7 +91,7 @@ func screen_to_board(screen_pos: Vector2) -> Vector2i:
 # ============ PIECE SELECTION & MOVEMENT ============
 
 func select_piece(piece):
-	if game_phase != GamePhase.MOVING:
+	if game_phase == GamePhase.GAME_OVER:
 		return
 
 	if selected_piece == piece:
