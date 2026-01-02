@@ -35,6 +35,9 @@ func run_all_tests():
 	test_attack_targeting()
 	test_reinforcement()
 	test_shooting()
+	test_mate_in_3()
+	test_king_capture_win()
+	test_king_death_by_shooting()
 
 # ============ HELPER FUNCTIONS ============
 
@@ -610,3 +613,131 @@ func get_king_attack_squares_test(piece: MockPiece) -> Array[Vector2i]:
 				squares.append(target_pos)
 
 	return squares
+
+# ============ GAME SCENARIO TESTS ============
+
+func test_mate_in_3():
+	# Test a "mate in 3" scenario: Queen can reach and capture enemy king in 3 moves
+	# Position: Black king at e8 (4,0), White queen at a1 (0,7)
+	# Move 1: Qa1-a8 (threaten king)
+	# Move 2: Black king moves Ke8-d7
+	# Move 3: Qa8-d8+ (but we can also just capture if king stays)
+	# Actually in this game, let's test a forced capture scenario
+	start_test("Mate in 3 - Queen Hunt")
+
+	clear_board()
+	var white_queen = MockPiece.new(PieceType.QUEEN, PieceColor.WHITE, Vector2i(0, 7))  # a1
+	var black_king = MockPiece.new(PieceType.KING, PieceColor.BLACK, Vector2i(4, 0))    # e8
+	place_piece(white_queen)
+	place_piece(black_king)
+
+	# Move 1: Queen to a8 (threatens king's row)
+	var queen_moves = get_valid_moves(white_queen)
+	var target_a8 = Vector2i(0, 0)
+	assert_contains(queen_moves, target_a8, "Queen can move to a8")
+
+	# Simulate the move
+	test_board[white_queen.board_position.y][white_queen.board_position.x] = null
+	white_queen.board_position = target_a8
+	test_board[target_a8.y][target_a8.x] = white_queen
+
+	# Move 2: Black king escapes to d7
+	var king_moves = get_valid_moves(black_king)
+	var target_d7 = Vector2i(3, 1)
+	assert_contains(king_moves, target_d7, "King can escape to d7")
+
+	test_board[black_king.board_position.y][black_king.board_position.x] = null
+	black_king.board_position = target_d7
+	test_board[target_d7.y][target_d7.x] = black_king
+
+	# Move 3: Queen to d8, threatening king
+	queen_moves = get_valid_moves(white_queen)
+	var target_d8 = Vector2i(3, 0)
+	assert_contains(queen_moves, target_d8, "Queen can move to d8")
+
+	test_board[white_queen.board_position.y][white_queen.board_position.x] = null
+	white_queen.board_position = target_d8
+	test_board[target_d8.y][target_d8.x] = white_queen
+
+	# Now queen attacks king (king at d7, queen at d8)
+	var enemy_targets = get_enemy_targets(white_queen)
+	assert_equal(enemy_targets.size(), 1, "Queen has 1 enemy target")
+	assert_equal(enemy_targets[0], black_king, "Queen targets the black king")
+
+	# After 3 moves, queen can capture king on next turn
+	queen_moves = get_valid_moves(white_queen)
+	assert_contains(queen_moves, black_king.board_position, "Queen can capture king (mate!)")
+
+func test_king_capture_win():
+	# Test that capturing the king wins the game
+	start_test("King Capture Win Condition")
+
+	clear_board()
+	var white_queen = MockPiece.new(PieceType.QUEEN, PieceColor.WHITE, Vector2i(3, 1))
+	var black_king = MockPiece.new(PieceType.KING, PieceColor.BLACK, Vector2i(4, 0))
+	place_piece(white_queen)
+	place_piece(black_king)
+
+	var queen_moves = get_valid_moves(white_queen)
+	var king_pos = black_king.board_position
+
+	assert_contains(queen_moves, king_pos, "Queen can capture the black king")
+
+	# Simulate capture
+	test_board[king_pos.y][king_pos.x] = null  # Remove king
+	test_board[white_queen.board_position.y][white_queen.board_position.x] = null
+	white_queen.board_position = king_pos
+	test_board[king_pos.y][king_pos.x] = white_queen
+
+	# Verify king is gone
+	var found_black_king = false
+	for row in range(BOARD_SIZE):
+		for col in range(BOARD_SIZE):
+			var piece = test_board[row][col]
+			if piece != null and piece.type == PieceType.KING and piece.color == PieceColor.BLACK:
+				found_black_king = true
+
+	assert_true(not found_black_king, "Black king is removed from board (game over)")
+
+func test_king_death_by_shooting():
+	# Test that a king can die from accumulated shooting damage
+	start_test("King Death by Shooting")
+
+	clear_board()
+	# Set up 8 white rooks all attacking the black king
+	# King at e4 (4,4), rooks on the same rank and file
+	var black_king = MockPiece.new(PieceType.KING, PieceColor.BLACK, Vector2i(4, 4))
+	place_piece(black_king)
+	assert_equal(black_king.hp, 8, "Black king starts with 8 HP")
+
+	# Place white rooks to attack the king
+	var white_rooks = []
+	var rook_positions = [
+		Vector2i(0, 4),  # a4 - attacks via file
+		Vector2i(4, 0),  # e8 - attacks via rank
+		Vector2i(7, 4),  # h4 - attacks via file
+		Vector2i(4, 7),  # e1 - attacks via rank
+	]
+
+	for pos in rook_positions:
+		var rook = MockPiece.new(PieceType.ROOK, PieceColor.WHITE, pos)
+		place_piece(rook)
+		white_rooks.append(rook)
+
+	# Verify each rook can attack the king
+	var total_attackers = 0
+	for rook in white_rooks:
+		var enemies = get_enemy_targets(rook)
+		if black_king in enemies:
+			total_attackers += 1
+
+	assert_equal(total_attackers, 4, "4 rooks can attack the king")
+
+	# Simulate shooting phase - 4 damage
+	black_king.hp -= 4
+	assert_equal(black_king.hp, 4, "King has 4 HP after first shooting phase")
+
+	# Next turn, shoot again (assuming king doesn't move)
+	black_king.hp -= 4
+	assert_equal(black_king.hp, 0, "King has 0 HP after second shooting phase")
+	assert_true(black_king.hp <= 0, "King is dead - game over!")

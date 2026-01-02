@@ -10,6 +10,7 @@ const ProjectileScene = preload("res://scenes/projectile.tscn")
 
 var highlight_squares: Array = []
 var active_projectiles: int = 0
+var is_processing: bool = false
 
 func _ready():
 	draw_board()
@@ -80,14 +81,28 @@ func spawn_piece(type: GameManager.PieceType, color: GameManager.PieceColor, boa
 # ============ PHASE HANDLING ============
 
 func _on_phase_changed(phase):
+	# Use call_deferred to avoid nested signal handling issues
 	match phase:
 		GameManager.GamePhase.MOVING:
-			# Player can now make a move
-			pass
+			is_processing = false
 		GameManager.GamePhase.REINFORCE:
-			await process_reinforce_phase()
+			call_deferred("_process_reinforce_deferred")
 		GameManager.GamePhase.SHOOTING:
-			await process_shooting_phase()
+			call_deferred("_process_shooting_deferred")
+
+func _process_reinforce_deferred():
+	if is_processing:
+		return
+	is_processing = true
+	await process_reinforce_phase()
+	is_processing = false
+
+func _process_shooting_deferred():
+	if is_processing:
+		return
+	is_processing = true
+	await process_shooting_phase()
+	is_processing = false
 
 func process_reinforce_phase():
 	var actions = GameManager.process_reinforce_phase()
@@ -135,15 +150,25 @@ func process_shooting_phase():
 func process_deaths():
 	var dead_pieces = GameManager.process_deaths()
 
+	if dead_pieces.size() == 0:
+		return
+
+	# Start all death animations in parallel
+	var tweens = []
 	for piece in dead_pieces:
 		if not is_instance_valid(piece):
 			continue
-		# Death animation - fade out
 		var tween = create_tween()
 		tween.tween_property(piece, "modulate:a", 0.0, 0.3)
-		await tween.finished
-		if is_instance_valid(piece):
-			GameManager.kill_piece(piece)
+		tweens.append({"tween": tween, "piece": piece})
+
+	# Wait for animations (with timeout)
+	await get_tree().create_timer(0.35).timeout
+
+	# Kill all dead pieces
+	for data in tweens:
+		if is_instance_valid(data.piece):
+			GameManager.kill_piece(data.piece)
 
 func spawn_projectile(from_piece, to_piece, is_reinforce: bool):
 	# Safety check - don't spawn if pieces are invalid
@@ -212,7 +237,47 @@ func clear_highlights():
 
 # ============ INPUT HANDLING ============
 
+var cursor_pos: Vector2i = Vector2i(4, 6)  # Start at white's king position
+var cursor_highlight: ColorRect = null
+
 func _input(event):
+	# Debug keyboard controls (always available)
+	if event is InputEventKey and event.pressed:
+		match event.keycode:
+			KEY_R:  # Restart game
+				restart_game()
+				return
+			KEY_P:  # Print game state
+				print_game_state()
+				return
+			KEY_ESCAPE:
+				GameManager.deselect_piece()
+				return
+
+	# Keyboard controls for moving cursor
+	if event is InputEventKey and event.pressed and GameManager.game_phase == GameManager.GamePhase.MOVING:
+		var moved = false
+		match event.keycode:
+			KEY_UP, KEY_W:
+				cursor_pos.y = max(0, cursor_pos.y - 1)
+				moved = true
+			KEY_DOWN, KEY_S:
+				cursor_pos.y = min(7, cursor_pos.y + 1)
+				moved = true
+			KEY_LEFT, KEY_A:
+				cursor_pos.x = max(0, cursor_pos.x - 1)
+				moved = true
+			KEY_RIGHT, KEY_D:
+				cursor_pos.x = min(7, cursor_pos.x + 1)
+				moved = true
+			KEY_SPACE, KEY_ENTER:
+				handle_cursor_action()
+				return
+
+		if moved:
+			update_cursor()
+			return
+
 	if GameManager.game_phase == GameManager.GamePhase.GAME_OVER:
 		return
 
@@ -225,6 +290,9 @@ func _input(event):
 		var board_pos = GameManager.screen_to_board(local_pos)
 
 		if GameManager.is_valid_position(board_pos):
+			cursor_pos = board_pos
+			update_cursor()
+
 			# Try to move if we have a piece selected
 			if GameManager.selected_piece != null:
 				if GameManager.try_move_to(board_pos):
@@ -236,6 +304,72 @@ func _input(event):
 				GameManager.select_piece(piece)
 			else:
 				GameManager.deselect_piece()
+
+func handle_cursor_action():
+	if GameManager.selected_piece != null:
+		if GameManager.try_move_to(cursor_pos):
+			return
+
+	var piece = GameManager.get_piece_at(cursor_pos)
+	if piece != null:
+		GameManager.select_piece(piece)
+	else:
+		GameManager.deselect_piece()
+
+func update_cursor():
+	if cursor_highlight != null:
+		cursor_highlight.queue_free()
+
+	cursor_highlight = ColorRect.new()
+	cursor_highlight.size = Vector2(GameManager.SQUARE_SIZE, GameManager.SQUARE_SIZE)
+	cursor_highlight.position = Vector2(cursor_pos.x * GameManager.SQUARE_SIZE,
+										cursor_pos.y * GameManager.SQUARE_SIZE)
+	cursor_highlight.color = Color(1.0, 1.0, 1.0, 0.3)  # White semi-transparent
+	highlights_container.add_child(cursor_highlight)
+
+func restart_game():
+	# Clear all pieces
+	for child in pieces_container.get_children():
+		child.queue_free()
+
+	# Clear projectiles
+	for child in projectiles_container.get_children():
+		child.queue_free()
+
+	# Reset game state
+	GameManager.reset_game()
+	is_processing = false
+	active_projectiles = 0
+
+	# Setup pieces again
+	await get_tree().create_timer(0.1).timeout
+	setup_pieces()
+	await get_tree().create_timer(0.3).timeout
+	GameManager.start_turn()
+	print("Game restarted!")
+
+func print_game_state():
+	print("=== Game State ===")
+	print("Current player: ", "WHITE" if GameManager.current_player == GameManager.PieceColor.WHITE else "BLACK")
+	print("Phase: ", GameManager.game_phase)
+	print("Board:")
+	for row in range(8):
+		var row_str = ""
+		for col in range(8):
+			var piece = GameManager.get_piece_at(Vector2i(col, row))
+			if piece == null:
+				row_str += ". "
+			else:
+				var symbol = "P" if piece.type == GameManager.PieceType.PAWN else \
+							 "N" if piece.type == GameManager.PieceType.KNIGHT else \
+							 "B" if piece.type == GameManager.PieceType.BISHOP else \
+							 "R" if piece.type == GameManager.PieceType.ROOK else \
+							 "Q" if piece.type == GameManager.PieceType.QUEEN else "K"
+				if piece.color == GameManager.PieceColor.BLACK:
+					symbol = symbol.to_lower()
+				row_str += symbol + " "
+		print(row_str)
+	print("==================")
 
 # ============ GAME OVER ============
 
