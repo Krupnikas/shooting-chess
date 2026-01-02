@@ -81,28 +81,15 @@ func spawn_piece(type: GameManager.PieceType, color: GameManager.PieceColor, boa
 # ============ PHASE HANDLING ============
 
 func _on_phase_changed(phase):
-	# Use call_deferred to avoid nested signal handling issues
 	match phase:
 		GameManager.GamePhase.MOVING:
 			is_processing = false
 		GameManager.GamePhase.REINFORCE:
-			call_deferred("_process_reinforce_deferred")
+			is_processing = true
+			process_reinforce_phase()
 		GameManager.GamePhase.SHOOTING:
-			call_deferred("_process_shooting_deferred")
-
-func _process_reinforce_deferred():
-	if is_processing:
-		return
-	is_processing = true
-	await process_reinforce_phase()
-	is_processing = false
-
-func _process_shooting_deferred():
-	if is_processing:
-		return
-	is_processing = true
-	await process_shooting_phase()
-	is_processing = false
+			is_processing = true
+			process_shooting_phase()
 
 func process_reinforce_phase():
 	var actions = GameManager.process_reinforce_phase()
@@ -110,7 +97,7 @@ func process_reinforce_phase():
 	if actions.size() == 0:
 		# No reinforcements, advance immediately
 		await get_tree().create_timer(0.3).timeout
-		GameManager.advance_phase()
+		call_deferred("_advance_to_next_phase")
 		return
 
 	# Spawn projectiles for all reinforce actions
@@ -121,7 +108,7 @@ func process_reinforce_phase():
 	await wait_for_projectiles()
 
 	await get_tree().create_timer(0.2).timeout
-	GameManager.advance_phase()
+	call_deferred("_advance_to_next_phase")
 
 func process_shooting_phase():
 	var actions = GameManager.process_shooting_phase()
@@ -130,7 +117,7 @@ func process_shooting_phase():
 		# No shooting, advance immediately (ends turn)
 		await get_tree().create_timer(0.3).timeout
 		await process_deaths()
-		GameManager.advance_phase()
+		call_deferred("_advance_to_next_phase")
 		return
 
 	# Spawn projectiles for all shoot actions
@@ -145,7 +132,10 @@ func process_shooting_phase():
 	await process_deaths()
 
 	await get_tree().create_timer(0.3).timeout
-	GameManager.advance_phase()  # This ends turn and starts next player
+	call_deferred("_advance_to_next_phase")
+
+func _advance_to_next_phase():
+	GameManager.advance_phase()
 
 func process_deaths():
 	var dead_pieces = GameManager.process_deaths()
