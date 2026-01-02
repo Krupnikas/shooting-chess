@@ -191,27 +191,39 @@ func wait_for_projectiles():
 # ============ PIECE SELECTION & HIGHLIGHTING ============
 
 func _on_piece_selected(_piece):
+	if not is_inside_tree():
+		return
 	clear_highlights()
 	show_highlights()
 
 func _on_piece_deselected():
+	if not is_inside_tree():
+		return
 	clear_highlights()
 
 func show_highlights():
+	if not is_instance_valid(highlights_container):
+		return
+
 	# Highlight selected piece
-	if GameManager.selected_piece != null:
+	if GameManager.selected_piece != null and is_instance_valid(GameManager.selected_piece):
 		var selected_highlight = create_highlight(
 			GameManager.selected_piece.board_position,
 			GameManager.SELECTED_COLOR
 		)
-		highlight_squares.append(selected_highlight)
+		if selected_highlight:
+			highlight_squares.append(selected_highlight)
 
 	# Highlight valid moves
 	for move_pos in GameManager.valid_moves:
 		var highlight = create_highlight(move_pos, GameManager.HIGHLIGHT_COLOR)
-		highlight_squares.append(highlight)
+		if highlight:
+			highlight_squares.append(highlight)
 
 func create_highlight(board_pos: Vector2i, color: Color) -> ColorRect:
+	if not is_instance_valid(highlights_container):
+		return null
+
 	var highlight = ColorRect.new()
 	highlight.size = Vector2(GameManager.SQUARE_SIZE, GameManager.SQUARE_SIZE)
 	highlight.position = Vector2(board_pos.x * GameManager.SQUARE_SIZE,
@@ -222,7 +234,8 @@ func create_highlight(board_pos: Vector2i, color: Color) -> ColorRect:
 
 func clear_highlights():
 	for highlight in highlight_squares:
-		highlight.queue_free()
+		if is_instance_valid(highlight):
+			highlight.queue_free()
 	highlight_squares.clear()
 
 # ============ INPUT HANDLING ============
@@ -305,8 +318,12 @@ func handle_cursor_action():
 		GameManager.deselect_piece()
 
 func update_cursor():
-	if cursor_highlight != null:
+	if cursor_highlight != null and is_instance_valid(cursor_highlight):
 		cursor_highlight.queue_free()
+	cursor_highlight = null
+
+	if not is_instance_valid(highlights_container):
+		return
 
 	cursor_highlight = ColorRect.new()
 	cursor_highlight.size = Vector2(GameManager.SQUARE_SIZE, GameManager.SQUARE_SIZE)
