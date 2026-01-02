@@ -156,27 +156,29 @@ func _on_phase_changed(phase):
 				call_deferred("_advance_to_next_phase")
 
 func _do_spawn_projectiles():
-	# Spawn all projectiles
-	# Each piece shoots at ALL pieces in its attack range (friendly and enemy)
+	# Spawn projectiles for all current player's pieces
+	# Pieces shoot in their attack pattern regardless of whether a target exists
+	# - Sliding pieces (bishop, rook, queen): shoot in directions until hitting edge
+	# - Targeted pieces (pawn, knight, king): shoot at specific cells
 	# Projectile color matches the shooting piece's color
 	# Same color hit = +1 HP (heal), different color hit = -1 HP (damage)
 	var player_pieces = GameManager.get_pieces_of_color(GameManager.current_player)
-	var spawn_count = 0
 
 	for piece in player_pieces:
 		if not is_instance_valid(piece):
 			continue
 
-		# Get ALL targets (both friendly and enemy)
-		var targets = GameManager.get_all_targets(piece)
+		var is_white_projectile = piece.color == GameManager.PieceColor.WHITE
+		var attack_data = get_attack_data(piece)
 
-		# Spawn projectile for each target
-		for target in targets:
-			if is_instance_valid(target):
-				# Projectile color matches the piece that fired it
-				var is_white_projectile = piece.color == GameManager.PieceColor.WHITE
-				spawn_targeted_projectile_to_piece(piece, target, is_white_projectile)
-				spawn_count += 1
+		if attack_data["mode"] == "directional":
+			# Sliding pieces: spawn directional projectiles
+			for dir in attack_data["data"]:
+				spawn_directional_projectile(piece, dir, is_white_projectile)
+		else:
+			# Targeted pieces: spawn projectiles to specific cells
+			for target_cell in attack_data["data"]:
+				spawn_targeted_projectile_to_cell(piece, target_cell, is_white_projectile)
 
 	# Transition to waiting state
 	if active_projectiles > 0:
@@ -260,16 +262,30 @@ func get_attack_data(piece) -> Dictionary:
 
 	return { "mode": "directional", "data": [] }
 
-func spawn_targeted_projectile_to_piece(from_piece, to_piece, is_white_projectile: bool):
-	if not is_instance_valid(from_piece) or not is_instance_valid(to_piece):
+func spawn_directional_projectile(from_piece, direction: Vector2, is_white_projectile: bool):
+	if not is_instance_valid(from_piece):
 		return
 
 	var board_size = GameManager.BOARD_SIZE * GameManager.SQUARE_SIZE
 	var bounds = Rect2(0, 0, board_size, board_size)
-	var target_pos = GameManager.board_to_screen(to_piece.board_position)
 
 	var projectile = ProjectileScene.instantiate()
-	projectile.setup_targeted(from_piece.position, target_pos, to_piece.board_position, is_white_projectile, bounds)
+	projectile.setup_directional(from_piece.position, direction, is_white_projectile, bounds)
+	projectile.set_source(from_piece)
+	projectile.finished.connect(_on_projectile_finished)
+	projectiles_container.add_child(projectile)
+	active_projectiles += 1
+
+func spawn_targeted_projectile_to_cell(from_piece, target_cell: Vector2i, is_white_projectile: bool):
+	if not is_instance_valid(from_piece):
+		return
+
+	var board_size = GameManager.BOARD_SIZE * GameManager.SQUARE_SIZE
+	var bounds = Rect2(0, 0, board_size, board_size)
+	var target_pos = GameManager.board_to_screen(target_cell)
+
+	var projectile = ProjectileScene.instantiate()
+	projectile.setup_targeted(from_piece.position, target_pos, target_cell, is_white_projectile, bounds)
 	projectile.set_source(from_piece)
 	projectile.finished.connect(_on_projectile_finished)
 	projectiles_container.add_child(projectile)

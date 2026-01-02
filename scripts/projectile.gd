@@ -15,6 +15,11 @@ var target_board_pos: Vector2i = Vector2i.ZERO
 
 var source_piece = null  # The piece that fired this projectile
 
+# For directional mode: track if we've found a target to stop at
+var stopping_at_cell: bool = false
+var stop_cell_center: Vector2 = Vector2.ZERO
+var stop_piece = null
+
 func _ready():
 	sprite = $Sprite2D
 	update_color()
@@ -25,6 +30,7 @@ func setup_directional(from_pos: Vector2, dir: Vector2, white: bool, bounds: Rec
 	is_white = white
 	board_bounds = bounds
 	is_targeted = false
+	stopping_at_cell = false
 
 func setup_targeted(from_pos: Vector2, target_pos: Vector2, target_cell: Vector2i, white: bool, bounds: Rect2):
 	position = from_pos
@@ -73,13 +79,22 @@ func _process(delta):
 			return
 		return
 
-	# Directional mode: check for collision with pieces at cell center
+	# Directional mode: if stopping, check if reached center
+	if stopping_at_cell:
+		var dist_to_center = position.distance_to(stop_cell_center)
+		if dist_to_center < 20.0:
+			emit_signal("finished", stop_piece, is_white)
+			queue_free()
+			return
+		return
+
+	# Directional mode: check for collision with pieces
 	if GameManager.is_valid_position(board_pos):
 		var piece = GameManager.get_piece_at(board_pos)
 		if piece != null and piece != source_piece:
-			# Check if we're close to the center of the cell
-			var cell_center = GameManager.board_to_screen(board_pos)
-			if position.distance_to(cell_center) < 30.0:
-				emit_signal("finished", piece, is_white)
-				queue_free()
-				return
+			# Found a piece - start moving toward its cell center
+			stopping_at_cell = true
+			stop_cell_center = GameManager.board_to_screen(board_pos)
+			stop_piece = piece
+			# Redirect toward the center
+			direction = (stop_cell_center - position).normalized()

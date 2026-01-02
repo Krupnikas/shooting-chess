@@ -160,8 +160,8 @@ func execute_move(piece, target_pos: Vector2i):
 
 func start_turn():
 	gm_trace("[GM] start_turn called for player: " + str(current_player))
-	# Reset HP for all pieces at start of turn (before move phase)
-	reset_all_hp()
+	# Reset HP only for current player's pieces at start of their turn
+	reset_player_hp(current_player)
 
 	# Start with move phase
 	game_phase = GamePhase.MOVING

@@ -1,6 +1,6 @@
 # Shooting Chess
 
-A chess variant that adds HP, healing, and shooting mechanics to create entirely new tactical possibilities.
+A chess variant that adds HP and shooting mechanics to create entirely new tactical possibilities.
 
 ## Game Rules
 
@@ -9,7 +9,7 @@ A chess variant that adds HP, healing, and shooting mechanics to create entirely
 - Standard initial piece positions
 
 ### Base HP Values
-Each piece has a base health point (HP) value set at the beginning of each turn:
+Each piece has a base health point (HP) value:
 
 | Piece  | Base HP |
 |--------|---------|
@@ -22,20 +22,29 @@ Each piece has a base health point (HP) value set at the beginning of each turn:
 
 ### Turn Structure
 
-Each turn consists of three phases:
+Each turn consists of two phases:
 
-1. **Reinforce Phase** - For each of your pieces, it "reinforces" all friendly pieces it can attack (according to standard chess movement rules) by +1 HP. HP can exceed the base value! For example, a pawn (base 1 HP) covered by 3 friendly pieces will have 4 HP after reinforcement. Visualized with a green ball animation.
+1. **Move Phase** - At the start of your turn, your pieces' HP is reset to their base values. Then you make a standard chess move (move, attack, or capture using normal chess rules).
 
-2. **Shooting Phase** - For each of your pieces, it "shoots" all enemy pieces it can attack by -1 HP. Damage is visualized with a red ball animation. If a piece's HP reaches 0, it dies and is removed from the board.
+2. **Shooting Phase** - After you move, all your pieces shoot projectiles in their attack directions:
+   - **Sliding pieces** (Bishop, Rook, Queen): Shoot projectiles in their movement directions that travel until hitting a piece or the board edge
+   - **Targeted pieces** (Pawn, Knight, King): Shoot projectiles to specific cells they can attack
 
-3. **Move Phase** - Standard chess move (move, attack, or capture a piece using normal chess rules).
+   Projectile color matches the piece that fired it (white pieces shoot white balls, black pieces shoot black balls).
+
+   **Damage/Healing Rules:**
+   - Same color hit = **+1 HP** (healing) - e.g., white ball hits white piece
+   - Different color hit = **-1 HP** (damage) - e.g., white ball hits black piece
+
+   If a piece's HP reaches 0, it dies and is removed from the board.
 
 ### Victory Condition
 The game ends when a king's HP reaches 0 and it dies. There is no checkmate - the king must actually be killed through shooting damage.
 
 ### Key Strategic Differences from Standard Chess
 - Pieces can be eliminated without being captured directly
-- Positioning matters for both offense (shooting) and defense (healing)
+- Your pieces heal each other when they can attack friendly pieces
+- Enemy pieces damage each other when they can attack enemy pieces in your attack lines
 - High-mobility pieces (Queen, Rooks, Bishops) become more valuable for area control
 - Pawns are fragile (1 HP) and can be easily eliminated by concentrated fire
 - The King needs protection not just from checkmate but from sustained damage
