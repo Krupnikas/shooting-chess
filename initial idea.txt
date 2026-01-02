@@ -1,0 +1,12 @@
+game called shooting chess
+
+the idea is that we change chess mechanics a bit so there are complete new tatctics.
+
+0. board and initial positions are the same
+1. chess figures can move, atack and eat exach other by the same rules
+2. in the begining of each move there is a new healing phase and shooting phase
+3. all figures have hp set to values in the beggining of each move to: (pan - 1, knight - 3, bishop - 3, tower - 4, queen and king - 8)
+4. healing stage - for each figure for all figures of the same color it can "attack" it adds to them +1 hp with a heacling green ball charge.
+5. shooting stage - for each figure for all figures of another color it can attack it deducts from them -1 hp with a damaging red ball charge. If figures hp reaches 0 it dies.
+6. regular chess move
+7. game ends when king dies

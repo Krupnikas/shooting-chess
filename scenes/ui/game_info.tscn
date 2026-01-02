@@ -1,0 +1,47 @@
+[gd_scene load_steps=2 format=3 uid="uid://cgameinfo789"]
+
+[ext_resource type="Script" path="res://scripts/ui/game_info.gd" id="1_gameinfo"]
+
+[node name="GameInfo" type="Control"]
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 60.0
+grow_horizontal = 2
+script = ExtResource("1_gameinfo")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TurnLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -100.0
+offset_top = 5.0
+offset_right = 100.0
+offset_bottom = 30.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 36
+text = "White's Turn"
+horizontal_alignment = 1
+
+[node name="PhaseLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -100.0
+offset_top = 32.0
+offset_right = 100.0
+offset_bottom = 55.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 28
+text = "Move Phase"
+horizontal_alignment = 1
