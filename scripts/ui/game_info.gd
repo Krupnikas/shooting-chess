@@ -39,15 +39,12 @@ func update_display():
 	var phase_name = ""
 	var phase_color = Color.WHITE
 	match GameManager.game_phase:
-		GameManager.GamePhase.REINFORCE:
-			phase_name = "Reinforce Phase"
-			phase_color = Color(0.5, 1.0, 0.5)  # Light green
-		GameManager.GamePhase.SHOOTING:
-			phase_name = "Shooting Phase"
-			phase_color = Color(1.0, 0.5, 0.5)  # Light red
 		GameManager.GamePhase.MOVING:
 			phase_name = "Move Phase"
 			phase_color = Color(0.7, 0.8, 1.0)  # Light blue
+		GameManager.GamePhase.SHOOTING:
+			phase_name = "Shooting Phase"
+			phase_color = Color(1.0, 0.5, 0.5)  # Light red
 		GameManager.GamePhase.GAME_OVER:
 			phase_name = "Game Over"
 			phase_color = Color.GOLD

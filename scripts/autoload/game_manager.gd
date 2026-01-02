@@ -3,7 +3,7 @@ extends Node
 # Enums
 enum PieceType { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING }
 enum PieceColor { WHITE, BLACK }
-enum GamePhase { REINFORCE, SHOOTING, MOVING, GAME_OVER }
+enum GamePhase { MOVING, SHOOTING, GAME_OVER }
 
 # Constants
 const BOARD_SIZE = 8
@@ -26,7 +26,7 @@ const SELECTED_COLOR = Color(0.8, 0.8, 0.3, 0.7)   # Yellow for selected piece
 # Game state
 var board: Array = []  # 8x8 array of Piece nodes or null
 var current_player: PieceColor = PieceColor.WHITE
-var game_phase: GamePhase = GamePhase.REINFORCE
+var game_phase: GamePhase = GamePhase.MOVING
 var selected_piece = null
 var valid_moves: Array[Vector2i] = []
 var winner: PieceColor = PieceColor.WHITE
@@ -61,7 +61,7 @@ func initialize_board():
 
 func reset_game():
 	current_player = PieceColor.WHITE
-	game_phase = GamePhase.REINFORCE
+	game_phase = GamePhase.MOVING
 	winner = PieceColor.WHITE
 	is_processing_phase = false
 	selected_piece = null
@@ -154,18 +154,18 @@ func execute_move(piece, target_pos: Vector2i):
 		emit_signal("game_over", winner)
 		return
 
-	advance_phase()  # Move to reinforce phase
+	advance_phase()  # Move to shooting phase
 
 # ============ TURN & PHASE MANAGEMENT ============
 
 func start_turn():
 	gm_trace("[GM] start_turn called for player: " + str(current_player))
-	# Reset HP for all pieces of current player at start of their turn
-	reset_player_hp(current_player)
+	# Reset HP for all pieces at start of turn (before move phase)
+	reset_all_hp()
 
-	# Start with reinforce phase
-	game_phase = GamePhase.REINFORCE
-	gm_trace("[GM] Emitting phase_changed to REINFORCE")
+	# Start with move phase
+	game_phase = GamePhase.MOVING
+	gm_trace("[GM] Emitting phase_changed to MOVING")
 	emit_signal("phase_changed", game_phase)
 	gm_trace("[GM] start_turn done")
 
@@ -174,6 +174,14 @@ func reset_player_hp(color: PieceColor):
 		for col in range(BOARD_SIZE):
 			var piece = board[row][col]
 			if piece != null and piece.color == color:
+				piece.reset_hp()
+
+func reset_all_hp():
+	# Reset HP for ALL pieces at start of turn
+	for row in range(BOARD_SIZE):
+		for col in range(BOARD_SIZE):
+			var piece = board[row][col]
+			if piece != null:
 				piece.reset_hp()
 
 func process_reinforce_phase() -> Array:
@@ -242,22 +250,17 @@ func check_win_condition() -> bool:
 func advance_phase():
 	gm_trace("[GM] advance_phase called, current phase: " + str(game_phase))
 	match game_phase:
-		GamePhase.REINFORCE:
-			# After reinforce, go to shooting
-			gm_trace("[GM] REINFORCE -> SHOOTING")
+		GamePhase.MOVING:
+			# After move, go to shooting phase
+			gm_trace("[GM] MOVING -> SHOOTING")
 			game_phase = GamePhase.SHOOTING
 			emit_signal("phase_changed", game_phase)
 		GamePhase.SHOOTING:
-			# After shooting, check for deaths and go to move phase
-			gm_trace("[GM] SHOOTING -> checking win condition then MOVING")
+			# After shooting, check for deaths and end turn
+			gm_trace("[GM] SHOOTING -> checking win condition then ending turn")
 			if check_win_condition():
 				gm_trace("[GM] Win condition met!")
 				return
-			game_phase = GamePhase.MOVING
-			emit_signal("phase_changed", game_phase)
-		GamePhase.MOVING:
-			# After move, end turn and switch player
-			gm_trace("[GM] MOVING -> ending turn")
 			end_turn()
 	gm_trace("[GM] advance_phase done")
 
@@ -385,6 +388,18 @@ func get_enemy_targets(piece) -> Array:
 	for square in attack_squares:
 		var target = get_piece_at(square)
 		if target != null and target.color != piece.color:
+			targets.append(target)
+
+	return targets
+
+func get_all_targets(piece) -> Array:
+	# Get ALL pieces in attack range (both friendly and enemy, excluding self)
+	var targets = []
+	var attack_squares = get_attack_squares(piece)
+
+	for square in attack_squares:
+		var target = get_piece_at(square)
+		if target != null and target != piece:
 			targets.append(target)
 
 	return targets

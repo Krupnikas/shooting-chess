@@ -142,53 +142,40 @@ func _start_delay(time: float, next: ProcessState):
 
 # ============ PHASE HANDLING ============
 
-var _current_phase_is_reinforce: bool = false
-
 func _on_phase_changed(phase):
 	match phase:
-		GameManager.GamePhase.REINFORCE:
-			_current_phase_is_reinforce = true
-			if ENABLE_PROJECTILES:
-				is_processing = true
-				_state = ProcessState.SPAWNING
-			else:
-				# Skip reinforce phase
-				call_deferred("_advance_to_next_phase")
+		GameManager.GamePhase.MOVING:
+			is_processing = false
+			_state = ProcessState.IDLE
 		GameManager.GamePhase.SHOOTING:
-			_current_phase_is_reinforce = false
 			if ENABLE_PROJECTILES:
 				is_processing = true
 				_state = ProcessState.SPAWNING
 			else:
 				# Skip shooting phase
 				call_deferred("_advance_to_next_phase")
-		GameManager.GamePhase.MOVING:
-			is_processing = false
-			_state = ProcessState.IDLE
 
 func _do_spawn_projectiles():
 	# Spawn all projectiles
-	# Reinforce: green projectiles to friendly pieces
-	# Shooting: red projectiles to enemy pieces
+	# Each piece shoots at ALL pieces in its attack range (friendly and enemy)
+	# Projectile color matches the shooting piece's color
+	# Same color hit = +1 HP (heal), different color hit = -1 HP (damage)
 	var player_pieces = GameManager.get_pieces_of_color(GameManager.current_player)
 	var spawn_count = 0
-	var is_heal = _current_phase_is_reinforce
 
 	for piece in player_pieces:
 		if not is_instance_valid(piece):
 			continue
 
-		# Get targets based on phase
-		var targets: Array
-		if _current_phase_is_reinforce:
-			targets = GameManager.get_friendly_targets(piece)
-		else:
-			targets = GameManager.get_enemy_targets(piece)
+		# Get ALL targets (both friendly and enemy)
+		var targets = GameManager.get_all_targets(piece)
 
 		# Spawn projectile for each target
 		for target in targets:
 			if is_instance_valid(target):
-				spawn_targeted_projectile_to_piece(piece, target, is_heal)
+				# Projectile color matches the piece that fired it
+				var is_white_projectile = piece.color == GameManager.PieceColor.WHITE
+				spawn_targeted_projectile_to_piece(piece, target, is_white_projectile)
 				spawn_count += 1
 
 	# Transition to waiting state
@@ -196,8 +183,7 @@ func _do_spawn_projectiles():
 		_state = ProcessState.WAITING_PROJECTILES
 	else:
 		# No projectiles, advance immediately
-		if not _current_phase_is_reinforce:
-			_do_process_deaths()
+		_do_process_deaths()
 		call_deferred("_advance_to_next_phase")
 		_state = ProcessState.IDLE
 
@@ -274,7 +260,7 @@ func get_attack_data(piece) -> Dictionary:
 
 	return { "mode": "directional", "data": [] }
 
-func spawn_targeted_projectile_to_piece(from_piece, to_piece, is_heal: bool):
+func spawn_targeted_projectile_to_piece(from_piece, to_piece, is_white_projectile: bool):
 	if not is_instance_valid(from_piece) or not is_instance_valid(to_piece):
 		return
 
@@ -283,20 +269,22 @@ func spawn_targeted_projectile_to_piece(from_piece, to_piece, is_heal: bool):
 	var target_pos = GameManager.board_to_screen(to_piece.board_position)
 
 	var projectile = ProjectileScene.instantiate()
-	projectile.setup_targeted(from_piece.position, target_pos, to_piece.board_position, is_heal, bounds)
+	projectile.setup_targeted(from_piece.position, target_pos, to_piece.board_position, is_white_projectile, bounds)
 	projectile.set_source(from_piece)
 	projectile.finished.connect(_on_projectile_finished)
 	projectiles_container.add_child(projectile)
 	active_projectiles += 1
 
-func _on_projectile_finished(hit_piece, is_heal: bool):
+func _on_projectile_finished(hit_piece, is_white_projectile: bool):
 	active_projectiles -= 1
-	# Apply HP change based on projectile type
+	# Apply HP change based on projectile color vs piece color
+	# Same color = heal (+1 HP), different color = damage (-1 HP)
 	if hit_piece != null and is_instance_valid(hit_piece):
-		if is_heal:
-			hit_piece.heal(1)  # Green = reinforce +1 HP
+		var piece_is_white = hit_piece.color == GameManager.PieceColor.WHITE
+		if is_white_projectile == piece_is_white:
+			hit_piece.heal(1)  # Same color = +1 HP
 		else:
-			hit_piece.take_damage(1)  # Red = damage -1 HP
+			hit_piece.take_damage(1)  # Different color = -1 HP
 
 # ============ PIECE SELECTION & HIGHLIGHTING ============
 
