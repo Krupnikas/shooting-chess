@@ -26,7 +26,7 @@ const SELECTED_COLOR = Color(0.8, 0.8, 0.3, 0.7)   # Yellow for selected piece
 # Game state
 var board: Array = []  # 8x8 array of Piece nodes or null
 var current_player: PieceColor = PieceColor.WHITE
-var game_phase: GamePhase = GamePhase.REINFORCE
+var game_phase: GamePhase = GamePhase.MOVING
 var selected_piece = null
 var valid_moves: Array[Vector2i] = []
 var winner: PieceColor = PieceColor.WHITE
@@ -58,7 +58,7 @@ func initialize_board():
 
 func reset_game():
 	current_player = PieceColor.WHITE
-	game_phase = GamePhase.REINFORCE
+	game_phase = GamePhase.MOVING
 	winner = PieceColor.WHITE
 	is_processing_phase = false
 	selected_piece = null
@@ -126,9 +126,11 @@ func try_move_to(target_pos: Vector2i) -> bool:
 func execute_move(piece, target_pos: Vector2i):
 	var from_pos = piece.board_position
 	var captured_piece = get_piece_at(target_pos)
+	var king_captured = false
 
 	# Handle capture
 	if captured_piece != null:
+		king_captured = captured_piece.type == PieceType.KING
 		emit_signal("piece_captured", captured_piece)
 		remove_piece_at(target_pos)
 		captured_piece.queue_free()
@@ -140,8 +142,15 @@ func execute_move(piece, target_pos: Vector2i):
 	piece.position = board_to_screen(target_pos)
 
 	emit_signal("piece_moved", piece, from_pos, target_pos)
-
 	deselect_piece()
+
+	# Check if king was captured - game over
+	if king_captured:
+		game_phase = GamePhase.GAME_OVER
+		winner = current_player
+		emit_signal("game_over", winner)
+		return
+
 	advance_phase()  # Move to reinforce phase
 
 # ============ TURN & PHASE MANAGEMENT ============
