@@ -136,13 +136,20 @@ func process_deaths():
 	var dead_pieces = GameManager.process_deaths()
 
 	for piece in dead_pieces:
+		if not is_instance_valid(piece):
+			continue
 		# Death animation - fade out
 		var tween = create_tween()
 		tween.tween_property(piece, "modulate:a", 0.0, 0.3)
 		await tween.finished
-		GameManager.kill_piece(piece)
+		if is_instance_valid(piece):
+			GameManager.kill_piece(piece)
 
 func spawn_projectile(from_piece, to_piece, is_reinforce: bool):
+	# Safety check - don't spawn if pieces are invalid
+	if not is_instance_valid(from_piece) or not is_instance_valid(to_piece):
+		return
+
 	var projectile = ProjectileScene.instantiate()
 	projectile.setup(from_piece.position, to_piece.position, is_reinforce)
 	projectile.finished.connect(_on_projectile_finished.bind(to_piece, is_reinforce))
@@ -150,17 +157,21 @@ func spawn_projectile(from_piece, to_piece, is_reinforce: bool):
 	active_projectiles += 1
 
 func _on_projectile_finished(target_piece, is_reinforce: bool):
+	active_projectiles -= 1
 	# Apply HP change when projectile reaches target
 	if is_instance_valid(target_piece):
 		if is_reinforce:
 			target_piece.heal(1)
 		else:
 			target_piece.take_damage(1)
-	active_projectiles -= 1
 
 func wait_for_projectiles():
-	while active_projectiles > 0:
+	var timeout = 0
+	while active_projectiles > 0 and timeout < 100:  # Max 5 second timeout
 		await get_tree().create_timer(0.05).timeout
+		timeout += 1
+	# Reset counter if timed out (safety)
+	active_projectiles = 0
 
 # ============ PIECE SELECTION & HIGHLIGHTING ============
 
