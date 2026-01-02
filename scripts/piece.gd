@@ -7,10 +7,10 @@ var board_position: Vector2i = Vector2i.ZERO
 var hp: int = 1
 var base_hp: int = 1
 var blink_tween: Tween = null
-var _original_modulate: Color = Color.WHITE  # Store true original modulate
 
 @onready var sprite = $Sprite
 @onready var hp_label = $HPLabel
+@onready var blink_overlay = $BlinkOverlay
 
 # Texture paths for each piece type
 const PIECE_TEXTURES = {
@@ -36,8 +36,6 @@ func _ready():
 	base_hp = GameManager.BASE_HP[type]
 	hp = base_hp
 	update_display()
-	# Store the original modulate after display is set up
-	_original_modulate = sprite.modulate
 
 func update_display():
 	# Load the appropriate texture for this piece
@@ -69,12 +67,14 @@ func blink(blink_color: Color):
 	# Kill any existing blink tween to avoid color staying stuck
 	if blink_tween and blink_tween.is_valid():
 		blink_tween.kill()
-		# Reset to original immediately when killing old tween
-		sprite.modulate = _original_modulate
+		# Reset overlay to transparent immediately
+		blink_overlay.color = Color(0, 0, 0, 0)
 
+	# Use overlay with semi-transparent blink color
+	var overlay_color = Color(blink_color.r, blink_color.g, blink_color.b, 0.5)
 	blink_tween = create_tween()
-	blink_tween.tween_property(sprite, "modulate", blink_color, 0.15)
-	blink_tween.tween_property(sprite, "modulate", _original_modulate, 0.15)
+	blink_tween.tween_property(blink_overlay, "color", overlay_color, 0.5)
+	blink_tween.tween_property(blink_overlay, "color", Color(0, 0, 0, 0), 0.5)
 
 func reset_hp():
 	hp = base_hp
