@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <ellipse cx="50" cy="15" rx="8" ry="10" fill="black" stroke="white" stroke-width="2"/>
+  <path d="M35 25 Q50 20 65 25 Q70 40 65 55 L60 70 Q50 75 40 70 L35 55 Q30 40 35 25" fill="black" stroke="white" stroke-width="2"/>
+  <line x1="50" y1="30" x2="50" y2="50" stroke="white" stroke-width="2"/>
+  <line x1="40" y1="40" x2="60" y2="40" stroke="white" stroke-width="2"/>
+  <ellipse cx="50" cy="78" rx="20" ry="8" fill="black" stroke="white" stroke-width="2"/>
+  <ellipse cx="50" cy="88" rx="28" ry="8" fill="black" stroke="white" stroke-width="2"/>
+</svg>

@@ -3,6 +3,13 @@ extends Node2D
 const PieceScene = preload("res://scenes/piece.tscn")
 const ProjectileScene = preload("res://scenes/projectile.tscn")
 
+# ============ FEATURE FLAGS ============
+const ENABLE_PROJECTILES = true  # Enable shooting phase
+const ENABLE_HIGHLIGHTS = true  # Enable highlights
+const ENABLE_TWEENS = true  # Controlled in piece.gd
+const ENABLE_HEARTBEAT_LOG = false
+const ENABLE_TRACE_LOG = false
+
 @onready var squares_container = $Squares
 @onready var highlights_container = $Highlights
 @onready var pieces_container = $Pieces
@@ -83,175 +90,106 @@ func spawn_piece(type: GameManager.PieceType, color: GameManager.PieceColor, boa
 	pieces_container.add_child(piece)
 	GameManager.set_piece_at(board_pos, piece)
 
-# ============ HEARTBEAT ============
+# ============ LOGGING ============
 
-var _heartbeat_time: float = 0.0
+var _log_file: FileAccess = null
+
+func trace(msg: String):
+	if ENABLE_TRACE_LOG:
+		print("[%.1f] %s" % [Time.get_ticks_msec() / 1000.0, msg])
+
+# ============ STATE MACHINE ============
+
+enum ProcessState { IDLE, SPAWNING, WAITING_PROJECTILES, PROCESSING_DEATHS, DELAY }
+
+var _state: ProcessState = ProcessState.IDLE
+var _delay_timer: float = 0.0
+var _next_state: ProcessState = ProcessState.IDLE
+var _heartbeat_timer: float = 0.0
 
 func _process(delta):
-	_heartbeat_time += delta
-	if _heartbeat_time >= 10.0:
-		_heartbeat_time = 0.0
-		print("HEARTBEAT: ", Time.get_ticks_msec() / 1000.0)
+	if not ENABLE_PROJECTILES:
+		return  # Skip all processing when projectiles disabled
+
+	# Heartbeat every 2 seconds
+	if ENABLE_HEARTBEAT_LOG:
+		_heartbeat_timer += delta
+		if _heartbeat_timer >= 2.0:
+			_heartbeat_timer = 0.0
+			print("[HEARTBEAT %.1f] state=%d proj=%d" % [Time.get_ticks_msec() / 1000.0, _state, active_projectiles])
+
+	match _state:
+		ProcessState.IDLE:
+			pass  # Waiting for phase change
+		ProcessState.SPAWNING:
+			_do_spawn_projectiles()
+		ProcessState.WAITING_PROJECTILES:
+			if active_projectiles <= 0:
+				_state = ProcessState.PROCESSING_DEATHS
+		ProcessState.PROCESSING_DEATHS:
+			_do_process_deaths()
+			_start_delay(0.3, ProcessState.IDLE)
+			call_deferred("_advance_to_next_phase")
+		ProcessState.DELAY:
+			_delay_timer -= delta
+			if _delay_timer <= 0:
+				_state = _next_state
+
+func _start_delay(time: float, next: ProcessState):
+	_delay_timer = time
+	_next_state = next
+	_state = ProcessState.DELAY
 
 # ============ PHASE HANDLING ============
 
 func _on_phase_changed(phase):
-	print("[PHASE] Changed to: ", phase, " at ", Time.get_ticks_msec() / 1000.0)
 	match phase:
 		GameManager.GamePhase.MOVING:
 			is_processing = false
-			print("[PHASE] MOVING - ready for input")
-		GameManager.GamePhase.REINFORCE:
-			is_processing = true
-			print("[PHASE] Starting reinforce processing...")
-			process_reinforce_phase()
+			_state = ProcessState.IDLE
 		GameManager.GamePhase.SHOOTING:
-			is_processing = true
-			print("[PHASE] Starting shooting processing...")
-			process_shooting_phase()
+			if ENABLE_PROJECTILES:
+				is_processing = true
+				_state = ProcessState.SPAWNING
+			else:
+				# Skip shooting phase
+				call_deferred("_advance_to_next_phase")
 
-func process_reinforce_phase():
-	if is_shutting_down:
-		return
-	print("[REINFORCE] Starting...")
-
-	# Fire projectiles from all pieces (staggered 0.1s per piece)
+func _do_spawn_projectiles():
+	# Spawn all projectiles
 	var player_pieces = GameManager.get_pieces_of_color(GameManager.current_player)
-	var projectile_count = 0
+	var spawn_count = 0
 
 	for piece in player_pieces:
-		if is_shutting_down or not is_inside_tree() or not is_instance_valid(piece):
-			break
-		var attack_data = get_attack_data(piece)
-		if attack_data.mode == "directional":
-			for dir in attack_data.data:
-				spawn_directional_projectile(piece, dir, true)
-				projectile_count += 1
-		else:  # targeted
-			for target_cell in attack_data.data:
-				spawn_targeted_projectile(piece, target_cell, true)
-				projectile_count += 1
-		# Wait 0.1s before next piece fires
-		await get_tree().create_timer(0.1).timeout
-
-	if is_shutting_down:
-		return
-
-	print("[REINFORCE] Spawned ", projectile_count, " projectiles")
-
-	if projectile_count == 0:
-		print("[REINFORCE] No projectiles, advancing...")
-		if not is_inside_tree():
-			return
-		await get_tree().create_timer(0.3).timeout
-		if is_shutting_down:
-			return
-		call_deferred("_advance_to_next_phase")
-		return
-
-	# Wait for remaining projectiles to finish
-	print("[REINFORCE] Waiting for projectiles...")
-	await wait_for_projectiles()
-	if is_shutting_down:
-		return
-	print("[REINFORCE] Projectiles done")
-
-	if not is_inside_tree():
-		return
-	await get_tree().create_timer(0.2).timeout
-	if is_shutting_down:
-		return
-	call_deferred("_advance_to_next_phase")
-
-func process_shooting_phase():
-	if is_shutting_down:
-		return
-	print("[SHOOTING] Starting...")
-
-	# Fire projectiles from all pieces (staggered 0.1s per piece)
-	var player_pieces = GameManager.get_pieces_of_color(GameManager.current_player)
-	var projectile_count = 0
-
-	for piece in player_pieces:
-		if is_shutting_down or not is_inside_tree() or not is_instance_valid(piece):
-			break
-		var attack_data = get_attack_data(piece)
-		if attack_data.mode == "directional":
-			for dir in attack_data.data:
-				spawn_directional_projectile(piece, dir, false)
-				projectile_count += 1
-		else:  # targeted
-			for target_cell in attack_data.data:
-				spawn_targeted_projectile(piece, target_cell, false)
-				projectile_count += 1
-		# Wait 0.1s before next piece fires
-		await get_tree().create_timer(0.1).timeout
-
-	if is_shutting_down:
-		return
-
-	print("[SHOOTING] Spawned ", projectile_count, " projectiles")
-
-	if projectile_count == 0:
-		print("[SHOOTING] No projectiles, processing deaths...")
-		if not is_inside_tree():
-			return
-		await get_tree().create_timer(0.3).timeout
-		if is_shutting_down:
-			return
-		await process_deaths()
-		call_deferred("_advance_to_next_phase")
-		return
-
-	# Wait for remaining projectiles to finish
-	print("[SHOOTING] Waiting for projectiles...")
-	await wait_for_projectiles()
-	if is_shutting_down:
-		return
-	print("[SHOOTING] Projectiles done")
-
-	# Process deaths after shooting
-	if not is_inside_tree():
-		return
-	await get_tree().create_timer(0.2).timeout
-	if is_shutting_down:
-		return
-	await process_deaths()
-
-	if not is_inside_tree():
-		return
-	await get_tree().create_timer(0.3).timeout
-	if is_shutting_down:
-		return
-	call_deferred("_advance_to_next_phase")
-
-func _advance_to_next_phase():
-	print("[ADVANCE] Calling GameManager.advance_phase() at ", Time.get_ticks_msec() / 1000.0)
-	GameManager.advance_phase()
-	print("[ADVANCE] Done")
-
-func process_deaths():
-	var dead_pieces = GameManager.process_deaths()
-
-	if dead_pieces.size() == 0:
-		return
-
-	# Start all death animations in parallel
-	var tweens = []
-	for piece in dead_pieces:
 		if not is_instance_valid(piece):
 			continue
-		var tween = create_tween()
-		tween.tween_property(piece, "modulate:a", 0.0, 0.3)
-		tweens.append({"tween": tween, "piece": piece})
+		var attack_data = get_attack_data(piece)
+		if attack_data.mode == "directional":
+			for dir in attack_data.data:
+				spawn_directional_projectile(piece, dir)
+				spawn_count += 1
+		else:
+			for target_cell in attack_data.data:
+				spawn_targeted_projectile(piece, target_cell)
+				spawn_count += 1
 
-	# Wait for animations (with timeout)
-	await get_tree().create_timer(0.35).timeout
+	# Transition to waiting state
+	if active_projectiles > 0:
+		_state = ProcessState.WAITING_PROJECTILES
+	else:
+		# No projectiles, advance immediately
+		_do_process_deaths()
+		call_deferred("_advance_to_next_phase")
+		_state = ProcessState.IDLE
 
-	# Kill all dead pieces
-	for data in tweens:
-		if is_instance_valid(data.piece):
-			GameManager.kill_piece(data.piece)
+func _do_process_deaths():
+	var dead_pieces = GameManager.process_deaths()
+	for piece in dead_pieces:
+		if is_instance_valid(piece):
+			GameManager.kill_piece(piece)
+
+func _advance_to_next_phase():
+	GameManager.advance_phase()
 
 func get_attack_data(piece) -> Dictionary:
 	# Returns attack data: either directions (for sliding pieces) or target cells (for pawn/knight)
@@ -317,69 +255,46 @@ func get_attack_data(piece) -> Dictionary:
 
 	return { "mode": "directional", "data": [] }
 
-func spawn_directional_projectile(from_piece, direction: Vector2, is_reinforce: bool):
+func spawn_directional_projectile(from_piece, direction: Vector2):
 	if not is_instance_valid(from_piece):
 		return
 
 	var board_size = GameManager.BOARD_SIZE * GameManager.SQUARE_SIZE
 	var bounds = Rect2(0, 0, board_size, board_size)
+	var is_white = from_piece.color == GameManager.PieceColor.WHITE
 
 	var projectile = ProjectileScene.instantiate()
-	projectile.setup_directional(from_piece.position, direction, is_reinforce, bounds)
+	projectile.setup_directional(from_piece.position, direction, is_white, bounds)
 	projectile.set_source(from_piece)
-	projectile.finished.connect(_on_projectile_finished.bind(is_reinforce))
+	projectile.finished.connect(_on_projectile_finished)
 	projectiles_container.add_child(projectile)
 	active_projectiles += 1
 
-func spawn_targeted_projectile(from_piece, target_cell: Vector2i, is_reinforce: bool):
+func spawn_targeted_projectile(from_piece, target_cell: Vector2i):
 	if not is_instance_valid(from_piece):
 		return
 
 	var board_size = GameManager.BOARD_SIZE * GameManager.SQUARE_SIZE
 	var bounds = Rect2(0, 0, board_size, board_size)
 	var target_pos = GameManager.board_to_screen(target_cell)
+	var is_white = from_piece.color == GameManager.PieceColor.WHITE
 
 	var projectile = ProjectileScene.instantiate()
-	projectile.setup_targeted(from_piece.position, target_pos, target_cell, is_reinforce, bounds)
+	projectile.setup_targeted(from_piece.position, target_pos, target_cell, is_white, bounds)
 	projectile.set_source(from_piece)
-	projectile.finished.connect(_on_projectile_finished.bind(is_reinforce))
+	projectile.finished.connect(_on_projectile_finished)
 	projectiles_container.add_child(projectile)
 	active_projectiles += 1
 
-func _on_projectile_finished(hit_piece, is_reinforce: bool):
+func _on_projectile_finished(hit_piece, projectile_is_white: bool):
 	active_projectiles -= 1
-	# Apply HP change when projectile hits target
+	# Apply HP change: same color = heal, different color = damage
 	if hit_piece != null and is_instance_valid(hit_piece):
-		if is_reinforce:
-			hit_piece.heal(1)
+		var target_is_white = hit_piece.color == GameManager.PieceColor.WHITE
+		if projectile_is_white == target_is_white:
+			hit_piece.heal(1)  # Same color = reinforce
 		else:
-			hit_piece.take_damage(1)
-
-func wait_for_projectiles():
-	print("[WAIT] Starting wait, active_projectiles=", active_projectiles)
-	var start_time = Time.get_ticks_msec()
-	var timeout_ms = 10000  # 10 second timeout (staggered firing + travel time)
-
-	while active_projectiles > 0:
-		var elapsed = Time.get_ticks_msec() - start_time
-		if elapsed > timeout_ms:
-			print("[WAIT] TIMEOUT after ", elapsed, "ms, forcing completion")
-			break
-
-		if not is_inside_tree():
-			print("[WAIT] ERROR: Not in tree!")
-			break
-
-		var tree = get_tree()
-		if tree == null:
-			print("[WAIT] ERROR: tree is null!")
-			break
-
-		# Use process_frame instead of timer to be more reliable
-		await tree.process_frame
-
-	print("[WAIT] Done, resetting counter (was ", active_projectiles, ")")
-	active_projectiles = 0
+			hit_piece.take_damage(1)  # Different color = damage
 
 # ============ PIECE SELECTION & HIGHLIGHTING ============
 
@@ -395,6 +310,8 @@ func _on_piece_deselected():
 	clear_highlights()
 
 func show_highlights():
+	if not ENABLE_HIGHLIGHTS:
+		return
 	if not is_instance_valid(highlights_container):
 		return
 

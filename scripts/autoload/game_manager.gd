@@ -3,7 +3,7 @@ extends Node
 # Enums
 enum PieceType { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING }
 enum PieceColor { WHITE, BLACK }
-enum GamePhase { MOVING, REINFORCE, SHOOTING, GAME_OVER }
+enum GamePhase { MOVING, SHOOTING, GAME_OVER }
 
 # Constants
 const BOARD_SIZE = 8
@@ -48,6 +48,9 @@ signal phase_animations_complete()
 func _ready():
 	initialize_board()
 
+func gm_trace(_msg: String):
+	pass  # Logging disabled
+
 func initialize_board():
 	board.clear()
 	for row in range(BOARD_SIZE):
@@ -91,7 +94,7 @@ func screen_to_board(screen_pos: Vector2) -> Vector2i:
 # ============ PIECE SELECTION & MOVEMENT ============
 
 func select_piece(piece):
-	if game_phase == GamePhase.GAME_OVER:
+	if game_phase != GamePhase.MOVING:
 		return
 
 	if selected_piece == piece:
@@ -156,15 +159,15 @@ func execute_move(piece, target_pos: Vector2i):
 # ============ TURN & PHASE MANAGEMENT ============
 
 func start_turn():
-	print("[GM] start_turn called for player: ", current_player)
+	gm_trace("[GM] start_turn called for player: " + str(current_player))
 	# Reset HP for all pieces of current player
 	reset_player_hp(current_player)
 
 	# Start with move phase
 	game_phase = GamePhase.MOVING
-	print("[GM] Emitting phase_changed to MOVING")
+	gm_trace("[GM] Emitting phase_changed to MOVING")
 	emit_signal("phase_changed", game_phase)
-	print("[GM] start_turn done")
+	gm_trace("[GM] start_turn done")
 
 func reset_player_hp(color: PieceColor):
 	for row in range(BOARD_SIZE):
@@ -237,41 +240,36 @@ func check_win_condition() -> bool:
 	return false
 
 func advance_phase():
-	print("[GM] advance_phase called, current phase: ", game_phase)
+	gm_trace("[GM] advance_phase called, current phase: " + str(game_phase))
 	match game_phase:
 		GamePhase.MOVING:
-			# After move, go to reinforce
-			print("[GM] MOVING -> REINFORCE")
-			game_phase = GamePhase.REINFORCE
-			emit_signal("phase_changed", game_phase)
-		GamePhase.REINFORCE:
-			# After reinforce, go to shooting
-			print("[GM] REINFORCE -> SHOOTING")
+			# After move, go to shooting
+			gm_trace("[GM] MOVING -> SHOOTING")
 			game_phase = GamePhase.SHOOTING
 			emit_signal("phase_changed", game_phase)
 		GamePhase.SHOOTING:
 			# Check for deaths and win condition after shooting, then end turn
-			print("[GM] SHOOTING -> checking win condition")
+			gm_trace("[GM] SHOOTING -> checking win condition")
 			if check_win_condition():
-				print("[GM] Win condition met!")
+				gm_trace("[GM] Win condition met!")
 				return
-			print("[GM] No win, ending turn...")
+			gm_trace("[GM] No win, ending turn...")
 			end_turn()
-	print("[GM] advance_phase done")
+	gm_trace("[GM] advance_phase done")
 
 func end_turn():
-	print("[GM] end_turn called")
+	gm_trace("[GM] end_turn called")
 	# Switch player
 	if current_player == PieceColor.WHITE:
 		current_player = PieceColor.BLACK
 	else:
 		current_player = PieceColor.WHITE
 
-	print("[GM] Switched to player: ", current_player)
+	gm_trace("[GM] Switched to player: " + str(current_player))
 	emit_signal("turn_changed", current_player)
 
 	# Start new turn with reinforce phase
-	print("[GM] Starting new turn...")
+	gm_trace("[GM] Starting new turn...")
 	start_turn()
 
 # ============ TARGET CALCULATION ============

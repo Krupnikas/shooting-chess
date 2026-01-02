@@ -8,26 +8,26 @@ var hp: int = 1
 var base_hp: int = 1
 var blink_tween: Tween = null
 
-@onready var label = $Label
+@onready var sprite = $Sprite
 @onready var hp_label = $HPLabel
 
-# Unicode chess symbols
-const PIECE_SYMBOLS = {
+# Texture paths for each piece type
+const PIECE_TEXTURES = {
 	GameManager.PieceColor.WHITE: {
-		GameManager.PieceType.KING: "♔",
-		GameManager.PieceType.QUEEN: "♕",
-		GameManager.PieceType.ROOK: "♖",
-		GameManager.PieceType.BISHOP: "♗",
-		GameManager.PieceType.KNIGHT: "♘",
-		GameManager.PieceType.PAWN: "♙"
+		GameManager.PieceType.KING: "res://assets/pieces/white_king.png",
+		GameManager.PieceType.QUEEN: "res://assets/pieces/white_queen.png",
+		GameManager.PieceType.ROOK: "res://assets/pieces/white_rook.png",
+		GameManager.PieceType.BISHOP: "res://assets/pieces/white_bishop.png",
+		GameManager.PieceType.KNIGHT: "res://assets/pieces/white_knight.png",
+		GameManager.PieceType.PAWN: "res://assets/pieces/white_pawn.png"
 	},
 	GameManager.PieceColor.BLACK: {
-		GameManager.PieceType.KING: "♚",
-		GameManager.PieceType.QUEEN: "♛",
-		GameManager.PieceType.ROOK: "♜",
-		GameManager.PieceType.BISHOP: "♝",
-		GameManager.PieceType.KNIGHT: "♞",
-		GameManager.PieceType.PAWN: "♟"
+		GameManager.PieceType.KING: "res://assets/pieces/black_king.png",
+		GameManager.PieceType.QUEEN: "res://assets/pieces/black_queen.png",
+		GameManager.PieceType.ROOK: "res://assets/pieces/black_rook.png",
+		GameManager.PieceType.BISHOP: "res://assets/pieces/black_bishop.png",
+		GameManager.PieceType.KNIGHT: "res://assets/pieces/black_knight.png",
+		GameManager.PieceType.PAWN: "res://assets/pieces/black_pawn.png"
 	}
 }
 
@@ -37,28 +37,20 @@ func _ready():
 	update_display()
 
 func update_display():
-	label.text = PIECE_SYMBOLS[color][type]
-
-	# Set color tint for visibility
-	if color == GameManager.PieceColor.WHITE:
-		label.add_theme_color_override("font_color", Color.WHITE)
-		label.add_theme_color_override("font_outline_color", Color.BLACK)
-	else:
-		label.add_theme_color_override("font_color", Color.BLACK)
-		label.add_theme_color_override("font_outline_color", Color.WHITE)
-
+	# Load the appropriate texture for this piece
+	var texture_path = PIECE_TEXTURES[color][type]
+	sprite.texture = load(texture_path)
 	update_hp_display()
 
 func update_hp_display():
 	hp_label.text = str(hp)
-
-	# Color based on HP vs base
+	# Use modulate for HP color instead of add_theme_color_override
 	if hp > base_hp:
-		hp_label.add_theme_color_override("font_color", Color.GREEN)
+		hp_label.modulate = Color.GREEN
 	elif hp < base_hp:
-		hp_label.add_theme_color_override("font_color", Color.RED)
+		hp_label.modulate = Color.RED
 	else:
-		hp_label.add_theme_color_override("font_color", Color.WHITE)
+		hp_label.modulate = Color.WHITE
 
 func take_damage(amount: int):
 	hp -= amount
@@ -76,8 +68,8 @@ func blink(blink_color: Color):
 		blink_tween.kill()
 
 	blink_tween = create_tween()
-	blink_tween.tween_property(label, "modulate", blink_color, 0.15)
-	blink_tween.tween_property(label, "modulate", Color.WHITE, 0.15)
+	blink_tween.tween_property(sprite, "modulate", blink_color, 0.15)
+	blink_tween.tween_property(sprite, "modulate", Color.WHITE, 0.15)
 
 func reset_hp():
 	hp = base_hp
