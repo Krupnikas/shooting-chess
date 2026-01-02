@@ -142,35 +142,53 @@ func _start_delay(time: float, next: ProcessState):
 
 # ============ PHASE HANDLING ============
 
+var _current_phase_is_reinforce: bool = false
+
 func _on_phase_changed(phase):
 	match phase:
-		GameManager.GamePhase.MOVING:
-			is_processing = false
-			_state = ProcessState.IDLE
+		GameManager.GamePhase.REINFORCE:
+			_current_phase_is_reinforce = true
+			if ENABLE_PROJECTILES:
+				is_processing = true
+				_state = ProcessState.SPAWNING
+			else:
+				# Skip reinforce phase
+				call_deferred("_advance_to_next_phase")
 		GameManager.GamePhase.SHOOTING:
+			_current_phase_is_reinforce = false
 			if ENABLE_PROJECTILES:
 				is_processing = true
 				_state = ProcessState.SPAWNING
 			else:
 				# Skip shooting phase
 				call_deferred("_advance_to_next_phase")
+		GameManager.GamePhase.MOVING:
+			is_processing = false
+			_state = ProcessState.IDLE
 
 func _do_spawn_projectiles():
 	# Spawn all projectiles
+	# Reinforce: green projectiles to friendly pieces
+	# Shooting: red projectiles to enemy pieces
 	var player_pieces = GameManager.get_pieces_of_color(GameManager.current_player)
 	var spawn_count = 0
+	var is_heal = _current_phase_is_reinforce
 
 	for piece in player_pieces:
 		if not is_instance_valid(piece):
 			continue
-		var attack_data = get_attack_data(piece)
-		if attack_data.mode == "directional":
-			for dir in attack_data.data:
-				spawn_directional_projectile(piece, dir)
-				spawn_count += 1
+
+		# Get targets based on phase
+		var targets: Array
+		if _current_phase_is_reinforce:
+			targets = GameManager.get_friendly_targets(piece)
 		else:
-			for target_cell in attack_data.data:
-				spawn_targeted_projectile(piece, target_cell)
+			targets = GameManager.get_enemy_targets(piece)
+
+		# Spawn projectile for each target
+		for target in targets:
+			if is_instance_valid(target):
+				spawn_targeted_projectile_to_piece(piece, target, is_heal)
 				spawn_count += 1
 
 	# Transition to waiting state
@@ -178,7 +196,8 @@ func _do_spawn_projectiles():
 		_state = ProcessState.WAITING_PROJECTILES
 	else:
 		# No projectiles, advance immediately
-		_do_process_deaths()
+		if not _current_phase_is_reinforce:
+			_do_process_deaths()
 		call_deferred("_advance_to_next_phase")
 		_state = ProcessState.IDLE
 
@@ -255,46 +274,29 @@ func get_attack_data(piece) -> Dictionary:
 
 	return { "mode": "directional", "data": [] }
 
-func spawn_directional_projectile(from_piece, direction: Vector2):
-	if not is_instance_valid(from_piece):
+func spawn_targeted_projectile_to_piece(from_piece, to_piece, is_heal: bool):
+	if not is_instance_valid(from_piece) or not is_instance_valid(to_piece):
 		return
 
 	var board_size = GameManager.BOARD_SIZE * GameManager.SQUARE_SIZE
 	var bounds = Rect2(0, 0, board_size, board_size)
-	var is_white = from_piece.color == GameManager.PieceColor.WHITE
+	var target_pos = GameManager.board_to_screen(to_piece.board_position)
 
 	var projectile = ProjectileScene.instantiate()
-	projectile.setup_directional(from_piece.position, direction, is_white, bounds)
+	projectile.setup_targeted(from_piece.position, target_pos, to_piece.board_position, is_heal, bounds)
 	projectile.set_source(from_piece)
 	projectile.finished.connect(_on_projectile_finished)
 	projectiles_container.add_child(projectile)
 	active_projectiles += 1
 
-func spawn_targeted_projectile(from_piece, target_cell: Vector2i):
-	if not is_instance_valid(from_piece):
-		return
-
-	var board_size = GameManager.BOARD_SIZE * GameManager.SQUARE_SIZE
-	var bounds = Rect2(0, 0, board_size, board_size)
-	var target_pos = GameManager.board_to_screen(target_cell)
-	var is_white = from_piece.color == GameManager.PieceColor.WHITE
-
-	var projectile = ProjectileScene.instantiate()
-	projectile.setup_targeted(from_piece.position, target_pos, target_cell, is_white, bounds)
-	projectile.set_source(from_piece)
-	projectile.finished.connect(_on_projectile_finished)
-	projectiles_container.add_child(projectile)
-	active_projectiles += 1
-
-func _on_projectile_finished(hit_piece, projectile_is_white: bool):
+func _on_projectile_finished(hit_piece, is_heal: bool):
 	active_projectiles -= 1
-	# Apply HP change: same color = heal, different color = damage
+	# Apply HP change based on projectile type
 	if hit_piece != null and is_instance_valid(hit_piece):
-		var target_is_white = hit_piece.color == GameManager.PieceColor.WHITE
-		if projectile_is_white == target_is_white:
-			hit_piece.heal(1)  # Same color = reinforce
+		if is_heal:
+			hit_piece.heal(1)  # Green = reinforce +1 HP
 		else:
-			hit_piece.take_damage(1)  # Different color = damage
+			hit_piece.take_damage(1)  # Red = damage -1 HP
 
 # ============ PIECE SELECTION & HIGHLIGHTING ============
 

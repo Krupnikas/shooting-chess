@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b0r78ecxy7e1q"
-path="res://.godot/imported/white_rook.svg-90f4895205939dc65173e2deb6b4095c.ctex"
+uid="uid://xyko5wvh5mge"
+path="res://.godot/imported/green_circle.png-fd1377c0100c01afda26a2f261dc062a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/pieces/white_rook.svg"
-dest_files=["res://.godot/imported/white_rook.svg-90f4895205939dc65173e2deb6b4095c.ctex"]
+source_file="res://assets/pieces/green_circle.png"
+dest_files=["res://.godot/imported/green_circle.png-fd1377c0100c01afda26a2f261dc062a.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

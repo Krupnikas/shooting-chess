@@ -3,7 +3,7 @@ extends Node
 # Enums
 enum PieceType { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING }
 enum PieceColor { WHITE, BLACK }
-enum GamePhase { MOVING, SHOOTING, GAME_OVER }
+enum GamePhase { REINFORCE, SHOOTING, MOVING, GAME_OVER }
 
 # Constants
 const BOARD_SIZE = 8
@@ -26,7 +26,7 @@ const SELECTED_COLOR = Color(0.8, 0.8, 0.3, 0.7)   # Yellow for selected piece
 # Game state
 var board: Array = []  # 8x8 array of Piece nodes or null
 var current_player: PieceColor = PieceColor.WHITE
-var game_phase: GamePhase = GamePhase.MOVING
+var game_phase: GamePhase = GamePhase.REINFORCE
 var selected_piece = null
 var valid_moves: Array[Vector2i] = []
 var winner: PieceColor = PieceColor.WHITE
@@ -61,7 +61,7 @@ func initialize_board():
 
 func reset_game():
 	current_player = PieceColor.WHITE
-	game_phase = GamePhase.MOVING
+	game_phase = GamePhase.REINFORCE
 	winner = PieceColor.WHITE
 	is_processing_phase = false
 	selected_piece = null
@@ -160,12 +160,12 @@ func execute_move(piece, target_pos: Vector2i):
 
 func start_turn():
 	gm_trace("[GM] start_turn called for player: " + str(current_player))
-	# Reset HP for all pieces of current player
+	# Reset HP for all pieces of current player at start of their turn
 	reset_player_hp(current_player)
 
-	# Start with move phase
-	game_phase = GamePhase.MOVING
-	gm_trace("[GM] Emitting phase_changed to MOVING")
+	# Start with reinforce phase
+	game_phase = GamePhase.REINFORCE
+	gm_trace("[GM] Emitting phase_changed to REINFORCE")
 	emit_signal("phase_changed", game_phase)
 	gm_trace("[GM] start_turn done")
 
@@ -242,18 +242,22 @@ func check_win_condition() -> bool:
 func advance_phase():
 	gm_trace("[GM] advance_phase called, current phase: " + str(game_phase))
 	match game_phase:
-		GamePhase.MOVING:
-			# After move, go to shooting
-			gm_trace("[GM] MOVING -> SHOOTING")
+		GamePhase.REINFORCE:
+			# After reinforce, go to shooting
+			gm_trace("[GM] REINFORCE -> SHOOTING")
 			game_phase = GamePhase.SHOOTING
 			emit_signal("phase_changed", game_phase)
 		GamePhase.SHOOTING:
-			# Check for deaths and win condition after shooting, then end turn
-			gm_trace("[GM] SHOOTING -> checking win condition")
+			# After shooting, check for deaths and go to move phase
+			gm_trace("[GM] SHOOTING -> checking win condition then MOVING")
 			if check_win_condition():
 				gm_trace("[GM] Win condition met!")
 				return
-			gm_trace("[GM] No win, ending turn...")
+			game_phase = GamePhase.MOVING
+			emit_signal("phase_changed", game_phase)
+		GamePhase.MOVING:
+			# After move, end turn and switch player
+			gm_trace("[GM] MOVING -> ending turn")
 			end_turn()
 	gm_trace("[GM] advance_phase done")
 

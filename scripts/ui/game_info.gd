@@ -39,6 +39,9 @@ func update_display():
 	var phase_name = ""
 	var phase_color = Color.WHITE
 	match GameManager.game_phase:
+		GameManager.GamePhase.REINFORCE:
+			phase_name = "Reinforce Phase"
+			phase_color = Color(0.5, 1.0, 0.5)  # Light green
 		GameManager.GamePhase.SHOOTING:
 			phase_name = "Shooting Phase"
 			phase_color = Color(1.0, 0.5, 0.5)  # Light red
@@ -50,4 +53,4 @@ func update_display():
 			phase_color = Color.GOLD
 
 	phase_label.text = phase_name
-	phase_label.modulate = phase_color  # Use modulate instead of add_theme_color_override
+	phase_label.modulate = phase_color

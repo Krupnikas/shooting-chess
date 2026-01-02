@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b0r78ecxy7e1q"
-path="res://.godot/imported/white_rook.svg-90f4895205939dc65173e2deb6b4095c.ctex"
+uid="uid://f7up7j3o02kh"
+path="res://.godot/imported/red_circle.svg-b362562fa88c642756f9aa65a732298d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/pieces/white_rook.svg"
-dest_files=["res://.godot/imported/white_rook.svg-90f4895205939dc65173e2deb6b4095c.ctex"]
+source_file="res://assets/pieces/red_circle.svg"
+dest_files=["res://.godot/imported/red_circle.svg-b362562fa88c642756f9aa65a732298d.ctex"]
 
 [params]
 

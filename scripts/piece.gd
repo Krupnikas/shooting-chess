@@ -7,6 +7,7 @@ var board_position: Vector2i = Vector2i.ZERO
 var hp: int = 1
 var base_hp: int = 1
 var blink_tween: Tween = null
+var _original_modulate: Color = Color.WHITE  # Store true original modulate
 
 @onready var sprite = $Sprite
 @onready var hp_label = $HPLabel
@@ -35,6 +36,8 @@ func _ready():
 	base_hp = GameManager.BASE_HP[type]
 	hp = base_hp
 	update_display()
+	# Store the original modulate after display is set up
+	_original_modulate = sprite.modulate
 
 func update_display():
 	# Load the appropriate texture for this piece
@@ -44,32 +47,34 @@ func update_display():
 
 func update_hp_display():
 	hp_label.text = str(hp)
-	# Use modulate for HP color instead of add_theme_color_override
+	# Use modulate for HP color - nicer colors
 	if hp > base_hp:
-		hp_label.modulate = Color.GREEN
+		hp_label.modulate = Color(0.4, 1.0, 0.4)  # Soft green
 	elif hp < base_hp:
-		hp_label.modulate = Color.RED
+		hp_label.modulate = Color(1.0, 0.4, 0.4)  # Soft red
 	else:
 		hp_label.modulate = Color.WHITE
 
 func take_damage(amount: int):
 	hp -= amount
 	update_hp_display()
-	blink(Color.RED)
+	blink(Color(1.0, 0.3, 0.3))  # Soft red blink
 
 func heal(amount: int):
 	hp += amount
 	update_hp_display()
-	blink(Color.GREEN)
+	blink(Color(0.3, 1.0, 0.3))  # Soft green blink
 
 func blink(blink_color: Color):
 	# Kill any existing blink tween to avoid color staying stuck
 	if blink_tween and blink_tween.is_valid():
 		blink_tween.kill()
+		# Reset to original immediately when killing old tween
+		sprite.modulate = _original_modulate
 
 	blink_tween = create_tween()
 	blink_tween.tween_property(sprite, "modulate", blink_color, 0.15)
-	blink_tween.tween_property(sprite, "modulate", Color.WHITE, 0.15)
+	blink_tween.tween_property(sprite, "modulate", _original_modulate, 0.15)
 
 func reset_hp():
 	hp = base_hp
