@@ -31,6 +31,7 @@ var selected_piece = null
 var valid_moves: Array[Vector2i] = []
 var winner: PieceColor = PieceColor.WHITE
 var is_processing_phase: bool = false
+var show_hp_numbers: bool = true  # Toggle for HP number display
 
 # Signals
 signal piece_selected(piece)
@@ -44,9 +45,19 @@ signal game_over(winner)
 signal reinforce_action(from_piece, to_piece)
 signal shoot_action(from_piece, to_piece)
 signal phase_animations_complete()
+signal hp_display_toggled(show: bool)
 
 func _ready():
 	initialize_board()
+
+func _input(event):
+	# Toggle HP numbers display with 'H' key
+	if event is InputEventKey and event.pressed and event.keycode == KEY_H:
+		toggle_hp_display()
+
+func toggle_hp_display():
+	show_hp_numbers = !show_hp_numbers
+	emit_signal("hp_display_toggled", show_hp_numbers)
 
 func gm_trace(_msg: String):
 	pass  # Logging disabled
