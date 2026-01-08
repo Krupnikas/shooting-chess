@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://menu123"]
+[gd_scene load_steps=18 format=3 uid="uid://menu123"]
 
 [ext_resource type="Script" path="res://scripts/ui/menu.gd" id="1_menu"]
 [ext_resource type="Texture2D" path="res://assets/icons/pawn.svg" id="2_pawn"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" path="res://assets/icons/globe.svg" id="5_globe"]
 [ext_resource type="Texture2D" path="res://assets/icons/gear.svg" id="6_gear"]
 [ext_resource type="Texture2D" path="res://assets/icons/exit.svg" id="7_exit"]
+[ext_resource type="Texture2D" path="res://assets/icons/book.svg" id="8_book"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_local"]
 bg_color = Color(0.22, 0.32, 0.18, 1)
@@ -269,6 +270,19 @@ icon = ExtResource("5_globe")
 text = "Play Online (Coming Soon)"
 alignment = 0
 
+[node name="RulesButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
+custom_minimum_size = Vector2(520, 72)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.78, 0.65, 1)
+theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_normal")
+icon = ExtResource("8_book")
+text = "Rules"
+alignment = 0
+
 [node name="SettingsButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(520, 72)
 layout_mode = 2
@@ -393,3 +407,81 @@ theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxFlat_close_button")
 text = "OK"
+
+[node name="RulesPopup" type="PopupPanel" parent="."]
+size = Vector2i(650, 580)
+
+[node name="PanelContainer" type="PanelContainer" parent="RulesPopup"]
+offset_right = 650.0
+offset_bottom = 580.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_settings_panel")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="RulesPopup/PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Header" type="HBoxContainer" parent="RulesPopup/PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="RulesIcon" type="TextureRect" parent="RulesPopup/PanelContainer/VBoxContainer/Header"]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+texture = ExtResource("8_book")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="RulesTitle" type="Label" parent="RulesPopup/PanelContainer/VBoxContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
+theme_override_font_sizes/font_size = 42
+text = "Game Rules"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="RulesPopup/PanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 380)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RulesText" type="RichTextLabel" parent="RulesPopup/PanelContainer/VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_colors/default_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_font_sizes/normal_font_size = 20
+bbcode_enabled = true
+text = "[b]Shooting Chess[/b] combines classic chess with HP and projectile combat.
+
+[b]Turn Structure:[/b]
+1. [color=#aaddaa]MOVE[/color] - Move one piece (standard chess rules)
+2. [color=#ffaaaa]SHOOT[/color] - All your pieces fire at enemies in range
+
+[b]HP System:[/b]
+Each piece has Hit Points based on type:
+  - Pawn & King: 1 HP
+  - Knight, Bishop, Rook: 2 HP
+  - Queen: 3 HP
+
+HP resets at the start of each player's turn.
+
+[b]Shooting:[/b]
+After moving, ALL your pieces automatically shoot at enemy pieces within their attack range (same as their movement pattern).
+
+Each hit deals 1 damage. Pieces at 0 HP are destroyed.
+
+[b]Victory:[/b]
+Capture or destroy the enemy King to win!
+
+[b]Tips:[/b]
+- Position pieces to maximize shooting potential
+- The Queen is powerful but vulnerable (3 HP vs many attacks)
+- Kings have only 1 HP - protect them!"
+fit_content = true
+
+[node name="RulesCloseButton" type="Button" parent="RulesPopup/PanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_close_button")
+text = "Got it!"
