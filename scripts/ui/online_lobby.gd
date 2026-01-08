@@ -8,6 +8,12 @@ signal game_started()
 @onready var join_room_button = $CenterPanel/VBoxContainer/MainScreen/JoinRoomButton
 @onready var back_to_menu_button = $CenterPanel/VBoxContainer/MainScreen/BackToMenuButton
 
+# Color screen (shown when creating room)
+@onready var color_screen = $CenterPanel/VBoxContainer/ColorScreen
+@onready var play_white_button = $CenterPanel/VBoxContainer/ColorScreen/PlayWhiteButton
+@onready var play_black_button = $CenterPanel/VBoxContainer/ColorScreen/PlayBlackButton
+@onready var color_back_button = $CenterPanel/VBoxContainer/ColorScreen/ColorBackButton
+
 # Create screen
 @onready var create_screen = $CenterPanel/VBoxContainer/CreateScreen
 @onready var room_code_label = $CenterPanel/VBoxContainer/CreateScreen/RoomCodeContainer/RoomCodeLabel
@@ -33,6 +39,11 @@ func _ready():
 	create_room_button.pressed.connect(_on_create_room_pressed)
 	join_room_button.pressed.connect(_on_join_room_pressed)
 	back_to_menu_button.pressed.connect(_on_back_to_menu_pressed)
+
+	# Color screen buttons
+	play_white_button.pressed.connect(_on_play_white_pressed)
+	play_black_button.pressed.connect(_on_play_black_pressed)
+	color_back_button.pressed.connect(_on_color_back_pressed)
 
 	# Create screen buttons
 	copy_button.pressed.connect(_on_copy_pressed)
@@ -106,13 +117,23 @@ func _apply_responsive_scaling():
 
 func _show_main_screen():
 	main_screen.visible = true
+	color_screen.visible = false
 	create_screen.visible = false
 	join_screen.visible = false
 	status_label.text = "Create a room or join with a code"
 	_last_screen = "main"
 
+func _show_color_screen():
+	main_screen.visible = false
+	color_screen.visible = true
+	create_screen.visible = false
+	join_screen.visible = false
+	status_label.text = "Choose your color"
+	_last_screen = "color"
+
 func _show_create_screen():
 	main_screen.visible = false
+	color_screen.visible = false
 	create_screen.visible = true
 	join_screen.visible = false
 	room_code_label.text = "----"
@@ -120,6 +141,7 @@ func _show_create_screen():
 
 func _show_join_screen():
 	main_screen.visible = false
+	color_screen.visible = false
 	create_screen.visible = false
 	join_screen.visible = true
 	room_code_input.text = ""
@@ -130,9 +152,7 @@ func _show_join_screen():
 # ============ MAIN SCREEN ACTIONS ============
 
 func _on_create_room_pressed():
-	_show_create_screen()
-	status_label.text = "Creating room..."
-	NetworkManager.create_room()
+	_show_color_screen()
 
 func _on_join_room_pressed():
 	_show_join_screen()
@@ -141,6 +161,22 @@ func _on_back_to_menu_pressed():
 	NetworkManager.leave_room()
 	_clear_url_params()
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
+
+# ============ COLOR SCREEN ACTIONS ============
+
+func _on_play_white_pressed():
+	_create_room_with_color(GameManager.PieceColor.WHITE)
+
+func _on_play_black_pressed():
+	_create_room_with_color(GameManager.PieceColor.BLACK)
+
+func _on_color_back_pressed():
+	_show_main_screen()
+
+func _create_room_with_color(color: GameManager.PieceColor):
+	_show_create_screen()
+	status_label.text = "Creating room..."
+	NetworkManager.create_room(color)
 
 # ============ CREATE SCREEN ACTIONS ============
 
@@ -201,8 +237,8 @@ func _on_room_error(message: String):
 			# Stay on join screen, let user try again
 			join_submit_button.disabled = room_code_input.text.length() != 4
 		"create":
-			# Go back to main screen since room creation failed
-			_show_main_screen()
+			# Go back to color selection since room creation failed
+			_show_color_screen()
 		_:
 			_show_main_screen()
 
@@ -228,6 +264,8 @@ func _start_game():
 	print("[Lobby] Starting game, disabling AI...")
 	# Disable AI for online play
 	AIPlayer.disable_ai()
+	# Set board flip before scene loads (guest plays as black)
+	GameManager.is_board_flipped = NetworkManager.get_local_color() == GameManager.PieceColor.BLACK
 	# Update URL with game state for reconnection
 	_update_url_with_game_state()
 	print("[Lobby] Changing scene to main.tscn")

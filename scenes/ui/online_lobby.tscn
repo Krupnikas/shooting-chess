@@ -231,6 +231,59 @@ text = "Back to Menu"
 alignment = 0
 expand_icon = true
 
+[node name="ColorScreen" type="VBoxContainer" parent="CenterPanel/VBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 24
+
+[node name="ColorLabel" type="Label" parent="CenterPanel/VBoxContainer/ColorScreen"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.55, 0.48, 1)
+theme_override_font_sizes/font_size = 26
+text = "Choose Your Color"
+horizontal_alignment = 1
+
+[node name="PlayWhiteButton" type="Button" parent="CenterPanel/VBoxContainer/ColorScreen"]
+custom_minimum_size = Vector2(520, 72)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
+theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_primary")
+theme_override_styles/hover = SubResource("StyleBoxFlat_primary_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_primary")
+text = "Play as White"
+
+[node name="PlayBlackButton" type="Button" parent="CenterPanel/VBoxContainer/ColorScreen"]
+custom_minimum_size = Vector2(520, 72)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
+theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_secondary")
+theme_override_styles/hover = SubResource("StyleBoxFlat_secondary_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_secondary")
+text = "Play as Black"
+
+[node name="ColorBackButton" type="Button" parent="CenterPanel/VBoxContainer/ColorScreen"]
+custom_minimum_size = Vector2(520, 72)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.85, 0.78, 0.65, 1)
+theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
+theme_override_font_sizes/font_size = 28
+theme_override_constants/icon_max_width = 48
+theme_override_styles/normal = SubResource("StyleBoxFlat_secondary")
+theme_override_styles/hover = SubResource("StyleBoxFlat_secondary_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_secondary")
+icon = ExtResource("3_back")
+text = "Back"
+alignment = 0
+expand_icon = true
+
 [node name="CreateScreen" type="VBoxContainer" parent="CenterPanel/VBoxContainer"]
 visible = false
 layout_mode = 2

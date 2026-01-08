@@ -358,10 +358,14 @@ func create_highlight(board_pos: Vector2i, color: Color) -> ColorRect:
 	if not is_instance_valid(highlights_container):
 		return null
 
+	# Use screen position from board_to_screen (accounts for board flip)
+	var screen_pos = GameManager.board_to_screen(board_pos)
+	# Adjust to top-left corner of square (board_to_screen returns center)
+	var half_size = GameManager.SQUARE_SIZE / 2
+
 	var highlight = ColorRect.new()
 	highlight.size = Vector2(GameManager.SQUARE_SIZE, GameManager.SQUARE_SIZE)
-	highlight.position = Vector2(board_pos.x * GameManager.SQUARE_SIZE,
-								  board_pos.y * GameManager.SQUARE_SIZE)
+	highlight.position = Vector2(screen_pos.x - half_size, screen_pos.y - half_size)
 	highlight.color = color
 	highlights_container.add_child(highlight)
 	return highlight
@@ -467,10 +471,13 @@ func update_cursor():
 	if not is_instance_valid(highlights_container):
 		return
 
+	# Use screen position from board_to_screen (accounts for board flip)
+	var screen_pos = GameManager.board_to_screen(cursor_pos)
+	var half_size = GameManager.SQUARE_SIZE / 2
+
 	cursor_highlight = ColorRect.new()
 	cursor_highlight.size = Vector2(GameManager.SQUARE_SIZE, GameManager.SQUARE_SIZE)
-	cursor_highlight.position = Vector2(cursor_pos.x * GameManager.SQUARE_SIZE,
-										cursor_pos.y * GameManager.SQUARE_SIZE)
+	cursor_highlight.position = Vector2(screen_pos.x - half_size, screen_pos.y - half_size)
 	cursor_highlight.color = Color(1.0, 1.0, 1.0, 0.3)  # White semi-transparent
 	highlights_container.add_child(cursor_highlight)
 

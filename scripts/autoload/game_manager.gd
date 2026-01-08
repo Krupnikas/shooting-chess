@@ -33,6 +33,7 @@ var winner: PieceColor = PieceColor.WHITE
 var is_processing_phase: bool = false
 var show_hp_numbers: bool = false  # Toggle for HP number display (off by default)
 var player_color: PieceColor = PieceColor.WHITE  # Human player's color (for board orientation)
+var is_board_flipped: bool = false  # True when playing as black (board drawn from black's perspective)
 
 # Signals
 signal piece_selected(piece)
@@ -76,6 +77,7 @@ func reset_game():
 	game_phase = GamePhase.MOVING
 	winner = PieceColor.WHITE
 	is_processing_phase = false
+	is_board_flipped = false
 	selected_piece = null
 	valid_moves.clear()
 	initialize_board()
@@ -97,11 +99,20 @@ func is_valid_position(pos: Vector2i) -> bool:
 	return pos.x >= 0 and pos.x < BOARD_SIZE and pos.y >= 0 and pos.y < BOARD_SIZE
 
 func board_to_screen(board_pos: Vector2i) -> Vector2:
-	return Vector2(board_pos.x * SQUARE_SIZE + SQUARE_SIZE / 2,
-				   board_pos.y * SQUARE_SIZE + SQUARE_SIZE / 2)
+	# When board is flipped (playing as black), flip the screen coordinates
+	# so pieces appear on the opposite side but maintain normal orientation
+	var pos = board_pos
+	if is_board_flipped:
+		pos = Vector2i(BOARD_SIZE - 1 - board_pos.x, BOARD_SIZE - 1 - board_pos.y)
+	return Vector2(pos.x * SQUARE_SIZE + SQUARE_SIZE / 2,
+				   pos.y * SQUARE_SIZE + SQUARE_SIZE / 2)
 
 func screen_to_board(screen_pos: Vector2) -> Vector2i:
-	return Vector2i(int(screen_pos.x / SQUARE_SIZE), int(screen_pos.y / SQUARE_SIZE))
+	var board_pos = Vector2i(int(screen_pos.x / SQUARE_SIZE), int(screen_pos.y / SQUARE_SIZE))
+	# When board is flipped, convert back from flipped screen coords to logical board coords
+	if is_board_flipped:
+		board_pos = Vector2i(BOARD_SIZE - 1 - board_pos.x, BOARD_SIZE - 1 - board_pos.y)
+	return board_pos
 
 # ============ PIECE SELECTION & MOVEMENT ============
 

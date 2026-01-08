@@ -83,6 +83,7 @@ func _on_play_white_pressed():
 	# Player is white, AI controls black
 	AIPlayer.enable_ai(GameManager.PieceColor.BLACK)
 	GameManager.player_color = GameManager.PieceColor.WHITE
+	GameManager.is_board_flipped = false
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
 
 func _on_play_black_pressed():
@@ -90,6 +91,7 @@ func _on_play_black_pressed():
 	# Player is black, AI controls white
 	AIPlayer.enable_ai(GameManager.PieceColor.WHITE)
 	GameManager.player_color = GameManager.PieceColor.BLACK
+	GameManager.is_board_flipped = true
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
 
 func _on_color_cancel_pressed():
@@ -98,6 +100,7 @@ func _on_color_cancel_pressed():
 func _on_play_local_pressed():
 	# Disable AI for local play
 	AIPlayer.disable_ai()
+	GameManager.is_board_flipped = false
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
 
 func _on_play_online_pressed():

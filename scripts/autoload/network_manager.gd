@@ -47,21 +47,22 @@ func _ready():
 
 # ============ ROOM MANAGEMENT ============
 
-func create_room() -> void:
+func create_room(host_color: GameManager.PieceColor = GameManager.PieceColor.WHITE) -> void:
 	if connection_state != ConnectionState.DISCONNECTED:
 		emit_signal("room_error", "Already in a room")
 		return
 
 	connection_state = ConnectionState.CONNECTING
 	is_host = true
-	local_player_color = GameManager.PieceColor.WHITE
+	local_player_color = host_color
 	current_room_code = _generate_room_code()
 	_processed_move_keys = []
 
-	# Create room in Firebase
+	# Create room in Firebase with host's color choice
 	var room_data = {
 		"host_joined": true,
 		"guest_joined": false,
+		"host_color": "white" if host_color == GameManager.PieceColor.WHITE else "black",
 		"created_at": Time.get_unix_time_from_system(),
 		"moves": [],
 		"current_turn": 0
@@ -154,6 +155,13 @@ func _on_join_check_completed(result: int, response_code: int, headers: PackedSt
 		connection_state = ConnectionState.DISCONNECTED
 		return
 
+	# Set guest color as opposite of host's color
+	var host_color_str = json.get("host_color", "white")
+	if host_color_str == "white":
+		local_player_color = GameManager.PieceColor.BLACK
+	else:
+		local_player_color = GameManager.PieceColor.WHITE
+
 	# Mark guest as joined
 	var url = "%s/rooms/%s/guest_joined.json" % [FIREBASE_DATABASE_URL, current_room_code]
 	var http = HTTPRequest.new()
@@ -185,7 +193,6 @@ func reconnect_as_host(room_code: String) -> void:
 
 	connection_state = ConnectionState.CONNECTING
 	is_host = true
-	local_player_color = GameManager.PieceColor.WHITE
 	current_room_code = room_code.to_upper()
 	_processed_move_keys = []
 
@@ -211,6 +218,13 @@ func _on_reconnect_check_completed(result: int, response_code: int, headers: Pac
 		emit_signal("room_error", "Room no longer exists")
 		connection_state = ConnectionState.DISCONNECTED
 		return
+
+	# Restore host's color from room data
+	var host_color_str = json.get("host_color", "white")
+	if host_color_str == "white":
+		local_player_color = GameManager.PieceColor.WHITE
+	else:
+		local_player_color = GameManager.PieceColor.BLACK
 
 	# Room exists - mark host as rejoined
 	var update_url = "%s/rooms/%s/host_joined.json" % [FIREBASE_DATABASE_URL, current_room_code]
