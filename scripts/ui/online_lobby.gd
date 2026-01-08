@@ -36,6 +36,9 @@ func _ready():
 	_apply_responsive_scaling()
 	get_tree().root.size_changed.connect(_apply_responsive_scaling)
 
+	# Check URL for room reconnection (web only)
+	_check_url_params()
+
 func _setup_numpad():
 	# Connect all numpad digit buttons (0-9)
 	for i in range(10):
@@ -63,11 +66,11 @@ func _apply_responsive_scaling():
 	var min_dimension = min(viewport_size.x, viewport_size.y)
 
 	if min_dimension < 800:
-		_current_scale = 3.0
+		_current_scale = 5.0  # Very small screens (phones)
 	elif min_dimension < 1200:
-		_current_scale = 2.0
+		_current_scale = 3.0  # Medium screens (tablets)
 	else:
-		_current_scale = 1.0
+		_current_scale = 1.0  # Desktop
 
 	center_panel.scale = Vector2(_current_scale, _current_scale)
 	center_panel.pivot_offset = center_panel.size / 2
@@ -99,6 +102,7 @@ func _on_join_pressed():
 
 func _on_back_pressed():
 	NetworkManager.leave_room()
+	_clear_url_params()
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
 
 func _on_copy_pressed():
@@ -144,6 +148,80 @@ func _start_game():
 	print("[Lobby] Starting game, disabling AI...")
 	# Disable AI for online play
 	AIPlayer.disable_ai()
+	# Update URL with game state for reconnection
+	_update_url_with_game_state()
 	print("[Lobby] Changing scene to main.tscn")
 	emit_signal("game_started")
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
+
+# ============ URL STATE MANAGEMENT (Web only) ============
+
+func _check_url_params():
+	if not OS.has_feature("web"):
+		return
+
+	# Get URL parameters using JavaScript
+	var js_code = """
+		(function() {
+			var params = new URLSearchParams(window.location.search);
+			var room = params.get('room');
+			var role = params.get('role');
+			if (room && role) {
+				return room + ',' + role;
+			}
+			return '';
+		})()
+	"""
+	var result = JavaScriptBridge.eval(js_code)
+
+	if result != null and result != "":
+		var parts = result.split(",")
+		if parts.size() == 2:
+			var room_code = parts[0]
+			var role = parts[1]
+			print("[Lobby] Found URL params: room=", room_code, " role=", role)
+			_auto_reconnect(room_code, role)
+
+func _auto_reconnect(room_code: String, role: String):
+	status_label.text = "Reconnecting to room " + room_code + "..."
+	button_container.visible = false
+	join_container.visible = false
+
+	if role == "host":
+		# Reconnect as host - create room with same code
+		NetworkManager.reconnect_as_host(room_code)
+	else:
+		# Reconnect as guest
+		NetworkManager.join_room(room_code)
+
+func _update_url_with_game_state():
+	if not OS.has_feature("web"):
+		return
+
+	var room_code = NetworkManager.current_room_code
+	var role = "host" if NetworkManager.is_host else "guest"
+
+	var js_code = """
+		(function() {
+			var url = new URL(window.location.href);
+			url.searchParams.set('room', '%s');
+			url.searchParams.set('role', '%s');
+			window.history.replaceState({}, '', url.toString());
+		})()
+	""" % [room_code, role]
+	JavaScriptBridge.eval(js_code)
+	print("[Lobby] Updated URL with room=", room_code, " role=", role)
+
+func _clear_url_params():
+	if not OS.has_feature("web"):
+		return
+
+	var js_code = """
+		(function() {
+			var url = new URL(window.location.href);
+			url.searchParams.delete('room');
+			url.searchParams.delete('role');
+			window.history.replaceState({}, '', url.toString());
+		})()
+	"""
+	JavaScriptBridge.eval(js_code)

@@ -159,6 +159,68 @@ func _on_guest_joined_completed(result: int, response_code: int, headers: Packed
 	# Start polling for moves
 	_poll_timer.start()
 
+func reconnect_as_host(room_code: String) -> void:
+	"""Reconnect to an existing room as the host (after page reload)"""
+	if connection_state != ConnectionState.DISCONNECTED:
+		emit_signal("room_error", "Already in a room")
+		return
+
+	connection_state = ConnectionState.CONNECTING
+	is_host = true
+	local_player_color = GameManager.PieceColor.WHITE
+	current_room_code = room_code.to_upper()
+	_processed_move_keys = []
+
+	# Check if room still exists and update host_joined
+	var url = "%s/rooms/%s.json" % [FIREBASE_DATABASE_URL, current_room_code]
+
+	var http = HTTPRequest.new()
+	add_child(http)
+	http.request_completed.connect(_on_reconnect_check_completed.bind(http))
+	http.request(url, [], HTTPClient.METHOD_GET)
+
+func _on_reconnect_check_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray, http: HTTPRequest) -> void:
+	http.queue_free()
+
+	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
+		emit_signal("room_error", "Network error")
+		connection_state = ConnectionState.DISCONNECTED
+		return
+
+	var json = JSON.parse_string(body.get_string_from_utf8())
+
+	if json == null or not json is Dictionary:
+		emit_signal("room_error", "Room no longer exists")
+		connection_state = ConnectionState.DISCONNECTED
+		return
+
+	# Room exists - mark host as rejoined
+	var update_url = "%s/rooms/%s/host_joined.json" % [FIREBASE_DATABASE_URL, current_room_code]
+	var update_http = HTTPRequest.new()
+	add_child(update_http)
+	update_http.request_completed.connect(_on_host_rejoin_completed.bind(update_http, json.get("guest_joined", false)))
+	update_http.request(update_url, ["Content-Type: application/json"], HTTPClient.METHOD_PUT, "true")
+
+func _on_host_rejoin_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray, http: HTTPRequest, guest_was_joined: bool) -> void:
+	http.queue_free()
+
+	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
+		emit_signal("room_error", "Failed to reconnect")
+		connection_state = ConnectionState.DISCONNECTED
+		return
+
+	print("[Network] Reconnected as host to room: ", current_room_code)
+	emit_signal("room_created", current_room_code)
+
+	if guest_was_joined:
+		connection_state = ConnectionState.CONNECTED
+		emit_signal("peer_connected")
+	else:
+		connection_state = ConnectionState.WAITING_FOR_PEER
+
+	# Start polling
+	_poll_timer.start()
+
 # ============ POLLING ============
 
 func _poll_for_moves() -> void:
