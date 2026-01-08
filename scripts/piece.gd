@@ -15,7 +15,7 @@ var blink_tween: Tween = null
 
 const HEALTH_BAR_SEGMENTS = 4
 const SEGMENT_WIDTH = 28
-const SEGMENT_HEIGHT = 12
+const SEGMENT_HEIGHT = 28
 # Layer colors: green (base) -> blue -> gold -> purple -> cyan -> red...
 const LAYER_COLORS = [
 	Color(0.3, 0.85, 0.3),  # Green - layer 0 (1-4)

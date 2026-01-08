@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://cmain000"]
+[gd_scene load_steps=5 format=3 uid="uid://cmain000"]
 
 [ext_resource type="PackedScene" uid="uid://cboard456" path="res://scenes/board.tscn" id="1_board"]
 [ext_resource type="PackedScene" uid="uid://cgameinfo789" path="res://scenes/ui/game_info.tscn" id="2_gameinfo"]
 [ext_resource type="Script" path="res://scripts/main.gd" id="3_main"]
+[ext_resource type="Texture2D" path="res://assets/icons/back.svg" id="4_back"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("3_main")
@@ -33,4 +34,5 @@ offset_top = 20.0
 offset_right = 180.0
 offset_bottom = 70.0
 theme_override_font_sizes/font_size = 20
-text = "← Menu"
+icon = ExtResource("4_back")
+text = "Menu"

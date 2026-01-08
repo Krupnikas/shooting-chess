@@ -90,9 +90,7 @@ theme_override_colors/font_disabled_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_font_sizes/font_size = 28
 disabled = true
 icon = ExtResource("3_robot")
-text = "  Play vs AI (Coming Soon)"
-icon_alignment = 1
-expand_icon = true
+text = "Play vs AI (Coming Soon)"
 
 [node name="PlayLocalButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(560, 80)
@@ -100,9 +98,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_font_sizes/font_size = 28
 icon = ExtResource("4_people")
-text = "  Play 1v1 Offline"
-icon_alignment = 1
-expand_icon = true
+text = "Play 1v1 Offline"
 
 [node name="PlayOnlineButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(560, 80)
@@ -112,9 +108,7 @@ theme_override_colors/font_disabled_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_font_sizes/font_size = 28
 disabled = true
 icon = ExtResource("5_globe")
-text = "  Play 1v1 Online (Coming Soon)"
-icon_alignment = 1
-expand_icon = true
+text = "Play 1v1 Online (Coming Soon)"
 
 [node name="SettingsButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(560, 80)
@@ -122,9 +116,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_font_sizes/font_size = 28
 icon = ExtResource("6_gear")
-text = "  Settings"
-icon_alignment = 1
-expand_icon = true
+text = "Settings"
 
 [node name="ExitButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(560, 80)
@@ -132,9 +124,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.5, 0.5, 1)
 theme_override_font_sizes/font_size = 28
 icon = ExtResource("7_exit")
-text = "  Exit"
-icon_alignment = 1
-expand_icon = true
+text = "Exit"
 
 [node name="Footer" type="Label" parent="CenterPanel/VBoxContainer"]
 layout_mode = 2
