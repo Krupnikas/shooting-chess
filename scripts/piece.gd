@@ -14,8 +14,8 @@ var blink_tween: Tween = null
 @onready var health_bar = $HealthBar
 
 const HEALTH_BAR_SEGMENTS = 4
-const SEGMENT_WIDTH = 20
-const SEGMENT_HEIGHT = 20
+const SEGMENT_WIDTH = 18
+const SEGMENT_HEIGHT = 18
 # Layer colors: green (base) -> blue -> gold -> purple -> cyan -> red...
 const LAYER_COLORS = [
 	Color(0.3, 0.85, 0.3),  # Green - layer 0 (1-4)
