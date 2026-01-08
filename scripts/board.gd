@@ -35,6 +35,7 @@ func _ready():
 
 	# Connect network signals for online play
 	NetworkManager.move_received.connect(_on_network_move_received)
+	NetworkManager.peer_disconnected.connect(_on_peer_disconnected)
 
 	# Start the first turn
 	await get_tree().create_timer(0.5).timeout
@@ -380,8 +381,9 @@ func _input(event):
 	# Debug keyboard controls (always available)
 	if event is InputEventKey and event.pressed:
 		match event.keycode:
-			KEY_R:  # Restart game
-				restart_game()
+			KEY_R:  # Restart game (only in offline games)
+				if not NetworkManager.is_online_game():
+					restart_game()
 				return
 			KEY_P:  # Print game state
 				print_game_state()
@@ -528,6 +530,13 @@ func _on_game_over(winner):
 	var winner_name = "White" if winner == GameManager.PieceColor.WHITE else "Black"
 	print("Game Over! %s wins!" % winner_name)
 
+func _on_peer_disconnected():
+	print("[Board] Opponent disconnected!")
+	# End the game - declare the remaining player as winner
+	if NetworkManager.is_online_game() or NetworkManager.connection_state == NetworkManager.ConnectionState.DISCONNECTED:
+		var local_color = NetworkManager.get_local_color()
+		GameManager.end_game(local_color, "Opponent disconnected")
+
 # ============ NETWORK PLAY ============
 
 func is_local_turn() -> bool:
@@ -540,9 +549,24 @@ func is_local_turn() -> bool:
 func _on_network_move_received(from_pos: Vector2i, to_pos: Vector2i):
 	# Apply opponent's move
 	print("[Network] Received move: ", from_pos, " -> ", to_pos)
+
+	# Ignore moves if game is over
+	if GameManager.game_phase == GameManager.GamePhase.GAME_OVER:
+		print("[Network] Ignoring move - game is over")
+		return
+
+	# Validate the move source
+	if not GameManager.is_valid_position(from_pos) or not GameManager.is_valid_position(to_pos):
+		print("[Network] ERROR: Invalid position - from: ", from_pos, " to: ", to_pos)
+		return
+
 	var piece = GameManager.get_piece_at(from_pos)
 	if piece == null:
 		print("[Network] ERROR: No piece at ", from_pos)
+		return
+
+	if not is_instance_valid(piece):
+		print("[Network] ERROR: Piece at ", from_pos, " is invalid")
 		return
 
 	GameManager.select_piece(piece)

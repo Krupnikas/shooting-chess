@@ -259,6 +259,17 @@ func check_win_condition() -> bool:
 
 	return false
 
+func end_game(winning_color: PieceColor, reason: String = ""):
+	# Force end the game with a specific winner
+	game_phase = GamePhase.GAME_OVER
+	winner = winning_color
+	if reason != "":
+		print("[GameManager] Game ended: %s wins - %s" % [
+			"White" if winning_color == PieceColor.WHITE else "Black",
+			reason
+		])
+	emit_signal("game_over", winner)
+
 func advance_phase():
 	gm_trace("[GM] advance_phase called, current phase: " + str(game_phase))
 	match game_phase:

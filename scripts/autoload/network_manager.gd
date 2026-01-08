@@ -17,6 +17,8 @@ const FIREBASE_DATABASE_URL = "https://shooting-chess-default-rtdb.europe-west1.
 # Room settings
 const ROOM_CODE_LENGTH = 4
 const POLL_INTERVAL = 0.5  # Poll every 500ms
+const HTTP_TIMEOUT = 10.0  # Timeout for HTTP requests
+const MAX_POLL_FAILURES = 5  # Disconnect after this many consecutive poll failures
 
 # Connection state
 enum ConnectionState { DISCONNECTED, CONNECTING, WAITING_FOR_PEER, CONNECTED }
@@ -34,6 +36,8 @@ var _http_join: HTTPRequest = null
 var _http_poll: HTTPRequest = null
 var _http_send: HTTPRequest = null
 var _force_rejoin: bool = false
+var _poll_failure_count: int = 0
+var _last_opponent_activity: float = 0.0
 
 func _ready():
 	_poll_timer = Timer.new()
@@ -68,6 +72,7 @@ func create_room() -> void:
 	var headers = ["Content-Type: application/json"]
 
 	_http_create = HTTPRequest.new()
+	_http_create.timeout = HTTP_TIMEOUT
 	add_child(_http_create)
 	_http_create.request_completed.connect(_on_create_completed)
 	_http_create.request(url, headers, HTTPClient.METHOD_PUT, json)
@@ -75,6 +80,11 @@ func create_room() -> void:
 func _on_create_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
 	_http_create.queue_free()
 	_http_create = null
+
+	if result == HTTPRequest.RESULT_TIMEOUT:
+		emit_signal("room_error", "Connection timed out")
+		connection_state = ConnectionState.DISCONNECTED
+		return
 
 	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
 		emit_signal("room_error", "Failed to create room")
@@ -108,6 +118,7 @@ func join_room(room_code: String, force_rejoin: bool = false) -> void:
 	var url = "%s/rooms/%s.json" % [FIREBASE_DATABASE_URL, current_room_code]
 
 	_http_join = HTTPRequest.new()
+	_http_join.timeout = HTTP_TIMEOUT
 	add_child(_http_join)
 	_http_join.request_completed.connect(_on_join_check_completed)
 	_http_join.request(url, [], HTTPClient.METHOD_GET)
@@ -115,6 +126,11 @@ func join_room(room_code: String, force_rejoin: bool = false) -> void:
 func _on_join_check_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
 	_http_join.queue_free()
 	_http_join = null
+
+	if result == HTTPRequest.RESULT_TIMEOUT:
+		emit_signal("room_error", "Connection timed out")
+		connection_state = ConnectionState.DISCONNECTED
+		return
 
 	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
 		emit_signal("room_error", "Network error")
@@ -236,6 +252,7 @@ func _poll_for_moves() -> void:
 	var url = "%s/rooms/%s.json" % [FIREBASE_DATABASE_URL, current_room_code]
 
 	_http_poll = HTTPRequest.new()
+	_http_poll.timeout = HTTP_TIMEOUT
 	add_child(_http_poll)
 	_http_poll.request_completed.connect(_on_poll_completed)
 	_http_poll.request(url, [], HTTPClient.METHOD_GET)
@@ -246,10 +263,24 @@ func _on_poll_completed(result: int, response_code: int, headers: PackedStringAr
 		_http_poll = null
 
 	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
+		_poll_failure_count += 1
+		if _poll_failure_count >= MAX_POLL_FAILURES:
+			print("[Network] Too many poll failures, disconnecting")
+			_poll_timer.stop()
+			connection_state = ConnectionState.DISCONNECTED
+			emit_signal("peer_disconnected")
 		return
+
+	# Reset failure count on success
+	_poll_failure_count = 0
 
 	var json = JSON.parse_string(body.get_string_from_utf8())
 	if json == null or not json is Dictionary:
+		# Room was deleted - opponent left
+		print("[Network] Room no longer exists")
+		_poll_timer.stop()
+		connection_state = ConnectionState.DISCONNECTED
+		emit_signal("peer_disconnected")
 		return
 
 	# Check if guest joined (for host)
@@ -257,6 +288,7 @@ func _on_poll_completed(result: int, response_code: int, headers: PackedStringAr
 		if json.get("guest_joined", false):
 			print("[Network] Guest connected!")
 			connection_state = ConnectionState.CONNECTED
+			_last_opponent_activity = Time.get_unix_time_from_system()
 			emit_signal("peer_connected")
 
 	# Check for new moves (Firebase stores as dict with auto-generated keys)
@@ -269,17 +301,36 @@ func _on_poll_completed(result: int, response_code: int, headers: PackedStringAr
 				continue  # Already processed
 
 			var move = moves[key]
-			if move is Dictionary:
-				var from = Vector2i(move["from"]["x"], move["from"]["y"])
-				var to = Vector2i(move["to"]["x"], move["to"]["y"])
-				var by_host = move.get("by_host", true)
-
-				# Only process opponent's moves
-				if (is_host and not by_host) or (not is_host and by_host):
-					print("[Network] Received move: ", from, " -> ", to)
-					emit_signal("move_received", from, to)
-
+			if not move is Dictionary:
 				_processed_move_keys.append(key)
+				continue  # Skip malformed moves
+
+			# Validate move data exists
+			if not move.has("from") or not move.has("to"):
+				_processed_move_keys.append(key)
+				continue
+
+			var from_data = move["from"]
+			var to_data = move["to"]
+			if not from_data is Dictionary or not to_data is Dictionary:
+				_processed_move_keys.append(key)
+				continue
+
+			if not from_data.has("x") or not from_data.has("y") or not to_data.has("x") or not to_data.has("y"):
+				_processed_move_keys.append(key)
+				continue
+
+			var from = Vector2i(int(from_data["x"]), int(from_data["y"]))
+			var to = Vector2i(int(to_data["x"]), int(to_data["y"]))
+			var by_host = move.get("by_host", true)
+
+			# Only process opponent's moves
+			if (is_host and not by_host) or (not is_host and by_host):
+				print("[Network] Received move: ", from, " -> ", to)
+				_last_opponent_activity = Time.get_unix_time_from_system()
+				emit_signal("move_received", from, to)
+
+			_processed_move_keys.append(key)
 
 # ============ SEND MOVE ============
 
@@ -334,6 +385,8 @@ func leave_room() -> void:
 	connection_state = ConnectionState.DISCONNECTED
 	is_host = false
 	_processed_move_keys = []
+	_poll_failure_count = 0
+	_last_opponent_activity = 0.0
 
 func _generate_room_code() -> String:
 	var code = ""

@@ -26,6 +26,7 @@ signal game_started()
 @onready var center_panel = $CenterPanel
 
 var _current_scale: float = 1.0
+var _last_screen: String = "main"  # Track which screen we're on for error handling
 
 func _ready():
 	# Main screen buttons
@@ -50,6 +51,7 @@ func _ready():
 	NetworkManager.room_joined.connect(_on_room_joined)
 	NetworkManager.room_error.connect(_on_room_error)
 	NetworkManager.peer_connected.connect(_on_peer_connected)
+	NetworkManager.peer_disconnected.connect(_on_peer_disconnected)
 
 	_show_main_screen()
 	_apply_responsive_scaling()
@@ -106,13 +108,15 @@ func _show_main_screen():
 	main_screen.visible = true
 	create_screen.visible = false
 	join_screen.visible = false
-	status_label.text = "Choose an option"
+	status_label.text = "Create a room or join with a code"
+	_last_screen = "main"
 
 func _show_create_screen():
 	main_screen.visible = false
 	create_screen.visible = true
 	join_screen.visible = false
 	room_code_label.text = "----"
+	_last_screen = "create"
 
 func _show_join_screen():
 	main_screen.visible = false
@@ -121,6 +125,7 @@ func _show_join_screen():
 	room_code_input.text = ""
 	join_submit_button.disabled = true
 	status_label.text = "Enter room code"
+	_last_screen = "join"
 
 # ============ MAIN SCREEN ACTIONS ============
 
@@ -143,6 +148,8 @@ func _on_copy_pressed():
 	DisplayServer.clipboard_set(room_code_label.text)
 	status_label.text = "Code copied!"
 	await get_tree().create_timer(1.5).timeout
+	if not is_inside_tree():
+		return  # Scene was changed
 	if create_screen.visible:
 		status_label.text = "Waiting for opponent..."
 
@@ -187,13 +194,35 @@ func _on_room_joined(room_code: String):
 
 func _on_room_error(message: String):
 	status_label.text = "Error: " + message
-	_show_main_screen()
+	# Stay on the current screen, just show the error
+	# Re-enable UI elements based on which screen we're on
+	match _last_screen:
+		"join":
+			# Stay on join screen, let user try again
+			join_submit_button.disabled = room_code_input.text.length() != 4
+		"create":
+			# Go back to main screen since room creation failed
+			_show_main_screen()
+		_:
+			_show_main_screen()
 
 func _on_peer_connected():
 	print("[Lobby] Peer connected! Starting game in 1 second...")
 	status_label.text = "Connected! Starting game..."
 	await get_tree().create_timer(1.0).timeout
+	if not is_inside_tree():
+		return  # Scene was changed
 	_start_game()
+
+func _on_peer_disconnected():
+	print("[Lobby] Peer disconnected while in lobby")
+	if not is_inside_tree():
+		return  # Scene was changed
+	status_label.text = "Connection lost"
+	await get_tree().create_timer(1.5).timeout
+	if not is_inside_tree():
+		return  # Scene was changed
+	_show_main_screen()
 
 func _start_game():
 	print("[Lobby] Starting game, disabling AI...")
