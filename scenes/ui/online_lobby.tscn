@@ -9,19 +9,19 @@ bg_color = Color(0.1, 0.09, 0.07, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
 bg_color = Color(0.22, 0.32, 0.18, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
 border_color = Color(0.35, 0.5, 0.28, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-content_margin_left = 8.0
-content_margin_top = 4.0
-content_margin_right = 8.0
-content_margin_bottom = 4.0
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
 
 [node name="OnlineLobby" type="Control"]
 layout_mode = 3
@@ -52,17 +52,17 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -160.0
-offset_top = -220.0
-offset_right = 160.0
-offset_bottom = 220.0
+offset_left = -200.0
+offset_top = -300.0
+offset_right = 200.0
+offset_bottom = 300.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterPanel"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 16
 
 [node name="Header" type="HBoxContainer" parent="CenterPanel/VBoxContainer"]
 layout_mode = 2
@@ -70,7 +70,7 @@ theme_override_constants/separation = 16
 alignment = 1
 
 [node name="GlobeIcon" type="TextureRect" parent="CenterPanel/VBoxContainer/Header"]
-custom_minimum_size = Vector2(24, 24)
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 texture = ExtResource("2_globe")
 expand_mode = 1
@@ -79,13 +79,13 @@ stretch_mode = 5
 [node name="Title" type="Label" parent="CenterPanel/VBoxContainer/Header"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 28
 text = "Play Online"
 
 [node name="StatusLabel" type="Label" parent="CenterPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.65, 0.55, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 18
 text = "Create a room or enter a code to join"
 horizontal_alignment = 1
 autowrap_mode = 2
@@ -93,48 +93,48 @@ autowrap_mode = 2
 [node name="RoomCodeDisplay" type="VBoxContainer" parent="CenterPanel/VBoxContainer"]
 visible = false
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 12
 
 [node name="CodeLabel" type="Label" parent="CenterPanel/VBoxContainer/RoomCodeDisplay"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.65, 0.55, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 18
 text = "Room Code:"
 horizontal_alignment = 1
 
 [node name="RoomCodeLabel" type="Label" parent="CenterPanel/VBoxContainer/RoomCodeDisplay"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.95, 0.7, 1)
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 48
 text = "1234"
 horizontal_alignment = 1
 
 [node name="CopyButton" type="Button" parent="CenterPanel/VBoxContainer/RoomCodeDisplay"]
-custom_minimum_size = Vector2(100, 28)
+custom_minimum_size = Vector2(160, 44)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 text = "Copy Code"
 
 [node name="JoinContainer" type="VBoxContainer" parent="CenterPanel/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 10
 
 [node name="JoinLabel" type="Label" parent="CenterPanel/VBoxContainer/JoinContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.65, 0.55, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 18
 text = "Enter room code:"
 horizontal_alignment = 1
 
 [node name="RoomCodeInput" type="LineEdit" parent="CenterPanel/VBoxContainer/JoinContainer"]
-custom_minimum_size = Vector2(120, 32)
+custom_minimum_size = Vector2(160, 48)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 28
 placeholder_text = "0000"
 alignment = 1
 max_length = 4
@@ -143,130 +143,130 @@ virtual_keyboard_enabled = false
 [node name="NumpadContainer" type="GridContainer" parent="CenterPanel/VBoxContainer/JoinContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_constants/h_separation = 4
-theme_override_constants/v_separation = 4
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
 columns = 3
 
 [node name="Num1" type="Button" parent="CenterPanel/VBoxContainer/JoinContainer/NumpadContainer"]
-custom_minimum_size = Vector2(40, 32)
+custom_minimum_size = Vector2(64, 48)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 text = "1"
 
 [node name="Num2" type="Button" parent="CenterPanel/VBoxContainer/JoinContainer/NumpadContainer"]
-custom_minimum_size = Vector2(40, 32)
+custom_minimum_size = Vector2(64, 48)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 text = "2"
 
 [node name="Num3" type="Button" parent="CenterPanel/VBoxContainer/JoinContainer/NumpadContainer"]
-custom_minimum_size = Vector2(40, 32)
+custom_minimum_size = Vector2(64, 48)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 text = "3"
 
 [node name="Num4" type="Button" parent="CenterPanel/VBoxContainer/JoinContainer/NumpadContainer"]
-custom_minimum_size = Vector2(40, 32)
+custom_minimum_size = Vector2(64, 48)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 text = "4"
 
 [node name="Num5" type="Button" parent="CenterPanel/VBoxContainer/JoinContainer/NumpadContainer"]
-custom_minimum_size = Vector2(40, 32)
+custom_minimum_size = Vector2(64, 48)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 text = "5"
 
 [node name="Num6" type="Button" parent="CenterPanel/VBoxContainer/JoinContainer/NumpadContainer"]
-custom_minimum_size = Vector2(40, 32)
+custom_minimum_size = Vector2(64, 48)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 text = "6"
 
 [node name="Num7" type="Button" parent="CenterPanel/VBoxContainer/JoinContainer/NumpadContainer"]
-custom_minimum_size = Vector2(40, 32)
+custom_minimum_size = Vector2(64, 48)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 text = "7"
 
 [node name="Num8" type="Button" parent="CenterPanel/VBoxContainer/JoinContainer/NumpadContainer"]
-custom_minimum_size = Vector2(40, 32)
+custom_minimum_size = Vector2(64, 48)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 text = "8"
 
 [node name="Num9" type="Button" parent="CenterPanel/VBoxContainer/JoinContainer/NumpadContainer"]
-custom_minimum_size = Vector2(40, 32)
+custom_minimum_size = Vector2(64, 48)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 text = "9"
 
 [node name="Backspace" type="Button" parent="CenterPanel/VBoxContainer/JoinContainer/NumpadContainer"]
-custom_minimum_size = Vector2(40, 32)
+custom_minimum_size = Vector2(64, 48)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 text = "<"
 
 [node name="Num0" type="Button" parent="CenterPanel/VBoxContainer/JoinContainer/NumpadContainer"]
-custom_minimum_size = Vector2(40, 32)
+custom_minimum_size = Vector2(64, 48)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 text = "0"
 
 [node name="Spacer" type="Control" parent="CenterPanel/VBoxContainer/JoinContainer/NumpadContainer"]
-custom_minimum_size = Vector2(40, 32)
+custom_minimum_size = Vector2(64, 48)
 layout_mode = 2
 
 [node name="ButtonContainer" type="VBoxContainer" parent="CenterPanel/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 10
 
 [node name="CreateRoomButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
-custom_minimum_size = Vector2(160, 32)
+custom_minimum_size = Vector2(240, 48)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 text = "Create Room"
 
 [node name="JoinRoomButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
-custom_minimum_size = Vector2(160, 32)
+custom_minimum_size = Vector2(240, 48)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 disabled = true
 text = "Join Room"
 
 [node name="BackButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
-custom_minimum_size = Vector2(160, 32)
+custom_minimum_size = Vector2(240, 48)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.7, 0.65, 0.55, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 18
 icon = ExtResource("3_back")
 text = "Back to Menu"

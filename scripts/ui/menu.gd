@@ -54,16 +54,20 @@ func _ready():
 
 func _apply_responsive_scaling():
 	var viewport_size = get_viewport().get_visible_rect().size
-	var min_dimension = min(viewport_size.x, viewport_size.y)
 
-	# Scale up for small screens (mobile)
-	# Base design is for ~1600px viewport
-	if min_dimension < 800:
-		_current_scale = 5.0  # Very small screens (phones)
-	elif min_dimension < 1200:
-		_current_scale = 3.0  # Medium screens (tablets)
-	else:
-		_current_scale = 1.0  # Desktop
+	# Panel base size - estimate from the menu content
+	var panel_base_height = 500.0
+	var panel_base_width = 400.0
+	var padding = 20.0  # Minimal margin
+
+	# Calculate scale to fit viewport
+	var scale_x = (viewport_size.x - padding) / panel_base_width
+	var scale_y = (viewport_size.y - padding) / panel_base_height
+
+	# Use the smaller scale to ensure it fits
+	_current_scale = min(scale_x, scale_y)
+	_current_scale = min(_current_scale, 1.0)  # Cap at 1x for desktop
+	_current_scale = max(_current_scale, 0.5)  # Min scale
 
 	center_panel.scale = Vector2(_current_scale, _current_scale)
 
