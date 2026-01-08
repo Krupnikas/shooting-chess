@@ -264,15 +264,15 @@ expand_icon = true
 [node name="PlayOnlineButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(520, 72)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.4, 0.4, 0.38, 1)
-theme_override_colors/font_disabled_color = Color(0.4, 0.4, 0.38, 1)
+theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
+theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
 theme_override_font_sizes/font_size = 28
 theme_override_constants/icon_max_width = 48
-theme_override_styles/normal = SubResource("StyleBoxFlat_disabled")
-theme_override_styles/disabled = SubResource("StyleBoxFlat_disabled")
-disabled = true
+theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_normal")
 icon = ExtResource("5_globe")
-text = "Play Online (Coming Soon)"
+text = "Play Online"
 alignment = 0
 expand_icon = true
 

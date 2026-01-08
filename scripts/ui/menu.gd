@@ -3,6 +3,7 @@ extends Control
 @onready var center_panel = $CenterPanel
 @onready var play_ai_button = $CenterPanel/VBoxContainer/ButtonContainer/PlayAIButton
 @onready var play_local_button = $CenterPanel/VBoxContainer/ButtonContainer/PlayLocalButton
+@onready var play_online_button = $CenterPanel/VBoxContainer/ButtonContainer/PlayOnlineButton
 @onready var rules_button = $CenterPanel/VBoxContainer/ButtonContainer/RulesButton
 @onready var settings_button = $CenterPanel/VBoxContainer/ButtonContainer/SettingsButton
 @onready var exit_button = $CenterPanel/VBoxContainer/ButtonContainer/ExitButton
@@ -19,6 +20,7 @@ var _current_scale: float = 1.0
 func _ready():
 	play_ai_button.pressed.connect(_on_play_ai_pressed)
 	play_local_button.pressed.connect(_on_play_local_pressed)
+	play_online_button.pressed.connect(_on_play_online_pressed)
 	rules_button.pressed.connect(_on_rules_pressed)
 	settings_button.pressed.connect(_on_settings_pressed)
 	exit_button.pressed.connect(_on_exit_pressed)
@@ -26,6 +28,9 @@ func _ready():
 	rules_close_button.pressed.connect(_on_close_rules_pressed)
 	hp_toggle.toggled.connect(_on_hp_toggle_changed)
 	ai_difficulty_slider.value_changed.connect(_on_difficulty_changed)
+
+	# Enable online button
+	play_online_button.disabled = false
 
 	# Sync HP toggle with current state
 	hp_toggle.button_pressed = GameManager.show_hp_numbers
@@ -65,6 +70,9 @@ func _on_play_local_pressed():
 	# Disable AI for local play
 	AIPlayer.disable_ai()
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
+
+func _on_play_online_pressed():
+	get_tree().change_scene_to_file("res://scenes/ui/online_lobby.tscn")
 
 func _on_rules_pressed():
 	_show_scaled_popup(rules_popup)

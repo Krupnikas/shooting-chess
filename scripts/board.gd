@@ -22,6 +22,7 @@ var is_processing: bool = false
 var is_shutting_down: bool = false
 
 func _ready():
+	print("[Board] _ready called, is_online_game=", NetworkManager.is_online_game())
 	draw_board()
 	setup_pieces()
 
@@ -32,8 +33,12 @@ func _ready():
 	GameManager.game_over.connect(_on_game_over)
 	GameManager.piece_captured.connect(_on_piece_captured)
 
+	# Connect network signals for online play
+	NetworkManager.move_received.connect(_on_network_move_received)
+
 	# Start the first turn
 	await get_tree().create_timer(0.5).timeout
+	print("[Board] Starting turn, current_player=", GameManager.current_player)
 	GameManager.start_turn()
 
 func _exit_tree():
@@ -422,25 +427,32 @@ func _input(event):
 
 			# Try to move if we have a piece selected (only during MOVING phase)
 			if GameManager.game_phase == GameManager.GamePhase.MOVING:
-				if GameManager.selected_piece != null:
-					if GameManager.try_move_to(board_pos):
-						return
+				if _try_local_move(board_pos):
+					return
 
 			# Allow piece selection during any phase (except GAME_OVER)
+			# In online games, only select own pieces
 			var piece = GameManager.get_piece_at(board_pos)
 			if piece != null:
-				GameManager.select_piece(piece)
+				if NetworkManager.is_online_game() and piece.color != NetworkManager.get_local_color():
+					# Can't select opponent's pieces in online game
+					pass
+				else:
+					GameManager.select_piece(piece)
 			else:
 				GameManager.deselect_piece()
 
 func handle_cursor_action():
-	if GameManager.selected_piece != null:
-		if GameManager.try_move_to(cursor_pos):
-			return
+	if _try_local_move(cursor_pos):
+		return
 
 	var piece = GameManager.get_piece_at(cursor_pos)
 	if piece != null:
-		GameManager.select_piece(piece)
+		if NetworkManager.is_online_game() and piece.color != NetworkManager.get_local_color():
+			# Can't select opponent's pieces in online game
+			pass
+		else:
+			GameManager.select_piece(piece)
 	else:
 		GameManager.deselect_piece()
 
@@ -513,3 +525,40 @@ func _on_piece_captured(piece):
 func _on_game_over(winner):
 	var winner_name = "White" if winner == GameManager.PieceColor.WHITE else "Black"
 	print("Game Over! %s wins!" % winner_name)
+
+# ============ NETWORK PLAY ============
+
+func is_local_turn() -> bool:
+	# In offline play, always allow moves
+	if not NetworkManager.is_online_game():
+		return true
+	# In online play, only allow moves when it's the local player's turn
+	return GameManager.current_player == NetworkManager.get_local_color()
+
+func _on_network_move_received(from_pos: Vector2i, to_pos: Vector2i):
+	# Apply opponent's move
+	print("[Network] Received move: ", from_pos, " -> ", to_pos)
+	var piece = GameManager.get_piece_at(from_pos)
+	if piece == null:
+		print("[Network] ERROR: No piece at ", from_pos)
+		return
+
+	GameManager.select_piece(piece)
+	GameManager.try_move_to(to_pos)
+
+func _try_local_move(board_pos: Vector2i) -> bool:
+	# Check if it's our turn in online games
+	if not is_local_turn():
+		return false
+
+	if GameManager.selected_piece == null:
+		return false
+
+	var from_pos = GameManager.selected_piece.board_position
+
+	if GameManager.try_move_to(board_pos):
+		# Send move to opponent in online games
+		if NetworkManager.is_online_game():
+			NetworkManager.send_move(from_pos, board_pos)
+		return true
+	return false

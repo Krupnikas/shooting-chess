@@ -25,4 +25,6 @@ func _center_board():
 func _on_menu_button_pressed():
 	# Reset game state before going back to menu
 	GameManager.reset_game()
+	# Disconnect from online game if connected
+	NetworkManager.leave_room()
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
