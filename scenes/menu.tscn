@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://menu123"]
+[gd_scene load_steps=17 format=3 uid="uid://menu123"]
 
 [ext_resource type="Script" path="res://scripts/ui/menu.gd" id="1_menu"]
 [ext_resource type="Texture2D" path="res://assets/icons/pawn.svg" id="2_pawn"]
@@ -121,6 +121,38 @@ content_margin_right = 32.0
 content_margin_bottom = 16.0
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_panel"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_settings_panel"]
+bg_color = Color(0.12, 0.11, 0.09, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.35, 0.32, 0.28, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+content_margin_left = 32.0
+content_margin_top = 32.0
+content_margin_right = 32.0
+content_margin_bottom = 32.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_close_button"]
+bg_color = Color(0.22, 0.32, 0.18, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.35, 0.5, 0.28, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
 
 [node name="Menu" type="Control"]
 layout_mode = 3
@@ -271,15 +303,16 @@ text = "Press H in-game to toggle HP numbers"
 horizontal_alignment = 1
 
 [node name="SettingsPopup" type="PopupPanel" parent="."]
-size = Vector2i(550, 400)
+size = Vector2i(550, 480)
 
 [node name="PanelContainer" type="PanelContainer" parent="SettingsPopup"]
 offset_right = 550.0
-offset_bottom = 400.0
+offset_bottom = 480.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_settings_panel")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="SettingsPopup/PanelContainer"]
 layout_mode = 2
-theme_override_constants/separation = 28
+theme_override_constants/separation = 24
 
 [node name="Header" type="HBoxContainer" parent="SettingsPopup/PanelContainer/VBoxContainer"]
 layout_mode = 2
@@ -301,22 +334,62 @@ text = "Settings"
 
 [node name="Separator" type="HSeparator" parent="SettingsPopup/PanelContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxEmpty_panel")
 
 [node name="OptionsContainer" type="VBoxContainer" parent="SettingsPopup/PanelContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 20
+theme_override_constants/separation = 24
 
 [node name="HPToggle" type="CheckBox" parent="SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 24
 button_pressed = false
 text = "Show HP Numbers"
 
+[node name="AIDifficultyContainer" type="VBoxContainer" parent="SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="AIDifficultyLabel" type="Label" parent="SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer/AIDifficultyContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_font_sizes/font_size = 24
+text = "AI Difficulty: Medium"
+
+[node name="AIDifficultySlider" type="HSlider" parent="SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer/AIDifficultyContainer"]
+custom_minimum_size = Vector2(400, 32)
+layout_mode = 2
+min_value = 1.0
+max_value = 5.0
+step = 1.0
+value = 3.0
+tick_count = 5
+ticks_on_borders = true
+
+[node name="DifficultyHints" type="HBoxContainer" parent="SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer/AIDifficultyContainer"]
+layout_mode = 2
+
+[node name="EasyLabel" type="Label" parent="SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer/AIDifficultyContainer/DifficultyHints"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.5, 0.5, 0.45, 1)
+theme_override_font_sizes/font_size = 16
+text = "Easy"
+
+[node name="HardLabel" type="Label" parent="SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer/AIDifficultyContainer/DifficultyHints"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.5, 0.5, 0.45, 1)
+theme_override_font_sizes/font_size = 16
+text = "Hard"
+horizontal_alignment = 2
+
 [node name="CloseButton" type="Button" parent="SettingsPopup/PanelContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 64)
+custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_close_button")
 text = "OK"

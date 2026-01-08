@@ -8,8 +8,17 @@ signal ai_thinking(is_thinking: bool)
 
 var is_enabled: bool = false
 var ai_color: GameManager.PieceColor = GameManager.PieceColor.BLACK
-var skill_level: int = 10  # 0-20, higher = stronger
+var difficulty: int = 3  # 1-5, maps to Easy/Medium/Hard
 var think_time_ms: int = 1000  # Time to think in milliseconds
+
+# Difficulty names for display
+const DIFFICULTY_NAMES = {
+	1: "Very Easy",
+	2: "Easy",
+	3: "Medium",
+	4: "Hard",
+	5: "Very Hard"
+}
 
 var _stockfish_process: int = -1
 var _stockfish_thread: Thread = null
@@ -36,8 +45,12 @@ func disable_ai():
 	is_enabled = false
 	print("[AI] Disabled")
 
-func set_skill_level(level: int):
-	skill_level = clampi(level, 0, 20)
+func set_difficulty(level: int):
+	difficulty = clampi(level, 1, 5)
+	print("[AI] Difficulty set to: ", DIFFICULTY_NAMES[difficulty])
+
+func get_difficulty_name() -> String:
+	return DIFFICULTY_NAMES.get(difficulty, "Medium")
 
 func set_think_time(ms: int):
 	think_time_ms = maxi(100, ms)
@@ -158,8 +171,15 @@ func _evaluate_move(piece, target_pos: Vector2i) -> float:
 		if from_pos.y == start_row:
 			score += 3  # Bonus for developing pieces
 
-	# Add some randomness to make AI less predictable
-	score += randf() * 0.5
+	# Add randomness based on difficulty (lower difficulty = more random/worse moves)
+	# Difficulty 1: lots of randomness, may miss good moves
+	# Difficulty 5: almost no randomness, optimal play
+	var randomness_factor = (6 - difficulty) * 2.0  # 10 at easy, 2 at hard
+	score += randf() * randomness_factor
+
+	# At lower difficulties, occasionally "miss" good opportunities
+	if difficulty <= 2 and randf() < 0.3:
+		score *= 0.5  # Sometimes undervalue good moves
 
 	return score
 
