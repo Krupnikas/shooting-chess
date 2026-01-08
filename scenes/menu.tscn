@@ -19,8 +19,10 @@ corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
-content_margin_left = 24.0
-content_margin_right = 24.0
+content_margin_left = 32.0
+content_margin_top = 16.0
+content_margin_right = 32.0
+content_margin_bottom = 16.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_local_hover"]
 bg_color = Color(0.28, 0.42, 0.22, 1)
@@ -33,8 +35,10 @@ corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
-content_margin_left = 24.0
-content_margin_right = 24.0
+content_margin_left = 32.0
+content_margin_top = 16.0
+content_margin_right = 32.0
+content_margin_bottom = 16.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
 bg_color = Color(0.18, 0.18, 0.16, 1)
@@ -47,8 +51,10 @@ corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
-content_margin_left = 24.0
-content_margin_right = 24.0
+content_margin_left = 32.0
+content_margin_top = 16.0
+content_margin_right = 32.0
+content_margin_bottom = 16.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
 bg_color = Color(0.25, 0.25, 0.22, 1)
@@ -61,8 +67,10 @@ corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
-content_margin_left = 24.0
-content_margin_right = 24.0
+content_margin_left = 32.0
+content_margin_top = 16.0
+content_margin_right = 32.0
+content_margin_bottom = 16.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_disabled"]
 bg_color = Color(0.13, 0.13, 0.12, 1)
@@ -75,8 +83,10 @@ corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
-content_margin_left = 24.0
-content_margin_right = 24.0
+content_margin_left = 32.0
+content_margin_top = 16.0
+content_margin_right = 32.0
+content_margin_bottom = 16.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_exit"]
 bg_color = Color(0.28, 0.14, 0.14, 1)
@@ -89,8 +99,10 @@ corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
-content_margin_left = 24.0
-content_margin_right = 24.0
+content_margin_left = 32.0
+content_margin_top = 16.0
+content_margin_right = 32.0
+content_margin_bottom = 16.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_exit_hover"]
 bg_color = Color(0.38, 0.18, 0.18, 1)
@@ -103,8 +115,10 @@ corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
-content_margin_left = 24.0
-content_margin_right = 24.0
+content_margin_left = 32.0
+content_margin_top = 16.0
+content_margin_right = 32.0
+content_margin_bottom = 16.0
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_panel"]
 
@@ -137,26 +151,26 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -320.0
-offset_top = -400.0
-offset_right = 320.0
-offset_bottom = 400.0
+offset_left = -400.0
+offset_top = -450.0
+offset_right = 400.0
+offset_bottom = 450.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_panel")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterPanel"]
 layout_mode = 2
-theme_override_constants/separation = 24
+theme_override_constants/separation = 32
 
 [node name="TitleContainer" type="VBoxContainer" parent="CenterPanel/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 8
 
 [node name="ChessIcon" type="TextureRect" parent="CenterPanel/VBoxContainer/TitleContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-custom_minimum_size = Vector2(80, 80)
+custom_minimum_size = Vector2(120, 120)
 texture = ExtResource("2_pawn")
 expand_mode = 1
 stretch_mode = 5
@@ -164,32 +178,32 @@ stretch_mode = 5
 [node name="Title" type="Label" parent="CenterPanel/VBoxContainer/TitleContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 52
+theme_override_font_sizes/font_size = 72
 text = "Shooting Chess"
 horizontal_alignment = 1
 
 [node name="Subtitle" type="Label" parent="CenterPanel/VBoxContainer/TitleContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.6, 0.55, 0.48, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 26
 text = "Chess with HP and Projectiles"
 horizontal_alignment = 1
 
 [node name="Spacer" type="Control" parent="CenterPanel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 16)
+custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 
 [node name="ButtonContainer" type="VBoxContainer" parent="CenterPanel/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_constants/separation = 12
+theme_override_constants/separation = 16
 
 [node name="PlayLocalButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
-custom_minimum_size = Vector2(400, 64)
+custom_minimum_size = Vector2(520, 72)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 28
 theme_override_styles/normal = SubResource("StyleBoxFlat_local")
 theme_override_styles/hover = SubResource("StyleBoxFlat_local_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_local")
@@ -198,11 +212,11 @@ text = "Play 1v1 Offline"
 alignment = 0
 
 [node name="PlayAIButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
-custom_minimum_size = Vector2(400, 64)
+custom_minimum_size = Vector2(520, 72)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.4, 0.4, 0.38, 1)
 theme_override_colors/font_disabled_color = Color(0.4, 0.4, 0.38, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 28
 theme_override_styles/normal = SubResource("StyleBoxFlat_disabled")
 theme_override_styles/disabled = SubResource("StyleBoxFlat_disabled")
 disabled = true
@@ -211,11 +225,11 @@ text = "Play vs AI (Coming Soon)"
 alignment = 0
 
 [node name="PlayOnlineButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
-custom_minimum_size = Vector2(400, 64)
+custom_minimum_size = Vector2(520, 72)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.4, 0.4, 0.38, 1)
 theme_override_colors/font_disabled_color = Color(0.4, 0.4, 0.38, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 28
 theme_override_styles/normal = SubResource("StyleBoxFlat_disabled")
 theme_override_styles/disabled = SubResource("StyleBoxFlat_disabled")
 disabled = true
@@ -224,11 +238,11 @@ text = "Play Online (Coming Soon)"
 alignment = 0
 
 [node name="SettingsButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
-custom_minimum_size = Vector2(400, 64)
+custom_minimum_size = Vector2(520, 72)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.78, 0.65, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 28
 theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_normal")
@@ -237,11 +251,11 @@ text = "Settings"
 alignment = 0
 
 [node name="ExitButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
-custom_minimum_size = Vector2(400, 64)
+custom_minimum_size = Vector2(520, 72)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.5, 0.5, 1)
 theme_override_colors/font_hover_color = Color(1, 0.6, 0.6, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 28
 theme_override_styles/normal = SubResource("StyleBoxFlat_exit")
 theme_override_styles/hover = SubResource("StyleBoxFlat_exit_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_exit")
@@ -252,27 +266,27 @@ alignment = 0
 [node name="Footer" type="Label" parent="CenterPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.4, 0.38, 0.35, 1)
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 18
 text = "Press H in-game to toggle HP numbers"
 horizontal_alignment = 1
 
 [node name="SettingsPopup" type="PopupPanel" parent="."]
-size = Vector2i(500, 350)
+size = Vector2i(550, 400)
 
 [node name="PanelContainer" type="PanelContainer" parent="SettingsPopup"]
-offset_right = 500.0
-offset_bottom = 350.0
+offset_right = 550.0
+offset_bottom = 400.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="SettingsPopup/PanelContainer"]
 layout_mode = 2
-theme_override_constants/separation = 24
+theme_override_constants/separation = 28
 
 [node name="Header" type="HBoxContainer" parent="SettingsPopup/PanelContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 16
 
 [node name="SettingsIcon" type="TextureRect" parent="SettingsPopup/PanelContainer/VBoxContainer/Header"]
-custom_minimum_size = Vector2(40, 40)
+custom_minimum_size = Vector2(48, 48)
 layout_mode = 2
 texture = ExtResource("6_gear")
 expand_mode = 1
@@ -282,7 +296,7 @@ stretch_mode = 5
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 36
+theme_override_font_sizes/font_size = 42
 text = "Settings"
 
 [node name="Separator" type="HSeparator" parent="SettingsPopup/PanelContainer/VBoxContainer"]
@@ -291,18 +305,18 @@ layout_mode = 2
 [node name="OptionsContainer" type="VBoxContainer" parent="SettingsPopup/PanelContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 16
+theme_override_constants/separation = 20
 
 [node name="HPToggle" type="CheckBox" parent="SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 26
 button_pressed = false
 text = "Show HP Numbers"
 
 [node name="CloseButton" type="Button" parent="SettingsPopup/PanelContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 56)
+custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 26
 text = "OK"
