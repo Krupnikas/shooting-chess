@@ -2,6 +2,7 @@ extends Node2D
 
 const PieceScene = preload("res://scenes/piece.tscn")
 const ProjectileScene = preload("res://scenes/projectile.tscn")
+const ExplosionScene = preload("res://scenes/explosion.tscn")
 
 # ============ FEATURE FLAGS ============
 const ENABLE_PROJECTILES = true  # Enable shooting phase
@@ -29,6 +30,7 @@ func _ready():
 	GameManager.piece_deselected.connect(_on_piece_deselected)
 	GameManager.phase_changed.connect(_on_phase_changed)
 	GameManager.game_over.connect(_on_game_over)
+	GameManager.piece_captured.connect(_on_piece_captured)
 
 	# Start the first turn
 	await get_tree().create_timer(0.5).timeout
@@ -193,7 +195,16 @@ func _do_process_deaths():
 	var dead_pieces = GameManager.process_deaths()
 	for piece in dead_pieces:
 		if is_instance_valid(piece):
+			# Spawn explosion for king death
+			if piece.type == GameManager.PieceType.KING:
+				spawn_explosion(piece.position)
 			GameManager.kill_piece(piece)
+
+func spawn_explosion(pos: Vector2):
+	var explosion = ExplosionScene.instantiate()
+	explosion.position = pos
+	add_child(explosion)
+	explosion.explode()
 
 func _advance_to_next_phase():
 	GameManager.advance_phase()
@@ -493,6 +504,11 @@ func print_game_state():
 	print("==================")
 
 # ============ GAME OVER ============
+
+func _on_piece_captured(piece):
+	# Spawn explosion when king is captured
+	if piece.type == GameManager.PieceType.KING:
+		spawn_explosion(piece.position)
 
 func _on_game_over(winner):
 	var winner_name = "White" if winner == GameManager.PieceColor.WHITE else "Black"
