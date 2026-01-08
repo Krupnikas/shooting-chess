@@ -1,5 +1,6 @@
 extends Control
 
+@onready var center_panel = $CenterPanel
 @onready var play_ai_button = $CenterPanel/VBoxContainer/ButtonContainer/PlayAIButton
 @onready var play_local_button = $CenterPanel/VBoxContainer/ButtonContainer/PlayLocalButton
 @onready var rules_button = $CenterPanel/VBoxContainer/ButtonContainer/RulesButton
@@ -12,6 +13,8 @@ extends Control
 @onready var ai_difficulty_label = $SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer/AIDifficultyContainer/AIDifficultyLabel
 @onready var close_button = $SettingsPopup/PanelContainer/VBoxContainer/CloseButton
 @onready var rules_close_button = $RulesPopup/PanelContainer/VBoxContainer/RulesCloseButton
+
+var _current_scale: float = 1.0
 
 func _ready():
 	play_ai_button.pressed.connect(_on_play_ai_pressed)
@@ -31,6 +34,28 @@ func _ready():
 	ai_difficulty_slider.value = AIPlayer.difficulty
 	_update_difficulty_label(AIPlayer.difficulty)
 
+	# Scale UI for mobile/small screens
+	_apply_responsive_scaling()
+	get_tree().root.size_changed.connect(_apply_responsive_scaling)
+
+func _apply_responsive_scaling():
+	var viewport_size = get_viewport().get_visible_rect().size
+	var min_dimension = min(viewport_size.x, viewport_size.y)
+
+	# Scale up for small screens (mobile)
+	# Base design is for ~1600px viewport
+	if min_dimension < 800:
+		_current_scale = 1.8  # Very small screens (phones)
+	elif min_dimension < 1200:
+		_current_scale = 1.4  # Medium screens (tablets)
+	else:
+		_current_scale = 1.0  # Desktop
+
+	center_panel.scale = Vector2(_current_scale, _current_scale)
+
+	# Center the scaled panel properly
+	center_panel.pivot_offset = center_panel.size / 2
+
 func _on_play_ai_pressed():
 	# Enable AI for black pieces
 	AIPlayer.enable_ai(GameManager.PieceColor.BLACK)
@@ -42,21 +67,33 @@ func _on_play_local_pressed():
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
 
 func _on_rules_pressed():
-	# Center the popup on screen
-	var screen_size = get_viewport().get_visible_rect().size
-	var popup_size = rules_popup.size
-	rules_popup.position = Vector2i((screen_size.x - popup_size.x) / 2, (screen_size.y - popup_size.y) / 2)
-	rules_popup.popup()
+	_show_scaled_popup(rules_popup)
 
 func _on_close_rules_pressed():
 	rules_popup.hide()
 
 func _on_settings_pressed():
-	# Center the popup on screen
+	_show_scaled_popup(settings_popup)
+
+func _show_scaled_popup(popup: PopupPanel):
 	var screen_size = get_viewport().get_visible_rect().size
-	var popup_size = settings_popup.size
-	settings_popup.position = Vector2i((screen_size.x - popup_size.x) / 2, (screen_size.y - popup_size.y) / 2)
-	settings_popup.popup()
+
+	# Scale popup for mobile
+	var popup_scale = _current_scale
+	popup.content_scale_factor = popup_scale
+
+	# Calculate scaled size and center
+	var scaled_size = popup.size * popup_scale
+	var pos_x = int((screen_size.x - scaled_size.x) / 2)
+	var pos_y = int((screen_size.y - scaled_size.y) / 2)
+
+	# Ensure popup stays on screen
+	pos_x = max(10, pos_x)
+	pos_y = max(10, pos_y)
+
+	popup.position = Vector2i(pos_x, pos_y)
+	popup.size = Vector2i(scaled_size.x, scaled_size.y)
+	popup.popup()
 
 func _on_exit_pressed():
 	get_tree().quit()
