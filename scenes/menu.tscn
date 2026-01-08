@@ -50,7 +50,7 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_font_sizes/font_size = 120
-text = "♟️"
+text = "♟"
 horizontal_alignment = 1
 
 [node name="Title" type="Label" parent="CenterPanel/VBoxContainer/TitleContainer"]
@@ -82,14 +82,14 @@ theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_colors/font_disabled_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_font_sizes/font_size = 32
 disabled = true
-text = "🤖  Play vs AI (Coming Soon)"
+text = "[AI] Play vs AI (Coming Soon)"
 
 [node name="PlayLocalButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(600, 90)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_font_sizes/font_size = 32
-text = "👥  Play 1v1 Offline"
+text = "[2P] Play 1v1 Offline"
 
 [node name="PlayOnlineButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(600, 90)
@@ -98,21 +98,21 @@ theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_colors/font_disabled_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_font_sizes/font_size = 32
 disabled = true
-text = "🌐  Play 1v1 Online (Coming Soon)"
+text = "[NET] Play 1v1 Online (Coming Soon)"
 
 [node name="SettingsButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(600, 90)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_font_sizes/font_size = 32
-text = "⚙️  Settings"
+text = "[*] Settings"
 
 [node name="ExitButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(600, 90)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.5, 0.5, 1)
 theme_override_font_sizes/font_size = 32
-text = "🚪  Exit"
+text = "[X] Exit"
 
 [node name="Footer" type="Label" parent="CenterPanel/VBoxContainer"]
 layout_mode = 2
@@ -138,7 +138,7 @@ layout_mode = 2
 [node name="SettingsIcon" type="Label" parent="SettingsPopup/PanelContainer/VBoxContainer/Header"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 48
-text = "⚙️"
+text = "[*]"
 
 [node name="SettingsTitle" type="Label" parent="SettingsPopup/PanelContainer/VBoxContainer/Header"]
 layout_mode = 2
@@ -167,4 +167,4 @@ custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_font_sizes/font_size = 28
-text = "✓  Close"
+text = "OK"
