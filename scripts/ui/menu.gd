@@ -59,9 +59,9 @@ func _apply_responsive_scaling():
 	# Scale up for small screens (mobile)
 	# Base design is for ~1600px viewport
 	if min_dimension < 800:
-		_current_scale = 1.8  # Very small screens (phones)
+		_current_scale = 3.0  # Very small screens (phones)
 	elif min_dimension < 1200:
-		_current_scale = 1.4  # Medium screens (tablets)
+		_current_scale = 2.0  # Medium screens (tablets)
 	else:
 		_current_scale = 1.0  # Desktop
 

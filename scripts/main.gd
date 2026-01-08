@@ -34,10 +34,10 @@ func _setup_board_orientation():
 
 	if should_flip:
 		is_flipped = true
-		board.rotation = PI  # 180 degrees
-		# Move board to account for rotation around origin
+		# Rotate the entire board container (includes board, pieces, health bars)
 		var board_size = GameManager.BOARD_SIZE * GameManager.SQUARE_SIZE
-		board.position = Vector2(board_size, board_size)
+		board_container.rotation = PI  # 180 degrees
+		board_container.pivot_offset = Vector2(board_size / 2, board_size / 2)
 
 func _create_coordinate_labels():
 	var board_size = GameManager.BOARD_SIZE * GameManager.SQUARE_SIZE

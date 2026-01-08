@@ -63,9 +63,9 @@ func _apply_responsive_scaling():
 	var min_dimension = min(viewport_size.x, viewport_size.y)
 
 	if min_dimension < 800:
-		_current_scale = 1.6
+		_current_scale = 3.0
 	elif min_dimension < 1200:
-		_current_scale = 1.3
+		_current_scale = 2.0
 	else:
 		_current_scale = 1.0
 
