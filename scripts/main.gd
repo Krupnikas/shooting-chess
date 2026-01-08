@@ -88,8 +88,15 @@ func _center_board():
 	var board_size = GameManager.BOARD_SIZE * GameManager.SQUARE_SIZE  # 1280
 	var x_offset = (viewport_size.x - board_size) / 2
 	var y_offset = (viewport_size.y - board_size) / 2
-	board_container.position.x = x_offset
-	board_container.position.y = y_offset
+
+	if is_flipped:
+		# When rotated 180 degrees around center, we need to offset by board size
+		# because the pivot is at center but position is at top-left
+		board_container.position.x = x_offset + board_size
+		board_container.position.y = y_offset + board_size
+	else:
+		board_container.position.x = x_offset
+		board_container.position.y = y_offset
 
 func _on_menu_button_pressed():
 	# Reset game state before going back to menu

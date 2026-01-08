@@ -33,6 +33,7 @@ var _http_create: HTTPRequest = null
 var _http_join: HTTPRequest = null
 var _http_poll: HTTPRequest = null
 var _http_send: HTTPRequest = null
+var _force_rejoin: bool = false
 
 func _ready():
 	_poll_timer = Timer.new()
@@ -87,7 +88,7 @@ func _on_create_completed(result: int, response_code: int, headers: PackedString
 	# Start polling for guest to join
 	_poll_timer.start()
 
-func join_room(room_code: String) -> void:
+func join_room(room_code: String, force_rejoin: bool = false) -> void:
 	if connection_state != ConnectionState.DISCONNECTED:
 		emit_signal("room_error", "Already in a room")
 		return
@@ -101,6 +102,7 @@ func join_room(room_code: String) -> void:
 	local_player_color = GameManager.PieceColor.BLACK
 	current_room_code = room_code.to_upper()
 	_processed_move_keys = []
+	_force_rejoin = force_rejoin
 
 	# Check if room exists
 	var url = "%s/rooms/%s.json" % [FIREBASE_DATABASE_URL, current_room_code]
@@ -131,7 +133,7 @@ func _on_join_check_completed(result: int, response_code: int, headers: PackedSt
 		connection_state = ConnectionState.DISCONNECTED
 		return
 
-	if json.get("guest_joined", false):
+	if json.get("guest_joined", false) and not _force_rejoin:
 		emit_signal("room_error", "Room is full")
 		connection_state = ConnectionState.DISCONNECTED
 		return

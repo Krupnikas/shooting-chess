@@ -2,37 +2,56 @@ extends Control
 
 signal game_started()
 
-@onready var create_button = $CenterPanel/VBoxContainer/ButtonContainer/CreateRoomButton
-@onready var join_button = $CenterPanel/VBoxContainer/ButtonContainer/JoinRoomButton
-@onready var back_button = $CenterPanel/VBoxContainer/ButtonContainer/BackButton
-@onready var room_code_input = $CenterPanel/VBoxContainer/JoinContainer/RoomCodeInput
-@onready var status_label = $CenterPanel/VBoxContainer/StatusLabel
-@onready var room_code_display = $CenterPanel/VBoxContainer/RoomCodeDisplay
-@onready var room_code_label = $CenterPanel/VBoxContainer/RoomCodeDisplay/RoomCodeLabel
-@onready var copy_button = $CenterPanel/VBoxContainer/RoomCodeDisplay/CopyButton
-@onready var join_container = $CenterPanel/VBoxContainer/JoinContainer
-@onready var button_container = $CenterPanel/VBoxContainer/ButtonContainer
+# Main screen
+@onready var main_screen = $CenterPanel/VBoxContainer/MainScreen
+@onready var create_room_button = $CenterPanel/VBoxContainer/MainScreen/CreateRoomButton
+@onready var join_room_button = $CenterPanel/VBoxContainer/MainScreen/JoinRoomButton
+@onready var back_to_menu_button = $CenterPanel/VBoxContainer/MainScreen/BackToMenuButton
+
+# Create screen
+@onready var create_screen = $CenterPanel/VBoxContainer/CreateScreen
+@onready var room_code_label = $CenterPanel/VBoxContainer/CreateScreen/RoomCodeContainer/RoomCodeLabel
+@onready var copy_button = $CenterPanel/VBoxContainer/CreateScreen/CopyButton
+@onready var create_back_button = $CenterPanel/VBoxContainer/CreateScreen/CreateBackButton
+
+# Join screen
+@onready var join_screen = $CenterPanel/VBoxContainer/JoinScreen
+@onready var room_code_input = $CenterPanel/VBoxContainer/JoinScreen/RoomCodeInput
+@onready var numpad_container = $CenterPanel/VBoxContainer/JoinScreen/NumpadContainer
+@onready var join_submit_button = $CenterPanel/VBoxContainer/JoinScreen/NumpadContainer/JoinSubmitButton
+@onready var join_back_button = $CenterPanel/VBoxContainer/JoinScreen/JoinBackButton
+
+# Shared
+@onready var status_label = $CenterPanel/VBoxContainer/Header/StatusLabel
 @onready var center_panel = $CenterPanel
-@onready var numpad_container = $CenterPanel/VBoxContainer/JoinContainer/NumpadContainer
 
 var _current_scale: float = 1.0
 
 func _ready():
-	create_button.pressed.connect(_on_create_pressed)
-	join_button.pressed.connect(_on_join_pressed)
-	back_button.pressed.connect(_on_back_pressed)
+	# Main screen buttons
+	create_room_button.pressed.connect(_on_create_room_pressed)
+	join_room_button.pressed.connect(_on_join_room_pressed)
+	back_to_menu_button.pressed.connect(_on_back_to_menu_pressed)
+
+	# Create screen buttons
 	copy_button.pressed.connect(_on_copy_pressed)
+	create_back_button.pressed.connect(_on_create_back_pressed)
+
+	# Join screen buttons
+	join_submit_button.pressed.connect(_on_join_submit_pressed)
+	join_back_button.pressed.connect(_on_join_back_pressed)
 	room_code_input.text_changed.connect(_on_code_input_changed)
 
 	# Connect numpad buttons
 	_setup_numpad()
 
+	# Network signals
 	NetworkManager.room_created.connect(_on_room_created)
 	NetworkManager.room_joined.connect(_on_room_joined)
 	NetworkManager.room_error.connect(_on_room_error)
 	NetworkManager.peer_connected.connect(_on_peer_connected)
 
-	_reset_ui()
+	_show_main_screen()
 	_apply_responsive_scaling()
 	get_tree().root.size_changed.connect(_apply_responsive_scaling)
 
@@ -64,9 +83,9 @@ func _on_numpad_backspace():
 func _apply_responsive_scaling():
 	var viewport_size = get_viewport().get_visible_rect().size
 
-	# Panel base size is 400x600, we want it to fit in the viewport
-	var panel_base_height = 600.0
-	var panel_base_width = 400.0
+	# Panel base size matches main menu (800x900)
+	var panel_base_height = 900.0
+	var panel_base_width = 800.0
 	var padding = 20.0  # Minimal margin
 
 	# Calculate scale to fit viewport
@@ -75,48 +94,63 @@ func _apply_responsive_scaling():
 
 	# Use the smaller scale to ensure it fits
 	_current_scale = min(scale_x, scale_y)
-	_current_scale = min(_current_scale, 1.3)  # Cap at 1.3x for desktop
+	_current_scale = min(_current_scale, 1.0)  # Cap at 1x for desktop
 	_current_scale = max(_current_scale, 0.5)  # Min scale
 
 	center_panel.scale = Vector2(_current_scale, _current_scale)
 	center_panel.pivot_offset = center_panel.size / 2
 
-func _reset_ui():
-	room_code_display.visible = false
-	join_container.visible = true
-	button_container.visible = true
-	status_label.text = "Create a room or enter a code to join"
-	room_code_input.text = ""
-	join_button.disabled = true
+# ============ SCREEN NAVIGATION ============
 
-func _on_create_pressed():
+func _show_main_screen():
+	main_screen.visible = true
+	create_screen.visible = false
+	join_screen.visible = false
+	status_label.text = "Choose an option"
+
+func _show_create_screen():
+	main_screen.visible = false
+	create_screen.visible = true
+	join_screen.visible = false
+	room_code_label.text = "----"
+
+func _show_join_screen():
+	main_screen.visible = false
+	create_screen.visible = false
+	join_screen.visible = true
+	room_code_input.text = ""
+	join_submit_button.disabled = true
+	status_label.text = "Enter room code"
+
+# ============ MAIN SCREEN ACTIONS ============
+
+func _on_create_room_pressed():
+	_show_create_screen()
 	status_label.text = "Creating room..."
-	button_container.visible = false
-	join_container.visible = false
 	NetworkManager.create_room()
 
-func _on_join_pressed():
-	var code = room_code_input.text.strip_edges().to_upper()
-	if code.length() != 4:
-		status_label.text = "Enter a 4-digit code"
-		return
+func _on_join_room_pressed():
+	_show_join_screen()
 
-	status_label.text = "Joining room..."
-	button_container.visible = false
-	join_container.visible = false
-	NetworkManager.join_room(code)
-
-func _on_back_pressed():
+func _on_back_to_menu_pressed():
 	NetworkManager.leave_room()
 	_clear_url_params()
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
+
+# ============ CREATE SCREEN ACTIONS ============
 
 func _on_copy_pressed():
 	DisplayServer.clipboard_set(room_code_label.text)
 	status_label.text = "Code copied!"
 	await get_tree().create_timer(1.5).timeout
-	if room_code_display.visible:
+	if create_screen.visible:
 		status_label.text = "Waiting for opponent..."
+
+func _on_create_back_pressed():
+	NetworkManager.leave_room()
+	_show_main_screen()
+
+# ============ JOIN SCREEN ACTIONS ============
 
 func _on_code_input_changed(new_text: String):
 	# Only allow digits
@@ -128,21 +162,32 @@ func _on_code_input_changed(new_text: String):
 		room_code_input.text = filtered
 		room_code_input.caret_column = filtered.length()
 
-	join_button.disabled = filtered.length() != 4
+	join_submit_button.disabled = filtered.length() != 4
+
+func _on_join_submit_pressed():
+	var code = room_code_input.text.strip_edges().to_upper()
+	if code.length() != 4:
+		status_label.text = "Enter a 4-digit code"
+		return
+
+	status_label.text = "Joining room..."
+	NetworkManager.join_room(code)
+
+func _on_join_back_pressed():
+	_show_main_screen()
+
+# ============ NETWORK CALLBACKS ============
 
 func _on_room_created(room_code: String):
-	room_code_display.visible = true
 	room_code_label.text = room_code
 	status_label.text = "Waiting for opponent..."
-	button_container.visible = false
-	join_container.visible = false
 
 func _on_room_joined(room_code: String):
 	status_label.text = "Connecting to host..."
 
 func _on_room_error(message: String):
 	status_label.text = "Error: " + message
-	_reset_ui()
+	_show_main_screen()
 
 func _on_peer_connected():
 	print("[Lobby] Peer connected! Starting game in 1 second...")
@@ -190,15 +235,16 @@ func _check_url_params():
 
 func _auto_reconnect(room_code: String, role: String):
 	status_label.text = "Reconnecting to room " + room_code + "..."
-	button_container.visible = false
-	join_container.visible = false
+	main_screen.visible = false
+	create_screen.visible = false
+	join_screen.visible = false
 
 	if role == "host":
 		# Reconnect as host - create room with same code
 		NetworkManager.reconnect_as_host(room_code)
 	else:
-		# Reconnect as guest
-		NetworkManager.join_room(room_code)
+		# Reconnect as guest - force rejoin to skip "Room is full" check
+		NetworkManager.join_room(room_code, true)
 
 func _update_url_with_game_state():
 	if not OS.has_feature("web"):

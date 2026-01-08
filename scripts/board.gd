@@ -200,16 +200,17 @@ func _do_process_deaths():
 	var dead_pieces = GameManager.process_deaths()
 	for piece in dead_pieces:
 		if is_instance_valid(piece):
-			# Spawn explosion for king death
-			if piece.type == GameManager.PieceType.KING:
-				spawn_explosion(piece.position)
+			# Spawn explosion for every piece death
+			# King gets a huge explosion (3x), other pieces get small explosion (0.5x)
+			var explosion_scale = 3.0 if piece.type == GameManager.PieceType.KING else 0.5
+			spawn_explosion(piece.position, explosion_scale)
 			GameManager.kill_piece(piece)
 
-func spawn_explosion(pos: Vector2):
+func spawn_explosion(pos: Vector2, scale_multiplier: float = 1.0):
 	var explosion = ExplosionScene.instantiate()
 	explosion.position = pos
 	add_child(explosion)
-	explosion.explode()
+	explosion.explode(scale_multiplier)
 
 func _advance_to_next_phase():
 	GameManager.advance_phase()
@@ -518,9 +519,10 @@ func print_game_state():
 # ============ GAME OVER ============
 
 func _on_piece_captured(piece):
-	# Spawn explosion when king is captured
-	if piece.type == GameManager.PieceType.KING:
-		spawn_explosion(piece.position)
+	# Spawn explosion when any piece is captured
+	# King gets a huge explosion (3x), other pieces get small explosion (0.5x)
+	var explosion_scale = 3.0 if piece.type == GameManager.PieceType.KING else 0.5
+	spawn_explosion(piece.position, explosion_scale)
 
 func _on_game_over(winner):
 	var winner_name = "White" if winner == GameManager.PieceColor.WHITE else "Black"
