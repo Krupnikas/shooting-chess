@@ -20,10 +20,13 @@ func _ready():
 	hp_toggle.button_pressed = GameManager.show_hp_numbers
 
 func _on_play_ai_pressed():
-	# AI mode not yet implemented
-	pass
+	# Enable AI for black pieces
+	AIPlayer.enable_ai(GameManager.PieceColor.BLACK)
+	get_tree().change_scene_to_file("res://scenes/main.tscn")
 
 func _on_play_local_pressed():
+	# Disable AI for local play
+	AIPlayer.disable_ai()
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
 
 func _on_settings_pressed():
