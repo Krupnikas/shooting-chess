@@ -500,3 +500,57 @@ theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_font_sizes/font_size = 28
 theme_override_styles/normal = SubResource("StyleBoxFlat_close_button")
 text = "Got it!"
+
+[node name="ColorPopup" type="PopupPanel" parent="."]
+size = Vector2i(500, 350)
+
+[node name="PanelContainer" type="PanelContainer" parent="ColorPopup"]
+offset_right = 500.0
+offset_bottom = 350.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_settings_panel")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ColorPopup/PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Title" type="Label" parent="ColorPopup/PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
+theme_override_font_sizes/font_size = 36
+text = "Choose Your Color"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="ColorPopup/PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.65, 0.55, 1)
+theme_override_font_sizes/font_size = 20
+text = "White moves first"
+horizontal_alignment = 1
+
+[node name="ButtonContainer" type="HBoxContainer" parent="ColorPopup/PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="PlayWhiteButton" type="Button" parent="ColorPopup/PanelContainer/VBoxContainer/ButtonContainer"]
+custom_minimum_size = Vector2(180, 80)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_local")
+text = "White"
+
+[node name="PlayBlackButton" type="Button" parent="ColorPopup/PanelContainer/VBoxContainer/ButtonContainer"]
+custom_minimum_size = Vector2(180, 80)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
+text = "Black"
+
+[node name="CancelButton" type="Button" parent="ColorPopup/PanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.55, 0.5, 1)
+theme_override_font_sizes/font_size = 20
+text = "Cancel"

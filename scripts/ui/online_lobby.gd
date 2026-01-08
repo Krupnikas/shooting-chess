@@ -13,6 +13,7 @@ signal game_started()
 @onready var join_container = $CenterPanel/VBoxContainer/JoinContainer
 @onready var button_container = $CenterPanel/VBoxContainer/ButtonContainer
 @onready var center_panel = $CenterPanel
+@onready var numpad_container = $CenterPanel/VBoxContainer/JoinContainer/NumpadContainer
 
 var _current_scale: float = 1.0
 
@@ -23,6 +24,9 @@ func _ready():
 	copy_button.pressed.connect(_on_copy_pressed)
 	room_code_input.text_changed.connect(_on_code_input_changed)
 
+	# Connect numpad buttons
+	_setup_numpad()
+
 	NetworkManager.room_created.connect(_on_room_created)
 	NetworkManager.room_joined.connect(_on_room_joined)
 	NetworkManager.room_error.connect(_on_room_error)
@@ -32,14 +36,36 @@ func _ready():
 	_apply_responsive_scaling()
 	get_tree().root.size_changed.connect(_apply_responsive_scaling)
 
+func _setup_numpad():
+	# Connect all numpad digit buttons (0-9)
+	for i in range(10):
+		var btn = numpad_container.get_node("Num%d" % i)
+		if btn:
+			btn.pressed.connect(_on_numpad_digit.bind(str(i)))
+
+	# Connect backspace button
+	var backspace = numpad_container.get_node("Backspace")
+	if backspace:
+		backspace.pressed.connect(_on_numpad_backspace)
+
+func _on_numpad_digit(digit: String):
+	if room_code_input.text.length() < 4:
+		room_code_input.text += digit
+		_on_code_input_changed(room_code_input.text)
+
+func _on_numpad_backspace():
+	if room_code_input.text.length() > 0:
+		room_code_input.text = room_code_input.text.substr(0, room_code_input.text.length() - 1)
+		_on_code_input_changed(room_code_input.text)
+
 func _apply_responsive_scaling():
 	var viewport_size = get_viewport().get_visible_rect().size
 	var min_dimension = min(viewport_size.x, viewport_size.y)
 
 	if min_dimension < 800:
-		_current_scale = 1.8
+		_current_scale = 1.6
 	elif min_dimension < 1200:
-		_current_scale = 1.4
+		_current_scale = 1.3
 	else:
 		_current_scale = 1.0
 

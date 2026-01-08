@@ -9,11 +9,15 @@ extends Control
 @onready var exit_button = $CenterPanel/VBoxContainer/ButtonContainer/ExitButton
 @onready var settings_popup = $SettingsPopup
 @onready var rules_popup = $RulesPopup
+@onready var color_popup = $ColorPopup
 @onready var hp_toggle = $SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer/HPToggle
 @onready var ai_difficulty_slider = $SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer/AIDifficultyContainer/AIDifficultySlider
 @onready var ai_difficulty_label = $SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer/AIDifficultyContainer/AIDifficultyLabel
 @onready var close_button = $SettingsPopup/PanelContainer/VBoxContainer/CloseButton
 @onready var rules_close_button = $RulesPopup/PanelContainer/VBoxContainer/RulesCloseButton
+@onready var play_white_button = $ColorPopup/PanelContainer/VBoxContainer/ButtonContainer/PlayWhiteButton
+@onready var play_black_button = $ColorPopup/PanelContainer/VBoxContainer/ButtonContainer/PlayBlackButton
+@onready var color_cancel_button = $ColorPopup/PanelContainer/VBoxContainer/CancelButton
 
 var _current_scale: float = 1.0
 
@@ -28,6 +32,11 @@ func _ready():
 	rules_close_button.pressed.connect(_on_close_rules_pressed)
 	hp_toggle.toggled.connect(_on_hp_toggle_changed)
 	ai_difficulty_slider.value_changed.connect(_on_difficulty_changed)
+
+	# Color selection buttons
+	play_white_button.pressed.connect(_on_play_white_pressed)
+	play_black_button.pressed.connect(_on_play_black_pressed)
+	color_cancel_button.pressed.connect(_on_color_cancel_pressed)
 
 	# Enable online button
 	play_online_button.disabled = false
@@ -62,9 +71,25 @@ func _apply_responsive_scaling():
 	center_panel.pivot_offset = center_panel.size / 2
 
 func _on_play_ai_pressed():
-	# Enable AI for black pieces
+	# Show color selection popup
+	_show_scaled_popup(color_popup)
+
+func _on_play_white_pressed():
+	color_popup.hide()
+	# Player is white, AI controls black
 	AIPlayer.enable_ai(GameManager.PieceColor.BLACK)
+	GameManager.player_color = GameManager.PieceColor.WHITE
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
+
+func _on_play_black_pressed():
+	color_popup.hide()
+	# Player is black, AI controls white
+	AIPlayer.enable_ai(GameManager.PieceColor.WHITE)
+	GameManager.player_color = GameManager.PieceColor.BLACK
+	get_tree().change_scene_to_file("res://scenes/main.tscn")
+
+func _on_color_cancel_pressed():
+	color_popup.hide()
 
 func _on_play_local_pressed():
 	# Disable AI for local play

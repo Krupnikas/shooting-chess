@@ -32,6 +32,7 @@ var valid_moves: Array[Vector2i] = []
 var winner: PieceColor = PieceColor.WHITE
 var is_processing_phase: bool = false
 var show_hp_numbers: bool = false  # Toggle for HP number display (off by default)
+var player_color: PieceColor = PieceColor.WHITE  # Human player's color (for board orientation)
 
 # Signals
 signal piece_selected(piece)
