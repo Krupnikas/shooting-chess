@@ -237,12 +237,14 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
 theme_override_font_sizes/font_size = 28
+theme_override_constants/icon_max_width = 48
 theme_override_styles/normal = SubResource("StyleBoxFlat_local")
 theme_override_styles/hover = SubResource("StyleBoxFlat_local_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_local")
 icon = ExtResource("4_people")
 text = "Play 1v1 Offline"
 alignment = 0
+expand_icon = true
 
 [node name="PlayAIButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(520, 72)
@@ -250,12 +252,14 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
 theme_override_font_sizes/font_size = 28
+theme_override_constants/icon_max_width = 48
 theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_normal")
 icon = ExtResource("3_robot")
 text = "Play vs AI"
 alignment = 0
+expand_icon = true
 
 [node name="PlayOnlineButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(520, 72)
@@ -263,12 +267,14 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.4, 0.4, 0.38, 1)
 theme_override_colors/font_disabled_color = Color(0.4, 0.4, 0.38, 1)
 theme_override_font_sizes/font_size = 28
+theme_override_constants/icon_max_width = 48
 theme_override_styles/normal = SubResource("StyleBoxFlat_disabled")
 theme_override_styles/disabled = SubResource("StyleBoxFlat_disabled")
 disabled = true
 icon = ExtResource("5_globe")
 text = "Play Online (Coming Soon)"
 alignment = 0
+expand_icon = true
 
 [node name="RulesButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(520, 72)
@@ -276,12 +282,14 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.78, 0.65, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
 theme_override_font_sizes/font_size = 28
+theme_override_constants/icon_max_width = 48
 theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_normal")
 icon = ExtResource("8_book")
-text = "Rules"
+text = "Game Rules"
 alignment = 0
+expand_icon = true
 
 [node name="SettingsButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(520, 72)
@@ -289,12 +297,14 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.78, 0.65, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
 theme_override_font_sizes/font_size = 28
+theme_override_constants/icon_max_width = 48
 theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_normal")
 icon = ExtResource("6_gear")
 text = "Settings"
 alignment = 0
+expand_icon = true
 
 [node name="ExitButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(520, 72)
@@ -302,11 +312,13 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.5, 0.5, 1)
 theme_override_colors/font_hover_color = Color(1, 0.6, 0.6, 1)
 theme_override_font_sizes/font_size = 28
+theme_override_constants/icon_max_width = 48
 theme_override_styles/normal = SubResource("StyleBoxFlat_exit")
 theme_override_styles/hover = SubResource("StyleBoxFlat_exit_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_exit")
 icon = ExtResource("7_exit")
 text = "Exit"
+expand_icon = true
 alignment = 0
 
 [node name="Footer" type="Label" parent="CenterPanel/VBoxContainer"]
@@ -317,11 +329,11 @@ text = "Press H in-game to toggle HP numbers"
 horizontal_alignment = 1
 
 [node name="SettingsPopup" type="PopupPanel" parent="."]
-size = Vector2i(550, 480)
+size = Vector2i(700, 550)
 
 [node name="PanelContainer" type="PanelContainer" parent="SettingsPopup"]
-offset_right = 550.0
-offset_bottom = 480.0
+offset_right = 700.0
+offset_bottom = 550.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_settings_panel")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="SettingsPopup/PanelContainer"]
@@ -333,7 +345,7 @@ layout_mode = 2
 theme_override_constants/separation = 16
 
 [node name="SettingsIcon" type="TextureRect" parent="SettingsPopup/PanelContainer/VBoxContainer/Header"]
-custom_minimum_size = Vector2(48, 48)
+custom_minimum_size = Vector2(56, 56)
 layout_mode = 2
 texture = ExtResource("6_gear")
 expand_mode = 1
@@ -343,7 +355,7 @@ stretch_mode = 5
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 42
+theme_override_font_sizes/font_size = 48
 text = "Settings"
 
 [node name="Separator" type="HSeparator" parent="SettingsPopup/PanelContainer/VBoxContainer"]
@@ -358,22 +370,22 @@ theme_override_constants/separation = 24
 [node name="HPToggle" type="CheckBox" parent="SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 28
 button_pressed = false
 text = "Show HP Numbers"
 
 [node name="AIDifficultyContainer" type="VBoxContainer" parent="SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 16
 
 [node name="AIDifficultyLabel" type="Label" parent="SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer/AIDifficultyContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 28
 text = "AI Difficulty: Medium"
 
 [node name="AIDifficultySlider" type="HSlider" parent="SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer/AIDifficultyContainer"]
-custom_minimum_size = Vector2(400, 32)
+custom_minimum_size = Vector2(500, 40)
 layout_mode = 2
 min_value = 1.0
 max_value = 5.0
@@ -389,43 +401,43 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.5, 0.5, 0.45, 1)
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "Easy"
 
 [node name="HardLabel" type="Label" parent="SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer/AIDifficultyContainer/DifficultyHints"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.5, 0.5, 0.45, 1)
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "Hard"
 horizontal_alignment = 2
 
 [node name="CloseButton" type="Button" parent="SettingsPopup/PanelContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 56)
+custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 28
 theme_override_styles/normal = SubResource("StyleBoxFlat_close_button")
 text = "OK"
 
 [node name="RulesPopup" type="PopupPanel" parent="."]
-size = Vector2i(650, 580)
+size = Vector2i(750, 680)
 
 [node name="PanelContainer" type="PanelContainer" parent="RulesPopup"]
-offset_right = 650.0
-offset_bottom = 580.0
+offset_right = 750.0
+offset_bottom = 680.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_settings_panel")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="RulesPopup/PanelContainer"]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 24
 
 [node name="Header" type="HBoxContainer" parent="RulesPopup/PanelContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 16
 
 [node name="RulesIcon" type="TextureRect" parent="RulesPopup/PanelContainer/VBoxContainer/Header"]
-custom_minimum_size = Vector2(48, 48)
+custom_minimum_size = Vector2(56, 56)
 layout_mode = 2
 texture = ExtResource("8_book")
 expand_mode = 1
@@ -435,11 +447,11 @@ stretch_mode = 5
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 42
+theme_override_font_sizes/font_size = 48
 text = "Game Rules"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="RulesPopup/PanelContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 380)
+custom_minimum_size = Vector2(0, 480)
 layout_mode = 2
 size_flags_vertical = 3
 
@@ -448,15 +460,16 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_colors/default_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_font_sizes/normal_font_size = 20
+theme_override_font_sizes/normal_font_size = 26
+theme_override_font_sizes/bold_font_size = 30
 bbcode_enabled = true
 text = "[b]Shooting Chess[/b] combines classic chess with HP and projectile combat.
 
-[b]Turn Structure:[/b]
+[font_size=30][b]Turn Structure[/b][/font_size]
 1. [color=#aaddaa]MOVE[/color] - Move one piece (standard chess rules)
-2. [color=#ffaaaa]SHOOT[/color] - All your pieces fire at enemies in range
+2. [color=#ffaaaa]SHOOT[/color] - All your pieces fire projectiles in attack directions
 
-[b]HP System:[/b]
+[font_size=30][b]HP System[/b][/font_size]
 Each piece has Hit Points based on type:
   - Pawn & King: 1 HP
   - Knight, Bishop, Rook: 2 HP
@@ -464,24 +477,26 @@ Each piece has Hit Points based on type:
 
 HP resets at the start of each player's turn.
 
-[b]Shooting:[/b]
-After moving, ALL your pieces automatically shoot at enemy pieces within their attack range (same as their movement pattern).
+[font_size=30][b]Shooting[/b][/font_size]
+After moving, ALL your pieces fire projectiles in their attack directions:
+  - [color=#ffaaaa]Enemy hit[/color]: -1 HP (damage)
+  - [color=#aaddaa]Friendly hit[/color]: +1 HP (heal for this turn)
 
-Each hit deals 1 damage. Pieces at 0 HP are destroyed.
+Pieces at 0 HP are destroyed.
 
-[b]Victory:[/b]
+[font_size=30][b]Victory[/b][/font_size]
 Capture or destroy the enemy King to win!
 
-[b]Tips:[/b]
-- Position pieces to maximize shooting potential
+[font_size=30][b]Tips[/b][/font_size]
+- Position pieces to shoot enemies and heal allies
 - The Queen is powerful but vulnerable (3 HP vs many attacks)
 - Kings have only 1 HP - protect them!"
 fit_content = true
 
 [node name="RulesCloseButton" type="Button" parent="RulesPopup/PanelContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 56)
+custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 28
 theme_override_styles/normal = SubResource("StyleBoxFlat_close_button")
 text = "Got it!"
