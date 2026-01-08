@@ -10,11 +10,11 @@ const BOARD_SIZE = 8
 const SQUARE_SIZE = 160
 const BASE_HP = {
 	PieceType.PAWN: 1,
-	PieceType.KNIGHT: 3,
-	PieceType.BISHOP: 3,
-	PieceType.ROOK: 4,
-	PieceType.QUEEN: 8,
-	PieceType.KING: 8
+	PieceType.KNIGHT: 2,
+	PieceType.BISHOP: 2,
+	PieceType.ROOK: 2,
+	PieceType.QUEEN: 3,
+	PieceType.KING: 1
 }
 
 # Board colors
