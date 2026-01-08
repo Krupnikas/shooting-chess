@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://menu123"]
+[gd_scene load_steps=14 format=3 uid="uid://menu123"]
 
 [ext_resource type="Script" path="res://scripts/ui/menu.gd" id="1_menu"]
 [ext_resource type="Texture2D" path="res://assets/icons/pawn.svg" id="2_pawn"]
@@ -7,6 +7,55 @@
 [ext_resource type="Texture2D" path="res://assets/icons/globe.svg" id="5_globe"]
 [ext_resource type="Texture2D" path="res://assets/icons/gear.svg" id="6_gear"]
 [ext_resource type="Texture2D" path="res://assets/icons/exit.svg" id="7_exit"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_local"]
+bg_color = Color(0.25, 0.35, 0.2, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_local_hover"]
+bg_color = Color(0.3, 0.45, 0.25, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
+bg_color = Color(0.2, 0.2, 0.18, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
+bg_color = Color(0.28, 0.28, 0.25, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_disabled"]
+bg_color = Color(0.15, 0.15, 0.13, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_exit"]
+bg_color = Color(0.3, 0.15, 0.15, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_exit_hover"]
+bg_color = Color(0.4, 0.2, 0.2, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="Menu" type="Control"]
 layout_mode = 3
@@ -82,23 +131,27 @@ layout_mode = 2
 layout_mode = 2
 theme_override_constants/separation = 16
 
+[node name="PlayLocalButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
+custom_minimum_size = Vector2(560, 80)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
+theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_local")
+theme_override_styles/hover = SubResource("StyleBoxFlat_local_hover")
+icon = ExtResource("4_people")
+text = "Play 1v1 Offline"
+
 [node name="PlayAIButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(560, 80)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_colors/font_disabled_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_font_sizes/font_size = 28
+theme_override_styles/disabled = SubResource("StyleBoxFlat_disabled")
 disabled = true
 icon = ExtResource("3_robot")
 text = "Play vs AI (Coming Soon)"
-
-[node name="PlayLocalButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
-custom_minimum_size = Vector2(560, 80)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 28
-icon = ExtResource("4_people")
-text = "Play 1v1 Offline"
 
 [node name="PlayOnlineButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(560, 80)
@@ -106,6 +159,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_colors/font_disabled_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_font_sizes/font_size = 28
+theme_override_styles/disabled = SubResource("StyleBoxFlat_disabled")
 disabled = true
 icon = ExtResource("5_globe")
 text = "Play 1v1 Online (Coming Soon)"
@@ -114,15 +168,21 @@ text = "Play 1v1 Online (Coming Soon)"
 custom_minimum_size = Vector2(560, 80)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
+theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
 theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
 icon = ExtResource("6_gear")
 text = "Settings"
 
 [node name="ExitButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(560, 80)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.8, 0.5, 0.5, 1)
+theme_override_colors/font_color = Color(0.9, 0.5, 0.5, 1)
+theme_override_colors/font_hover_color = Color(1, 0.6, 0.6, 1)
 theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_exit")
+theme_override_styles/hover = SubResource("StyleBoxFlat_exit_hover")
 icon = ExtResource("7_exit")
 text = "Exit"
 
@@ -175,7 +235,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
 theme_override_font_sizes/font_size = 28
 button_pressed = false
-text = "  Show HP Numbers"
+text = "Show HP Numbers"
 
 [node name="CloseButton" type="Button" parent="SettingsPopup/PanelContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 72)
