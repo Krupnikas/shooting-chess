@@ -1,0 +1,173 @@
+[gd_scene load_steps=4 format=3 uid="uid://menu123"]
+
+[ext_resource type="Script" path="res://scripts/ui/menu.gd" id="1_menu"]
+[ext_resource type="FontFile" path="res://assets/fonts/Roboto-Regular.ttf" id="2_font"]
+[ext_resource type="FontFile" path="res://assets/fonts/Roboto-Bold.ttf" id="3_font_bold"]
+
+[node name="Menu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_menu")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -500.0
+offset_top = -500.0
+offset_right = 500.0
+offset_bottom = 500.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.12, 0.1, 0.08, 1)
+
+[node name="CenterPanel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -480.0
+offset_right = 400.0
+offset_bottom = 480.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterPanel"]
+layout_mode = 2
+theme_override_constants/separation = 40
+
+[node name="TitleContainer" type="VBoxContainer" parent="CenterPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="ChessIcon" type="Label" parent="CenterPanel/VBoxContainer/TitleContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
+theme_override_font_sizes/font_size = 120
+text = "♟️"
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="CenterPanel/VBoxContainer/TitleContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
+theme_override_fonts/font = ExtResource("3_font_bold")
+theme_override_font_sizes/font_size = 72
+text = "Shooting Chess"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="CenterPanel/VBoxContainer/TitleContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.65, 0.55, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 28
+text = "Chess with HP and Projectiles"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="CenterPanel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="ButtonContainer" type="VBoxContainer" parent="CenterPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="PlayAIButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
+custom_minimum_size = Vector2(600, 90)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)
+theme_override_colors/font_disabled_color = Color(0.5, 0.5, 0.5, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 32
+disabled = true
+text = "🤖  Play vs AI (Coming Soon)"
+
+[node name="PlayLocalButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
+custom_minimum_size = Vector2(600, 90)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 32
+text = "👥  Play 1v1 Offline"
+
+[node name="SettingsButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
+custom_minimum_size = Vector2(600, 90)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 32
+text = "⚙️  Settings"
+
+[node name="ExitButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
+custom_minimum_size = Vector2(600, 90)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.5, 0.5, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 32
+text = "🚪  Exit"
+
+[node name="Footer" type="Label" parent="CenterPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.45, 0.4, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 22
+text = "Press H in-game to toggle HP numbers"
+horizontal_alignment = 1
+
+[node name="SettingsPopup" type="PopupPanel" parent="."]
+size = Vector2i(600, 450)
+
+[node name="PanelContainer" type="PanelContainer" parent="SettingsPopup"]
+offset_right = 600.0
+offset_bottom = 450.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SettingsPopup/PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 32
+
+[node name="Header" type="HBoxContainer" parent="SettingsPopup/PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SettingsIcon" type="Label" parent="SettingsPopup/PanelContainer/VBoxContainer/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "⚙️"
+
+[node name="SettingsTitle" type="Label" parent="SettingsPopup/PanelContainer/VBoxContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
+theme_override_fonts/font = ExtResource("3_font_bold")
+theme_override_font_sizes/font_size = 48
+text = "Settings"
+
+[node name="Separator" type="HSeparator" parent="SettingsPopup/PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="OptionsContainer" type="VBoxContainer" parent="SettingsPopup/PanelContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 24
+
+[node name="HPToggle" type="CheckBox" parent="SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 28
+button_pressed = true
+text = "  Show HP Numbers"
+
+[node name="CloseButton" type="Button" parent="SettingsPopup/PanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 28
+text = "✓  Close"

@@ -41,6 +41,21 @@ Each turn consists of two phases:
 ### Victory Condition
 The game ends when a king's HP reaches 0 and it dies. There is no checkmate - the king must actually be killed through shooting damage.
 
+### Health Bar Display
+Each piece displays a layered health bar with 8 segments:
+- **Layer 1 (1-8 HP)**: Green
+- **Layer 2 (9-16 HP)**: Blue (full green bar underneath)
+- **Layer 3 (17-24 HP)**: Gold (full blue bar underneath)
+- **Layer 4 (25-32 HP)**: Purple
+- **Layer 5 (33-40 HP)**: Cyan
+- **Layer 6 (41-48 HP)**: Red
+
+When HP exceeds 8, the bar shows the overflow color on top of the previous layer's full bar.
+
+### Controls
+- **Click**: Select piece / Move to highlighted square
+- **H**: Toggle HP number display on/off
+
 ### Key Strategic Differences from Standard Chess
 - Pieces can be eliminated without being captured directly
 - Your pieces heal each other when they can attack friendly pieces

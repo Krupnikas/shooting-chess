@@ -20,6 +20,8 @@ var stopping_at_cell: bool = false
 var stop_cell_center: Vector2 = Vector2.ZERO
 var stop_piece = null
 
+@onready var outline: Sprite2D = $Outline
+
 func _ready():
 	sprite = $Sprite2D
 	update_color()
@@ -49,10 +51,15 @@ func update_color():
 		return
 
 	# White or black circle based on the piece that shot it
+	# Outline is the opposite color for visibility
 	if is_white:
 		sprite.texture = load("res://assets/pieces/white_circle.png")
+		if outline:
+			outline.texture = load("res://assets/pieces/black_circle.png")
 	else:
 		sprite.texture = load("res://assets/pieces/black_circle.png")
+		if outline:
+			outline.texture = load("res://assets/pieces/white_circle.png")
 
 func _process(delta):
 	position += direction * speed * delta
