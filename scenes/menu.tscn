@@ -1,8 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://menu123"]
+[gd_scene load_steps=2 format=3 uid="uid://menu123"]
 
 [ext_resource type="Script" path="res://scripts/ui/menu.gd" id="1_menu"]
-[ext_resource type="FontFile" path="res://assets/fonts/Roboto-Regular.ttf" id="2_font"]
-[ext_resource type="FontFile" path="res://assets/fonts/Roboto-Bold.ttf" id="3_font_bold"]
 
 [node name="Menu" type="Control"]
 layout_mode = 3
@@ -58,7 +56,6 @@ horizontal_alignment = 1
 [node name="Title" type="Label" parent="CenterPanel/VBoxContainer/TitleContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_fonts/font = ExtResource("3_font_bold")
 theme_override_font_sizes/font_size = 72
 text = "Shooting Chess"
 horizontal_alignment = 1
@@ -66,7 +63,6 @@ horizontal_alignment = 1
 [node name="Subtitle" type="Label" parent="CenterPanel/VBoxContainer/TitleContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.65, 0.55, 1)
-theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 28
 text = "Chess with HP and Projectiles"
 horizontal_alignment = 1
@@ -84,7 +80,6 @@ custom_minimum_size = Vector2(600, 90)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_colors/font_disabled_color = Color(0.5, 0.5, 0.5, 1)
-theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 32
 disabled = true
 text = "🤖  Play vs AI (Coming Soon)"
@@ -93,7 +88,6 @@ text = "🤖  Play vs AI (Coming Soon)"
 custom_minimum_size = Vector2(600, 90)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 32
 text = "👥  Play 1v1 Offline"
 
@@ -101,7 +95,6 @@ text = "👥  Play 1v1 Offline"
 custom_minimum_size = Vector2(600, 90)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 32
 text = "⚙️  Settings"
 
@@ -109,14 +102,12 @@ text = "⚙️  Settings"
 custom_minimum_size = Vector2(600, 90)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.5, 0.5, 1)
-theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 32
 text = "🚪  Exit"
 
 [node name="Footer" type="Label" parent="CenterPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.5, 0.45, 0.4, 1)
-theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 22
 text = "Press H in-game to toggle HP numbers"
 horizontal_alignment = 1
@@ -144,7 +135,6 @@ text = "⚙️"
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_fonts/font = ExtResource("3_font_bold")
 theme_override_font_sizes/font_size = 48
 text = "Settings"
 
@@ -159,7 +149,6 @@ theme_override_constants/separation = 24
 [node name="HPToggle" type="CheckBox" parent="SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 28
 button_pressed = true
 text = "  Show HP Numbers"
@@ -168,6 +157,5 @@ text = "  Show HP Numbers"
 custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 28
 text = "✓  Close"
