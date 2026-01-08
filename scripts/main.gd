@@ -6,7 +6,10 @@ extends Node2D
 func _ready():
 	menu_button.pressed.connect(_on_menu_button_pressed)
 	get_tree().root.size_changed.connect(_on_viewport_size_changed)
-	_center_board()
+	# Defer centering to ensure viewport is fully initialized (important for web)
+	call_deferred("_center_board")
+	# Also center after a short delay for web export
+	get_tree().create_timer(0.1).timeout.connect(_center_board)
 
 func _on_viewport_size_changed():
 	_center_board()
