@@ -31,7 +31,7 @@ var selected_piece = null
 var valid_moves: Array[Vector2i] = []
 var winner: PieceColor = PieceColor.WHITE
 var is_processing_phase: bool = false
-var show_hp_numbers: bool = true  # Toggle for HP number display
+var show_hp_numbers: bool = false  # Toggle for HP number display (off by default)
 
 # Signals
 signal piece_selected(piece)

@@ -13,17 +13,17 @@ var blink_tween: Tween = null
 @onready var blink_overlay = $BlinkOverlay
 @onready var health_bar = $HealthBar
 
-const HEALTH_BAR_SEGMENTS = 8
-const SEGMENT_WIDTH = 14
+const HEALTH_BAR_SEGMENTS = 4
+const SEGMENT_WIDTH = 28
 const SEGMENT_HEIGHT = 12
 # Layer colors: green (base) -> blue -> gold -> purple -> cyan -> red...
 const LAYER_COLORS = [
-	Color(0.3, 0.85, 0.3),  # Green - layer 0 (1-8)
-	Color(0.3, 0.5, 0.95),  # Blue - layer 1 (9-16)
-	Color(0.95, 0.75, 0.2), # Gold - layer 2 (17-24)
-	Color(0.7, 0.3, 0.9),   # Purple - layer 3 (25-32)
-	Color(0.2, 0.85, 0.85), # Cyan - layer 4 (33-40)
-	Color(0.9, 0.3, 0.3),   # Red - layer 5 (41-48)
+	Color(0.3, 0.85, 0.3),  # Green - layer 0 (1-4)
+	Color(0.3, 0.5, 0.95),  # Blue - layer 1 (5-8)
+	Color(0.95, 0.75, 0.2), # Gold - layer 2 (9-12)
+	Color(0.7, 0.3, 0.9),   # Purple - layer 3 (13-16)
+	Color(0.2, 0.85, 0.85), # Cyan - layer 4 (17-20)
+	Color(0.9, 0.3, 0.3),   # Red - layer 5 (21-24)
 ]
 
 # Texture paths for each piece type
