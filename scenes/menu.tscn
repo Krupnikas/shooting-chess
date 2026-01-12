@@ -269,6 +269,62 @@ content_margin_top = 12.0
 content_margin_right = 24.0
 content_margin_bottom = 12.0
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_debug_red"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_debug_blue"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0, 0.5, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_debug_green"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0, 1, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_debug_yellow"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_debug_magenta"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_debug_cyan"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_debug_orange"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.5, 0, 1)
+
 [node name="Menu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -277,6 +333,14 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_menu")
+
+[node name="DebugBorderRed" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_debug_red")
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
@@ -304,15 +368,29 @@ offset_right = 400.0
 offset_bottom = 450.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/panel = SubResource("StyleBoxFlat_debug_blue")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterPanel"]
 layout_mode = 2
 theme_override_constants/separation = 32
 
+[node name="DebugBorderGreen" type="Panel" parent="CenterPanel/VBoxContainer"]
+layout_mode = 2
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_debug_green")
+
 [node name="TitleContainer" type="VBoxContainer" parent="CenterPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 8
+
+[node name="DebugBorderYellow" type="Panel" parent="CenterPanel/VBoxContainer/TitleContainer"]
+layout_mode = 2
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_debug_yellow")
 
 [node name="ChessIcon" type="TextureRect" parent="CenterPanel/VBoxContainer/TitleContainer"]
 layout_mode = 2
@@ -340,10 +418,25 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 
+[node name="DebugBorderOrange" type="Panel" parent="CenterPanel/VBoxContainer/Spacer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_debug_orange")
+
 [node name="ButtonContainer" type="VBoxContainer" parent="CenterPanel/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 16
+
+[node name="DebugBorderMagenta" type="Panel" parent="CenterPanel/VBoxContainer/ButtonContainer"]
+layout_mode = 2
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_debug_magenta")
 
 [node name="PlayLocalButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(520, 72)
@@ -441,8 +534,23 @@ text = "Exit"
 expand_icon = true
 alignment = 0
 
-[node name="Footer" type="Label" parent="CenterPanel/VBoxContainer"]
+[node name="FooterContainer" type="Control" parent="CenterPanel/VBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DebugBorderCyan" type="Panel" parent="CenterPanel/VBoxContainer/FooterContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_debug_cyan")
+
+[node name="Footer" type="Label" parent="CenterPanel/VBoxContainer/FooterContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 theme_override_colors/font_color = Color(0.4, 0.38, 0.35, 1)
 theme_override_font_sizes/font_size = 18
 text = "Press H in-game to toggle HP numbers"
