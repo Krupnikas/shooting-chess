@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   auto-merge:
@@ -28,3 +29,11 @@ jobs:
           git checkout main
           git merge origin/${{ github.ref_name }} --no-edit
           git push origin main
+
+      - name: Trigger Deploy Workflow
+        run: |
+          curl -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/${{ github.repository }}/actions/workflows/deploy.yml/dispatches \
+            -d '{"ref":"main"}'
