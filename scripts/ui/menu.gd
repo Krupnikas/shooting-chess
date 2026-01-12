@@ -66,7 +66,7 @@ func _apply_responsive_scaling():
 
 	# Use the smaller scale to ensure it fits
 	_current_scale = min(scale_x, scale_y)
-	_current_scale = min(_current_scale, 1.0)  # Cap at 1x for desktop
+	_current_scale = min(_current_scale, 1.5)  # Cap at 1.5x (50% bigger)
 	_current_scale = max(_current_scale, 0.5)  # Min scale
 
 	center_panel.scale = Vector2(_current_scale, _current_scale)
