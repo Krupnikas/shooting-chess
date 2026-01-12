@@ -375,23 +375,9 @@ layout_mode = 2
 alignment = 1
 theme_override_constants/separation = 32
 
-[node name="DebugBorderGreen" type="Panel" parent="CenterPanel/VBoxContainer"]
-layout_mode = 2
-mouse_filter = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_debug_green")
-
 [node name="TitleContainer" type="VBoxContainer" parent="CenterPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 8
-
-[node name="DebugBorderYellow" type="Panel" parent="CenterPanel/VBoxContainer/TitleContainer"]
-layout_mode = 2
-mouse_filter = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_debug_yellow")
 
 [node name="ChessIcon" type="TextureRect" parent="CenterPanel/VBoxContainer/TitleContainer"]
 layout_mode = 2
@@ -419,25 +405,10 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 
-[node name="DebugBorderOrange" type="Panel" parent="CenterPanel/VBoxContainer/Spacer"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_debug_orange")
-
 [node name="ButtonContainer" type="VBoxContainer" parent="CenterPanel/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 16
-
-[node name="DebugBorderMagenta" type="Panel" parent="CenterPanel/VBoxContainer/ButtonContainer"]
-layout_mode = 2
-mouse_filter = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_debug_magenta")
 
 [node name="PlayLocalButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(520, 72)
@@ -535,23 +506,8 @@ text = "Exit"
 expand_icon = true
 alignment = 0
 
-[node name="FooterContainer" type="Control" parent="CenterPanel/VBoxContainer"]
+[node name="Footer" type="Label" parent="CenterPanel/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="DebugBorderCyan" type="Panel" parent="CenterPanel/VBoxContainer/FooterContainer"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_debug_cyan")
-
-[node name="Footer" type="Label" parent="CenterPanel/VBoxContainer/FooterContainer"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
 theme_override_colors/font_color = Color(0.4, 0.38, 0.35, 1)
 theme_override_font_sizes/font_size = 18
 text = "Press H in-game to toggle HP numbers"
