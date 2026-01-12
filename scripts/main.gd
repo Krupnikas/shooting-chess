@@ -76,8 +76,21 @@ func _on_viewport_size_changed():
 func _center_board():
 	var viewport_size = get_viewport().get_visible_rect().size
 	var board_size = GameManager.BOARD_SIZE * GameManager.SQUARE_SIZE  # 1280
-	var x_offset = (viewport_size.x - board_size) / 2
-	var y_offset = (viewport_size.y - board_size) / 2
+
+	# Calculate scale to fit board within viewport (with padding for labels and UI)
+	var padding = 100  # Space for coordinate labels and menu button
+	var available_width = viewport_size.x - padding
+	var available_height = viewport_size.y - padding - 150  # Extra space for bottom UI
+
+	var scale_x = available_width / board_size
+	var scale_y = available_height / board_size
+	var board_scale = min(scale_x, scale_y, 1.0)  # Don't scale up, only down
+
+	board_container.scale = Vector2(board_scale, board_scale)
+
+	var scaled_board_size = board_size * board_scale
+	var x_offset = (viewport_size.x - scaled_board_size) / 2
+	var y_offset = (viewport_size.y - scaled_board_size - 100) / 2 + 80  # Offset for menu button
 
 	board_container.position.x = x_offset
 	board_container.position.y = y_offset
