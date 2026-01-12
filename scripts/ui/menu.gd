@@ -53,26 +53,9 @@ func _ready():
 	get_tree().root.size_changed.connect(_apply_responsive_scaling)
 
 func _apply_responsive_scaling():
-	var viewport_size = get_viewport().get_visible_rect().size
-
-	# Panel base size - estimate from the menu content
-	var panel_base_height = 500.0
-	var panel_base_width = 400.0
-	var padding = 20.0  # Minimal margin
-
-	# Calculate scale to fit viewport
-	var scale_x = (viewport_size.x - padding) / panel_base_width
-	var scale_y = (viewport_size.y - padding) / panel_base_height
-
-	# Use the smaller scale to ensure it fits
-	_current_scale = min(scale_x, scale_y)
-	_current_scale = min(_current_scale, 1.5)  # Cap at 1.5x (50% bigger)
-	_current_scale = max(_current_scale, 0.5)  # Min scale
-
-	center_panel.scale = Vector2(_current_scale, _current_scale)
-
-	# Center the scaled panel properly
-	center_panel.pivot_offset = center_panel.size / 2
+	# No scaling - we use native sizes for crisp rendering
+	# The UI elements are sized appropriately in the scene file
+	pass
 
 func _on_play_ai_pressed():
 	# Show color selection popup
