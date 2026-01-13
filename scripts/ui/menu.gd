@@ -11,13 +11,17 @@ extends Control
 @onready var rules_popup = $RulesPopup
 @onready var color_popup = $ColorPopup
 @onready var hp_toggle = $SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer/HPToggle
-@onready var ai_difficulty_slider = $SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer/AIDifficultyContainer/AIDifficultySlider
-@onready var ai_difficulty_label = $SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer/AIDifficultyContainer/AIDifficultyLabel
 @onready var close_button = $SettingsPopup/PanelContainer/VBoxContainer/CloseButton
 @onready var rules_close_button = $RulesPopup/PanelContainer/VBoxContainer/RulesCloseButton
 @onready var play_white_button = $ColorPopup/PanelContainer/VBoxContainer/ButtonContainer/PlayWhiteButton
 @onready var play_black_button = $ColorPopup/PanelContainer/VBoxContainer/ButtonContainer/PlayBlackButton
 @onready var color_cancel_button = $ColorPopup/PanelContainer/VBoxContainer/CancelButton
+@onready var ai_difficulty_slider = $ColorPopup/PanelContainer/VBoxContainer/AIDifficultyContainer/AIDifficultySlider
+@onready var ai_difficulty_label = $ColorPopup/PanelContainer/VBoxContainer/AIDifficultyContainer/AIDifficultyLabel
+
+# Reference design size for scaling calculations
+const REFERENCE_WIDTH = 1080.0
+const REFERENCE_HEIGHT = 1920.0
 
 var _current_scale: float = 1.0
 
@@ -48,14 +52,16 @@ func _ready():
 	ai_difficulty_slider.value = AIPlayer.difficulty
 	_update_difficulty_label(AIPlayer.difficulty)
 
-	# Scale UI for mobile/small screens
+	# Calculate responsive scale for popups
 	_apply_responsive_scaling()
 	get_tree().root.size_changed.connect(_apply_responsive_scaling)
 
 func _apply_responsive_scaling():
-	# No scaling - we use native sizes for crisp rendering
-	# The UI elements are sized appropriately in the scene file
-	pass
+	# Calculate scale based on viewport size vs reference design
+	var viewport_size = get_viewport().get_visible_rect().size
+	var scale_x = viewport_size.x / REFERENCE_WIDTH
+	var scale_y = viewport_size.y / REFERENCE_HEIGHT
+	_current_scale = min(scale_x, scale_y)
 
 func _on_play_ai_pressed():
 	# Show color selection popup
@@ -134,4 +140,4 @@ func _on_difficulty_changed(value: float):
 	_update_difficulty_label(level)
 
 func _update_difficulty_label(level: int):
-	ai_difficulty_label.text = "AI Difficulty: " + AIPlayer.get_difficulty_name()
+	ai_difficulty_label.text = "AI Difficulty: " + AIPlayer.get_difficulty_name() + " (" + str(level) + ")"

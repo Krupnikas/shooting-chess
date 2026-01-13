@@ -8,16 +8,21 @@ signal ai_thinking(is_thinking: bool)
 
 var is_enabled: bool = false
 var ai_color: GameManager.PieceColor = GameManager.PieceColor.BLACK
-var difficulty: int = 3  # 1-5, maps to Easy/Medium/Hard
+var difficulty: int = 5  # 1-10 scale
 var think_time_ms: int = 1000  # Time to think in milliseconds
 
 # Difficulty names for display
 const DIFFICULTY_NAMES = {
-	1: "Very Easy",
-	2: "Easy",
-	3: "Medium",
-	4: "Hard",
-	5: "Very Hard"
+	1: "Beginner",
+	2: "Very Easy",
+	3: "Easy",
+	4: "Easy+",
+	5: "Medium",
+	6: "Medium+",
+	7: "Hard",
+	8: "Hard+",
+	9: "Expert",
+	10: "Master"
 }
 
 var _stockfish_process: int = -1
@@ -46,7 +51,7 @@ func disable_ai():
 	print("[AI] Disabled")
 
 func set_difficulty(level: int):
-	difficulty = clampi(level, 1, 5)
+	difficulty = clampi(level, 1, 10)
 	print("[AI] Difficulty set to: ", DIFFICULTY_NAMES[difficulty])
 
 func get_difficulty_name() -> String:
@@ -148,9 +153,10 @@ func _evaluate_move(piece, target_pos: Vector2i) -> float:
 	var shooting_score = _evaluate_shooting_potential(piece, target_pos)
 	score += shooting_score
 
-	# Center control bonus
+	# Center control bonus (scaled by difficulty)
 	var center_dist = abs(target_pos.x - 3.5) + abs(target_pos.y - 3.5)
-	score += (7 - center_dist) * 0.5
+	var center_weight = 0.3 + (difficulty * 0.07)  # 0.37 at 1, 1.0 at 10
+	score += (7 - center_dist) * center_weight
 
 	# Pawn advancement bonus
 	if piece.type == GameManager.PieceType.PAWN:
@@ -161,27 +167,95 @@ func _evaluate_move(piece, target_pos: Vector2i) -> float:
 			advancement = target_pos.y - from_pos.y
 		score += advancement * 2
 
-	# Protect king - penalty for moving king early
+	# Protect king - penalty for moving king early (stronger at higher difficulty)
 	if piece.type == GameManager.PieceType.KING:
-		score -= 5
+		var king_penalty = 3 + (difficulty * 0.5)  # 3.5 to 8
+		score -= king_penalty
 
 	# Development bonus (knights and bishops)
 	if piece.type in [GameManager.PieceType.KNIGHT, GameManager.PieceType.BISHOP]:
 		var start_row = 0 if ai_color == GameManager.PieceColor.BLACK else 7
 		if from_pos.y == start_row:
-			score += 3  # Bonus for developing pieces
+			var dev_bonus = 2 + (difficulty * 0.3)  # 2.3 to 5
+			score += dev_bonus
 
-	# Add randomness based on difficulty (lower difficulty = more random/worse moves)
-	# Difficulty 1: lots of randomness, may miss good moves
-	# Difficulty 5: almost no randomness, optimal play
-	var randomness_factor = (6 - difficulty) * 2.0  # 10 at easy, 2 at hard
+	# At higher difficulties, consider opponent's counter-attacks
+	if difficulty >= 6:
+		var danger_score = _evaluate_danger(piece, target_pos)
+		var danger_weight = (difficulty - 5) * 0.3  # 0.3 at 6, 1.5 at 10
+		score -= danger_score * danger_weight
+
+	# At highest difficulties, look ahead one move
+	if difficulty >= 8:
+		var lookahead_bonus = _evaluate_lookahead(piece, target_pos)
+		var lookahead_weight = (difficulty - 7) * 0.5  # 0.5 at 8, 1.5 at 10
+		score += lookahead_bonus * lookahead_weight
+
+	# Add randomness based on difficulty (lower difficulty = more random)
+	# Scale: difficulty 1 = lots of noise, difficulty 10 = almost none
+	var randomness_factor = (11 - difficulty) * 1.5  # 15 at 1, 1.5 at 10
 	score += randf() * randomness_factor
 
 	# At lower difficulties, occasionally "miss" good opportunities
-	if difficulty <= 2 and randf() < 0.3:
-		score *= 0.5  # Sometimes undervalue good moves
+	var miss_chance = maxf(0, (5 - difficulty) * 0.1)  # 40% at 1, 0% at 5+
+	if randf() < miss_chance:
+		score *= 0.4  # Sometimes undervalue good moves
 
 	return score
+
+func _evaluate_danger(piece, target_pos: Vector2i) -> float:
+	# Evaluate how exposed this piece would be after the move
+	var danger: float = 0.0
+	var enemy_color = GameManager.PieceColor.WHITE if ai_color == GameManager.PieceColor.BLACK else GameManager.PieceColor.BLACK
+	var enemy_pieces = GameManager.get_pieces_of_color(enemy_color)
+
+	for enemy in enemy_pieces:
+		var enemy_moves = GameManager.get_valid_moves(enemy)
+		if target_pos in enemy_moves:
+			# Our piece could be captured
+			danger += _get_piece_value(piece.type) * 2
+
+		# Check if enemy can shoot us
+		var enemy_targets = GameManager.get_enemy_targets(enemy)
+		for target in enemy_targets:
+			if target.board_position == target_pos or (piece.board_position == target_pos):
+				danger += 1.0
+
+	return danger
+
+func _evaluate_lookahead(piece, target_pos: Vector2i) -> float:
+	# Simple one-move lookahead: what's the best move we'd have after this?
+	var original_pos = piece.board_position
+	var captured_piece = GameManager.get_piece_at(target_pos)
+
+	# Simulate the move
+	GameManager.remove_piece_at(original_pos)
+	if captured_piece != null:
+		GameManager.remove_piece_at(target_pos)
+	GameManager.set_piece_at(target_pos, piece)
+	piece.board_position = target_pos
+
+	# Find best response move value
+	var best_future_score: float = 0.0
+	var our_pieces = GameManager.get_pieces_of_color(ai_color)
+	for p in our_pieces:
+		var moves = GameManager.get_valid_moves(p)
+		for move in moves:
+			var future_target = GameManager.get_piece_at(move)
+			if future_target != null and future_target.color != ai_color:
+				best_future_score = maxf(best_future_score, _get_piece_value(future_target.type) * 3)
+			# Check shooting potential
+			var shoot_score = _evaluate_shooting_potential(p, move) * 0.5
+			best_future_score = maxf(best_future_score, shoot_score)
+
+	# Restore original position
+	GameManager.remove_piece_at(target_pos)
+	GameManager.set_piece_at(original_pos, piece)
+	piece.board_position = original_pos
+	if captured_piece != null:
+		GameManager.set_piece_at(target_pos, captured_piece)
+
+	return best_future_score
 
 func _evaluate_shooting_potential(piece, target_pos: Vector2i) -> float:
 	# Temporarily move piece to evaluate shooting

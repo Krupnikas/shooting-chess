@@ -24,8 +24,7 @@ NetworkManager="*res://scripts/autoload/network_manager.gd"
 
 window/size/viewport_width=1080
 window/size/viewport_height=1920
-window/stretch/mode="canvas_items"
-window/stretch/aspect="expand"
+window/stretch/mode="disabled"
 window/handheld/orientation=1
 
 [input]
