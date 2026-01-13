@@ -85,7 +85,9 @@ func _process(delta):
 	if is_targeted:
 		# Check if we've reached (or passed) the target position
 		var dist_to_target = position.distance_to(target_position)
-		if dist_to_target < 20.0:  # Close enough to center
+		# Use velocity-based threshold to prevent overshoot at high speeds
+		var stopping_threshold = maxf(25.0, current_speed * delta * 1.5)
+		if dist_to_target < stopping_threshold:
 			var piece = GameManager.get_piece_at(target_board_pos)
 			if piece != null and piece != source_piece:
 				emit_signal("finished", piece, is_white)
@@ -98,7 +100,9 @@ func _process(delta):
 	# Directional mode: if stopping, check if reached center
 	if stopping_at_cell:
 		var dist_to_center = position.distance_to(stop_cell_center)
-		if dist_to_center < 20.0:
+		# Use velocity-based threshold to prevent overshoot at high speeds
+		var stopping_threshold = maxf(25.0, current_speed * delta * 1.5)
+		if dist_to_center < stopping_threshold:
 			# Check if piece is still valid (could have been freed)
 			if is_instance_valid(stop_piece):
 				emit_signal("finished", stop_piece, is_white)
