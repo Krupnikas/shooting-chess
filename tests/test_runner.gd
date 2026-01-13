@@ -102,11 +102,11 @@ enum PieceColor { WHITE, BLACK }
 const BOARD_SIZE = 8
 const BASE_HP_MAP = {
 	PieceType.PAWN: 1,
-	PieceType.KNIGHT: 3,
-	PieceType.BISHOP: 3,
-	PieceType.ROOK: 4,
-	PieceType.QUEEN: 8,
-	PieceType.KING: 8
+	PieceType.KNIGHT: 2,
+	PieceType.BISHOP: 2,
+	PieceType.ROOK: 2,
+	PieceType.QUEEN: 3,
+	PieceType.KING: 1
 }
 
 func get_base_hp(type: int) -> int:

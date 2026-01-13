@@ -92,8 +92,8 @@ func update_health_bar():
 		return
 
 	var segments = health_bar.get_children()
-	if segments.size() == 0:
-		return
+	if segments.size() != HEALTH_BAR_SEGMENTS:
+		return  # Must have exactly 4 segments
 
 	# Calculate which layer we're on and how many segments are filled
 	var current_hp = max(0, hp)

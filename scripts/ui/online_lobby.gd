@@ -74,12 +74,12 @@ func _ready():
 func _setup_numpad():
 	# Connect all numpad digit buttons (0-9)
 	for i in range(10):
-		var btn = numpad_container.get_node("Num%d" % i)
+		var btn = numpad_container.get_node_or_null("Num%d" % i)
 		if btn:
 			btn.pressed.connect(_on_numpad_digit.bind(str(i)))
 
 	# Connect backspace button
-	var backspace = numpad_container.get_node("Backspace")
+	var backspace = numpad_container.get_node_or_null("Backspace")
 	if backspace:
 		backspace.pressed.connect(_on_numpad_backspace)
 

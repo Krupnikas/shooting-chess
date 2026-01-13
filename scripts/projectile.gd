@@ -99,7 +99,11 @@ func _process(delta):
 	if stopping_at_cell:
 		var dist_to_center = position.distance_to(stop_cell_center)
 		if dist_to_center < 20.0:
-			emit_signal("finished", stop_piece, is_white)
+			# Check if piece is still valid (could have been freed)
+			if is_instance_valid(stop_piece):
+				emit_signal("finished", stop_piece, is_white)
+			else:
+				emit_signal("finished", null, is_white)
 			queue_free()
 			return
 		return
