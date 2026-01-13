@@ -205,21 +205,39 @@ func _evaluate_move(piece, target_pos: Vector2i) -> float:
 
 func _evaluate_danger(piece, target_pos: Vector2i) -> float:
 	# Evaluate how exposed this piece would be after the move
+	# Must simulate the move first to get accurate danger assessment
+	var original_pos = piece.board_position
+	var captured_piece = GameManager.get_piece_at(target_pos)
+
+	# Simulate the move
+	GameManager.remove_piece_at(original_pos)
+	if captured_piece != null:
+		GameManager.remove_piece_at(target_pos)
+	GameManager.set_piece_at(target_pos, piece)
+	piece.board_position = target_pos
+
 	var danger: float = 0.0
 	var enemy_color = GameManager.PieceColor.WHITE if ai_color == GameManager.PieceColor.BLACK else GameManager.PieceColor.BLACK
 	var enemy_pieces = GameManager.get_pieces_of_color(enemy_color)
 
 	for enemy in enemy_pieces:
+		# Check if enemy can capture our piece at its new position
 		var enemy_moves = GameManager.get_valid_moves(enemy)
 		if target_pos in enemy_moves:
-			# Our piece could be captured
 			danger += _get_piece_value(piece.type) * 2
 
-		# Check if enemy can shoot us
+		# Check if enemy can shoot our piece at its new position
 		var enemy_targets = GameManager.get_enemy_targets(enemy)
 		for target in enemy_targets:
-			if target.board_position == target_pos or (piece.board_position == target_pos):
+			if target == piece:
 				danger += 1.0
+
+	# Restore original board state
+	GameManager.remove_piece_at(target_pos)
+	GameManager.set_piece_at(original_pos, piece)
+	piece.board_position = original_pos
+	if captured_piece != null:
+		GameManager.set_piece_at(target_pos, captured_piece)
 
 	return danger
 

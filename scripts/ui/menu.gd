@@ -19,12 +19,6 @@ extends Control
 @onready var ai_difficulty_slider = $ColorPopup/PanelContainer/VBoxContainer/AIDifficultyContainer/AIDifficultySlider
 @onready var ai_difficulty_label = $ColorPopup/PanelContainer/VBoxContainer/AIDifficultyContainer/AIDifficultyLabel
 
-# Reference design size for scaling calculations
-const REFERENCE_WIDTH = 1080.0
-const REFERENCE_HEIGHT = 1920.0
-
-var _current_scale: float = 1.0
-
 func _ready():
 	play_ai_button.pressed.connect(_on_play_ai_pressed)
 	play_local_button.pressed.connect(_on_play_local_pressed)
@@ -52,20 +46,9 @@ func _ready():
 	ai_difficulty_slider.value = AIPlayer.difficulty
 	_update_difficulty_label(AIPlayer.difficulty)
 
-	# Calculate responsive scale for popups
-	_apply_responsive_scaling()
-	get_tree().root.size_changed.connect(_apply_responsive_scaling)
-
-func _apply_responsive_scaling():
-	# Calculate scale based on viewport size vs reference design
-	var viewport_size = get_viewport().get_visible_rect().size
-	var scale_x = viewport_size.x / REFERENCE_WIDTH
-	var scale_y = viewport_size.y / REFERENCE_HEIGHT
-	_current_scale = min(scale_x, scale_y)
-
 func _on_play_ai_pressed():
 	# Show color selection popup
-	_show_scaled_popup(color_popup)
+	_show_centered_popup(color_popup)
 
 func _on_play_white_pressed():
 	color_popup.hide()
@@ -96,32 +79,19 @@ func _on_play_online_pressed():
 	get_tree().change_scene_to_file("res://scenes/ui/online_lobby.tscn")
 
 func _on_rules_pressed():
-	_show_scaled_popup(rules_popup)
+	_show_centered_popup(rules_popup)
 
 func _on_close_rules_pressed():
 	rules_popup.hide()
 
 func _on_settings_pressed():
-	_show_scaled_popup(settings_popup)
+	_show_centered_popup(settings_popup)
 
-func _show_scaled_popup(popup: PopupPanel):
+func _show_centered_popup(popup: PopupPanel):
 	var screen_size = get_viewport().get_visible_rect().size
-
-	# Scale popup for mobile
-	var popup_scale = _current_scale
-	popup.content_scale_factor = popup_scale
-
-	# Calculate scaled size and center
-	var scaled_size = popup.size * popup_scale
-	var pos_x = int((screen_size.x - scaled_size.x) / 2)
-	var pos_y = int((screen_size.y - scaled_size.y) / 2)
-
-	# Ensure popup stays on screen
-	pos_x = max(10, pos_x)
-	pos_y = max(10, pos_y)
-
-	popup.position = Vector2i(pos_x, pos_y)
-	popup.size = Vector2i(scaled_size.x, scaled_size.y)
+	var pos_x = int((screen_size.x - popup.size.x) / 2)
+	var pos_y = int((screen_size.y - popup.size.y) / 2)
+	popup.position = Vector2i(max(10, pos_x), max(10, pos_y))
 	popup.popup()
 
 func _on_exit_pressed():
