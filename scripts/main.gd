@@ -31,8 +31,11 @@ func _setup_board_orientation():
 
 func _create_coordinate_labels():
 	var board_size = GameManager.BOARD_SIZE * GameManager.SQUARE_SIZE
-	var label_offset = 24  # Distance from board edge
-	var font_size = 20
+	var square_size = GameManager.SQUARE_SIZE
+	var label_offset = square_size * 0.15  # Distance from board edge (proportional)
+	var font_size = int(square_size * 0.125)  # Font size proportional to square size
+	var half_char_width = font_size * 0.4  # Approximate half character width
+	var half_char_height = font_size * 0.6  # Approximate half character height
 
 	# File labels (a-h) - bottom of board
 	var files = ["a", "b", "c", "d", "e", "f", "g", "h"]
@@ -46,8 +49,8 @@ func _create_coordinate_labels():
 		label.add_theme_color_override("font_color", Color(0.6, 0.55, 0.45, 1))
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		label.position = Vector2(
-			i * GameManager.SQUARE_SIZE + GameManager.SQUARE_SIZE / 2 - 8,
-			board_size + label_offset - 16
+			i * square_size + square_size / 2 - half_char_width,
+			board_size + label_offset - half_char_height
 		)
 		board_container.add_child(label)
 		file_labels.append(label)
@@ -64,8 +67,8 @@ func _create_coordinate_labels():
 		label.add_theme_color_override("font_color", Color(0.6, 0.55, 0.45, 1))
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		label.position = Vector2(
-			-label_offset - 4,
-			i * GameManager.SQUARE_SIZE + GameManager.SQUARE_SIZE / 2 - 12
+			-label_offset - half_char_width,
+			i * square_size + square_size / 2 - half_char_height
 		)
 		board_container.add_child(label)
 		rank_labels.append(label)
