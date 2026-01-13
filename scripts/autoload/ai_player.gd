@@ -179,17 +179,15 @@ func _evaluate_move(piece, target_pos: Vector2i) -> float:
 			var dev_bonus = 2 + (difficulty * 0.3)  # 2.3 to 5
 			score += dev_bonus
 
-	# At higher difficulties, consider opponent's counter-attacks
-	if difficulty >= 6:
-		var danger_score = _evaluate_danger(piece, target_pos)
-		var danger_weight = (difficulty - 5) * 0.3  # 0.3 at 6, 1.5 at 10
-		score -= danger_score * danger_weight
+	# Consider opponent's counter-attacks (scales with difficulty)
+	var danger_score = _evaluate_danger(piece, target_pos)
+	var danger_weight = difficulty * 0.15  # 0.15 at 1, 1.5 at 10
+	score -= danger_score * danger_weight
 
-	# At highest difficulties, look ahead one move
-	if difficulty >= 8:
-		var lookahead_bonus = _evaluate_lookahead(piece, target_pos)
-		var lookahead_weight = (difficulty - 7) * 0.5  # 0.5 at 8, 1.5 at 10
-		score += lookahead_bonus * lookahead_weight
+	# Look ahead one move (scales with difficulty)
+	var lookahead_bonus = _evaluate_lookahead(piece, target_pos)
+	var lookahead_weight = difficulty * 0.1  # 0.1 at 1, 1.0 at 10
+	score += lookahead_bonus * lookahead_weight
 
 	# Add randomness based on difficulty (lower difficulty = more random)
 	# Scale: difficulty 1 = lots of noise, difficulty 10 = almost none
