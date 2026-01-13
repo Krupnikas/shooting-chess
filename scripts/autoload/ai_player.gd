@@ -180,14 +180,18 @@ func _evaluate_move(piece, target_pos: Vector2i) -> float:
 			score += dev_bonus
 
 	# Consider opponent's counter-attacks (scales with difficulty)
-	var danger_score = _evaluate_danger(piece, target_pos)
-	var danger_weight = difficulty * 0.15  # 0.15 at 1, 1.5 at 10
-	score -= danger_score * danger_weight
+	# Only compute at difficulty 3+ to avoid unnecessary overhead at very easy levels
+	if difficulty >= 3:
+		var danger_score = _evaluate_danger(piece, target_pos)
+		var danger_weight = (difficulty - 2) * 0.19  # 0.19 at 3, 1.52 at 10
+		score -= danger_score * danger_weight
 
 	# Look ahead one move (scales with difficulty)
-	var lookahead_bonus = _evaluate_lookahead(piece, target_pos)
-	var lookahead_weight = difficulty * 0.1  # 0.1 at 1, 1.0 at 10
-	score += lookahead_bonus * lookahead_weight
+	# Only compute at difficulty 5+ to avoid lag at easier levels
+	if difficulty >= 5:
+		var lookahead_bonus = _evaluate_lookahead(piece, target_pos)
+		var lookahead_weight = (difficulty - 4) * 0.17  # 0.17 at 5, 1.02 at 10
+		score += lookahead_bonus * lookahead_weight
 
 	# Add randomness based on difficulty (lower difficulty = more random)
 	# Scale: difficulty 1 = lots of noise, difficulty 10 = almost none
@@ -219,6 +223,10 @@ func _evaluate_danger(piece, target_pos: Vector2i) -> float:
 	var enemy_pieces = GameManager.get_pieces_of_color(enemy_color)
 
 	for enemy in enemy_pieces:
+		# Skip the captured piece (it's no longer on the board)
+		if enemy == captured_piece:
+			continue
+
 		# Check if enemy can capture our piece at its new position
 		var enemy_moves = GameManager.get_valid_moves(enemy)
 		if target_pos in enemy_moves:
@@ -280,6 +288,8 @@ func _evaluate_shooting_potential(piece, target_pos: Vector2i) -> float:
 
 	# Simulate the move
 	GameManager.remove_piece_at(original_pos)
+	if original_board_piece != null:
+		GameManager.remove_piece_at(target_pos)
 	GameManager.set_piece_at(target_pos, piece)
 	piece.board_position = target_pos
 
