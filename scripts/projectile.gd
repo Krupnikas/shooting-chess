@@ -4,7 +4,10 @@ signal finished(hit_piece, is_white: bool)
 
 var sprite: Sprite2D = null
 var direction: Vector2 = Vector2.ZERO
-var speed: float = 600.0
+var base_speed: float = 400.0  # Starting speed
+var current_speed: float = 400.0  # Current speed (increases over time)
+var acceleration: float = 800.0  # Speed increase per second
+var max_speed: float = 1200.0  # Cap to prevent extreme speeds
 var is_white: bool = true  # true = white projectile, false = black projectile
 var board_bounds: Rect2 = Rect2(0, 0, 1280, 1280)  # 8 * 160
 
@@ -33,6 +36,7 @@ func setup_directional(from_pos: Vector2, dir: Vector2, white: bool, bounds: Rec
 	board_bounds = bounds
 	is_targeted = false
 	stopping_at_cell = false
+	current_speed = base_speed
 
 func setup_targeted(from_pos: Vector2, target_pos: Vector2, target_cell: Vector2i, white: bool, bounds: Rect2):
 	position = from_pos
@@ -42,6 +46,7 @@ func setup_targeted(from_pos: Vector2, target_pos: Vector2, target_cell: Vector2
 	is_white = white
 	board_bounds = bounds
 	is_targeted = true
+	current_speed = base_speed
 
 func set_source(piece):
 	source_piece = piece
@@ -62,7 +67,11 @@ func update_color():
 			outline.texture = load("res://assets/pieces/white_circle.png")
 
 func _process(delta):
-	position += direction * speed * delta
+	# Apply acceleration
+	current_speed = minf(current_speed + acceleration * delta, max_speed)
+
+	# Move projectile
+	position += direction * current_speed * delta
 
 	# Check if out of bounds
 	if not board_bounds.has_point(position):
