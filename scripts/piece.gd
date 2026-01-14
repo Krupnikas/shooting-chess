@@ -53,8 +53,8 @@ func _ready():
 	update_display()
 	hp_label.visible = false  # HP numbers are never shown
 
-	# Rotate black pieces 180 degrees in offline mode for 1v1 play
-	if color == GameManager.PieceColor.BLACK and not NetworkManager.is_online_game():
+	# Rotate black pieces 180 degrees in offline 1v1 mode only (not AI or online)
+	if color == GameManager.PieceColor.BLACK and not NetworkManager.is_online_game() and not AIPlayer.is_enabled:
 		sprite.rotation_degrees = 180
 
 func update_display():
