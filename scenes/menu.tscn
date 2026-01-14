@@ -655,43 +655,43 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_close_button")
 text = "Got it!"
 
 [node name="ColorPopup" type="PopupPanel" parent="."]
-size = Vector2i(550, 480)
+size = Vector2i(850, 680)
 
 [node name="PanelContainer" type="PanelContainer" parent="ColorPopup"]
-offset_right = 550.0
-offset_bottom = 480.0
+offset_right = 850.0
+offset_bottom = 680.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_settings_panel")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ColorPopup/PanelContainer"]
 layout_mode = 2
-theme_override_constants/separation = 24
+theme_override_constants/separation = 32
 
 [node name="Title" type="Label" parent="ColorPopup/PanelContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 36
+theme_override_font_sizes/font_size = 56
 text = "Play vs AI"
 horizontal_alignment = 1
 
 [node name="Subtitle" type="Label" parent="ColorPopup/PanelContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.65, 0.55, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 32
 text = "Choose your color (White moves first)"
 horizontal_alignment = 1
 
 [node name="ButtonContainer" type="HBoxContainer" parent="ColorPopup/PanelContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 24
+theme_override_constants/separation = 32
 alignment = 1
 
 [node name="PlayWhiteButton" type="Button" parent="ColorPopup/PanelContainer/VBoxContainer/ButtonContainer"]
-custom_minimum_size = Vector2(180, 80)
+custom_minimum_size = Vector2(280, 120)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 24
-theme_override_constants/icon_max_width = 48
+theme_override_font_sizes/font_size = 36
+theme_override_constants/icon_max_width = 64
 theme_override_styles/normal = SubResource("StyleBoxFlat_popup_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_popup_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_popup_normal")
@@ -699,12 +699,12 @@ icon = ExtResource("9_pawn_white")
 text = "White"
 
 [node name="PlayBlackButton" type="Button" parent="ColorPopup/PanelContainer/VBoxContainer/ButtonContainer"]
-custom_minimum_size = Vector2(180, 80)
+custom_minimum_size = Vector2(280, 120)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 24
-theme_override_constants/icon_max_width = 48
+theme_override_font_sizes/font_size = 36
+theme_override_constants/icon_max_width = 64
 theme_override_styles/normal = SubResource("StyleBoxFlat_popup_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_popup_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_popup_normal")
@@ -713,17 +713,17 @@ text = "Black"
 
 [node name="AIDifficultyContainer" type="VBoxContainer" parent="ColorPopup/PanelContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 16
 
 [node name="AIDifficultyLabel" type="Label" parent="ColorPopup/PanelContainer/VBoxContainer/AIDifficultyContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 36
 text = "AI Difficulty: Medium (5)"
 horizontal_alignment = 1
 
 [node name="AIDifficultySlider" type="HSlider" parent="ColorPopup/PanelContainer/VBoxContainer/AIDifficultyContainer"]
-custom_minimum_size = Vector2(400, 32)
+custom_minimum_size = Vector2(600, 48)
 layout_mode = 2
 size_flags_horizontal = 4
 min_value = 1.0
@@ -740,23 +740,23 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.5, 0.5, 0.45, 1)
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 28
 text = "Easy"
 
 [node name="HardLabel" type="Label" parent="ColorPopup/PanelContainer/VBoxContainer/AIDifficultyContainer/DifficultyHints"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.5, 0.5, 0.45, 1)
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 28
 text = "Hard"
 horizontal_alignment = 2
 
 [node name="CancelButton" type="Button" parent="ColorPopup/PanelContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 48)
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.6, 0.55, 0.5, 1)
 theme_override_colors/font_hover_color = Color(0.75, 0.7, 0.65, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 32
 theme_override_styles/normal = SubResource("StyleBoxFlat_popup_cancel")
 theme_override_styles/hover = SubResource("StyleBoxFlat_popup_cancel_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_popup_cancel")

@@ -198,7 +198,7 @@ theme_override_constants/separation = 8
 [node name="GlobeIcon" type="TextureRect" parent="CenterPanel/VBoxContainer/Header"]
 layout_mode = 2
 size_flags_horizontal = 4
-custom_minimum_size = Vector2(120, 120)
+custom_minimum_size = Vector2(180, 180)
 texture = ExtResource("2_globe")
 expand_mode = 1
 stretch_mode = 5
@@ -206,14 +206,14 @@ stretch_mode = 5
 [node name="Title" type="Label" parent="CenterPanel/VBoxContainer/Header"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 72
+theme_override_font_sizes/font_size = 108
 text = "Play Online"
 horizontal_alignment = 1
 
 [node name="StatusLabel" type="Label" parent="CenterPanel/VBoxContainer/Header"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.6, 0.55, 0.48, 1)
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 39
 text = "Create a room or join with a code"
 horizontal_alignment = 1
 
@@ -224,48 +224,48 @@ layout_mode = 2
 [node name="MainScreen" type="VBoxContainer" parent="CenterPanel/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_constants/separation = 16
+theme_override_constants/separation = 24
 
 [node name="QuickMatchButton" type="Button" parent="CenterPanel/VBoxContainer/MainScreen"]
-custom_minimum_size = Vector2(520, 72)
+custom_minimum_size = Vector2(780, 108)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 42
 theme_override_styles/normal = SubResource("StyleBoxFlat_primary")
 theme_override_styles/hover = SubResource("StyleBoxFlat_primary_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_primary")
 text = "Quick Match"
 
 [node name="CreateRoomButton" type="Button" parent="CenterPanel/VBoxContainer/MainScreen"]
-custom_minimum_size = Vector2(520, 72)
+custom_minimum_size = Vector2(780, 108)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 42
 theme_override_styles/normal = SubResource("StyleBoxFlat_secondary")
 theme_override_styles/hover = SubResource("StyleBoxFlat_secondary_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_secondary")
 text = "Create Private Room"
 
 [node name="JoinRoomButton" type="Button" parent="CenterPanel/VBoxContainer/MainScreen"]
-custom_minimum_size = Vector2(520, 72)
+custom_minimum_size = Vector2(780, 108)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 42
 theme_override_styles/normal = SubResource("StyleBoxFlat_secondary")
 theme_override_styles/hover = SubResource("StyleBoxFlat_secondary_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_secondary")
 text = "Join Room"
 
 [node name="BackToMenuButton" type="Button" parent="CenterPanel/VBoxContainer/MainScreen"]
-custom_minimum_size = Vector2(520, 72)
+custom_minimum_size = Vector2(780, 108)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.78, 0.65, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 28
-theme_override_constants/icon_max_width = 48
+theme_override_font_sizes/font_size = 42
+theme_override_constants/icon_max_width = 72
 theme_override_styles/normal = SubResource("StyleBoxFlat_secondary")
 theme_override_styles/hover = SubResource("StyleBoxFlat_secondary_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_secondary")
@@ -283,42 +283,42 @@ theme_override_constants/separation = 24
 [node name="ColorLabel" type="Label" parent="CenterPanel/VBoxContainer/ColorScreen"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.6, 0.55, 0.48, 1)
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 39
 text = "Choose Your Color"
 horizontal_alignment = 1
 
 [node name="PlayWhiteButton" type="Button" parent="CenterPanel/VBoxContainer/ColorScreen"]
-custom_minimum_size = Vector2(520, 72)
+custom_minimum_size = Vector2(780, 108)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 42
 theme_override_styles/normal = SubResource("StyleBoxFlat_primary")
 theme_override_styles/hover = SubResource("StyleBoxFlat_primary_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_primary")
 text = "Play as White"
 
 [node name="PlayBlackButton" type="Button" parent="CenterPanel/VBoxContainer/ColorScreen"]
-custom_minimum_size = Vector2(520, 72)
+custom_minimum_size = Vector2(780, 108)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 42
 theme_override_styles/normal = SubResource("StyleBoxFlat_secondary")
 theme_override_styles/hover = SubResource("StyleBoxFlat_secondary_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_secondary")
 text = "Play as Black"
 
 [node name="ColorBackButton" type="Button" parent="CenterPanel/VBoxContainer/ColorScreen"]
-custom_minimum_size = Vector2(520, 72)
+custom_minimum_size = Vector2(780, 108)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.85, 0.78, 0.65, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 28
-theme_override_constants/icon_max_width = 48
+theme_override_font_sizes/font_size = 42
+theme_override_constants/icon_max_width = 72
 theme_override_styles/normal = SubResource("StyleBoxFlat_secondary")
 theme_override_styles/hover = SubResource("StyleBoxFlat_secondary_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_secondary")
@@ -340,37 +340,37 @@ theme_override_constants/separation = 16
 [node name="CodeLabel" type="Label" parent="CenterPanel/VBoxContainer/CreateScreen/RoomCodeContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.6, 0.55, 0.48, 1)
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 39
 text = "Your Room Code"
 horizontal_alignment = 1
 
 [node name="RoomCodeLabel" type="Label" parent="CenterPanel/VBoxContainer/CreateScreen/RoomCodeContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.95, 0.7, 1)
-theme_override_font_sizes/font_size = 96
+theme_override_font_sizes/font_size = 120
 text = "----"
 horizontal_alignment = 1
 
 [node name="CopyButton" type="Button" parent="CenterPanel/VBoxContainer/CreateScreen"]
-custom_minimum_size = Vector2(520, 72)
+custom_minimum_size = Vector2(780, 108)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 42
 theme_override_styles/normal = SubResource("StyleBoxFlat_primary")
 theme_override_styles/hover = SubResource("StyleBoxFlat_primary_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_primary")
 text = "Copy Code"
 
 [node name="CreateBackButton" type="Button" parent="CenterPanel/VBoxContainer/CreateScreen"]
-custom_minimum_size = Vector2(520, 72)
+custom_minimum_size = Vector2(780, 108)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.85, 0.78, 0.65, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 28
-theme_override_constants/icon_max_width = 48
+theme_override_font_sizes/font_size = 42
+theme_override_constants/icon_max_width = 72
 theme_override_styles/normal = SubResource("StyleBoxFlat_secondary")
 theme_override_styles/hover = SubResource("StyleBoxFlat_secondary_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_secondary")
@@ -388,17 +388,17 @@ theme_override_constants/separation = 24
 [node name="JoinLabel" type="Label" parent="CenterPanel/VBoxContainer/JoinScreen"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.6, 0.55, 0.48, 1)
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 39
 text = "Enter Room Code"
 horizontal_alignment = 1
 
 [node name="RoomCodeInput" type="LineEdit" parent="CenterPanel/VBoxContainer/JoinScreen"]
-custom_minimum_size = Vector2(320, 80)
+custom_minimum_size = Vector2(400, 100)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(1, 0.95, 0.7, 1)
 theme_override_colors/caret_color = Color(1, 0.95, 0.7, 1)
-theme_override_font_sizes/font_size = 48
+theme_override_font_sizes/font_size = 64
 theme_override_styles/normal = SubResource("StyleBoxFlat_input")
 placeholder_text = "0000"
 alignment = 1
@@ -413,128 +413,128 @@ theme_override_constants/v_separation = 12
 columns = 3
 
 [node name="Num1" type="Button" parent="CenterPanel/VBoxContainer/JoinScreen/NumpadContainer"]
-custom_minimum_size = Vector2(100, 72)
+custom_minimum_size = Vector2(140, 96)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 42
 theme_override_styles/normal = SubResource("StyleBoxFlat_numpad")
 theme_override_styles/hover = SubResource("StyleBoxFlat_numpad_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_numpad")
 text = "1"
 
 [node name="Num2" type="Button" parent="CenterPanel/VBoxContainer/JoinScreen/NumpadContainer"]
-custom_minimum_size = Vector2(100, 72)
+custom_minimum_size = Vector2(140, 96)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 42
 theme_override_styles/normal = SubResource("StyleBoxFlat_numpad")
 theme_override_styles/hover = SubResource("StyleBoxFlat_numpad_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_numpad")
 text = "2"
 
 [node name="Num3" type="Button" parent="CenterPanel/VBoxContainer/JoinScreen/NumpadContainer"]
-custom_minimum_size = Vector2(100, 72)
+custom_minimum_size = Vector2(140, 96)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 42
 theme_override_styles/normal = SubResource("StyleBoxFlat_numpad")
 theme_override_styles/hover = SubResource("StyleBoxFlat_numpad_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_numpad")
 text = "3"
 
 [node name="Num4" type="Button" parent="CenterPanel/VBoxContainer/JoinScreen/NumpadContainer"]
-custom_minimum_size = Vector2(100, 72)
+custom_minimum_size = Vector2(140, 96)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 42
 theme_override_styles/normal = SubResource("StyleBoxFlat_numpad")
 theme_override_styles/hover = SubResource("StyleBoxFlat_numpad_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_numpad")
 text = "4"
 
 [node name="Num5" type="Button" parent="CenterPanel/VBoxContainer/JoinScreen/NumpadContainer"]
-custom_minimum_size = Vector2(100, 72)
+custom_minimum_size = Vector2(140, 96)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 42
 theme_override_styles/normal = SubResource("StyleBoxFlat_numpad")
 theme_override_styles/hover = SubResource("StyleBoxFlat_numpad_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_numpad")
 text = "5"
 
 [node name="Num6" type="Button" parent="CenterPanel/VBoxContainer/JoinScreen/NumpadContainer"]
-custom_minimum_size = Vector2(100, 72)
+custom_minimum_size = Vector2(140, 96)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 42
 theme_override_styles/normal = SubResource("StyleBoxFlat_numpad")
 theme_override_styles/hover = SubResource("StyleBoxFlat_numpad_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_numpad")
 text = "6"
 
 [node name="Num7" type="Button" parent="CenterPanel/VBoxContainer/JoinScreen/NumpadContainer"]
-custom_minimum_size = Vector2(100, 72)
+custom_minimum_size = Vector2(140, 96)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 42
 theme_override_styles/normal = SubResource("StyleBoxFlat_numpad")
 theme_override_styles/hover = SubResource("StyleBoxFlat_numpad_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_numpad")
 text = "7"
 
 [node name="Num8" type="Button" parent="CenterPanel/VBoxContainer/JoinScreen/NumpadContainer"]
-custom_minimum_size = Vector2(100, 72)
+custom_minimum_size = Vector2(140, 96)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 42
 theme_override_styles/normal = SubResource("StyleBoxFlat_numpad")
 theme_override_styles/hover = SubResource("StyleBoxFlat_numpad_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_numpad")
 text = "8"
 
 [node name="Num9" type="Button" parent="CenterPanel/VBoxContainer/JoinScreen/NumpadContainer"]
-custom_minimum_size = Vector2(100, 72)
+custom_minimum_size = Vector2(140, 96)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 42
 theme_override_styles/normal = SubResource("StyleBoxFlat_numpad")
 theme_override_styles/hover = SubResource("StyleBoxFlat_numpad_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_numpad")
 text = "9"
 
 [node name="Backspace" type="Button" parent="CenterPanel/VBoxContainer/JoinScreen/NumpadContainer"]
-custom_minimum_size = Vector2(100, 72)
+custom_minimum_size = Vector2(140, 96)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 42
 theme_override_styles/normal = SubResource("StyleBoxFlat_numpad")
 theme_override_styles/hover = SubResource("StyleBoxFlat_numpad_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_numpad")
 text = "<"
 
 [node name="Num0" type="Button" parent="CenterPanel/VBoxContainer/JoinScreen/NumpadContainer"]
-custom_minimum_size = Vector2(100, 72)
+custom_minimum_size = Vector2(140, 96)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 42
 theme_override_styles/normal = SubResource("StyleBoxFlat_numpad")
 theme_override_styles/hover = SubResource("StyleBoxFlat_numpad_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_numpad")
 text = "0"
 
 [node name="JoinSubmitButton" type="Button" parent="CenterPanel/VBoxContainer/JoinScreen/NumpadContainer"]
-custom_minimum_size = Vector2(100, 72)
+custom_minimum_size = Vector2(140, 96)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
@@ -546,13 +546,13 @@ disabled = true
 text = "Go"
 
 [node name="JoinBackButton" type="Button" parent="CenterPanel/VBoxContainer/JoinScreen"]
-custom_minimum_size = Vector2(520, 72)
+custom_minimum_size = Vector2(780, 108)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.85, 0.78, 0.65, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 28
-theme_override_constants/icon_max_width = 48
+theme_override_font_sizes/font_size = 42
+theme_override_constants/icon_max_width = 72
 theme_override_styles/normal = SubResource("StyleBoxFlat_secondary")
 theme_override_styles/hover = SubResource("StyleBoxFlat_secondary_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_secondary")
@@ -565,12 +565,12 @@ expand_icon = true
 visible = false
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_constants/separation = 32
+theme_override_constants/separation = 48
 
 [node name="MatchmakingLabel" type="Label" parent="CenterPanel/VBoxContainer/MatchmakingScreen"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.6, 0.55, 0.48, 1)
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 48
 text = "Finding Opponent"
 horizontal_alignment = 1
 
@@ -579,34 +579,34 @@ layout_mode = 2
 
 [node name="Loader" type="HBoxContainer" parent="CenterPanel/VBoxContainer/MatchmakingScreen/LoaderContainer"]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 24
 
 [node name="Dot1" type="Label" parent="CenterPanel/VBoxContainer/MatchmakingScreen/LoaderContainer/Loader"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.95, 0.7, 1)
-theme_override_font_sizes/font_size = 48
+theme_override_font_sizes/font_size = 72
 text = "."
 
 [node name="Dot2" type="Label" parent="CenterPanel/VBoxContainer/MatchmakingScreen/LoaderContainer/Loader"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.95, 0.7, 1)
-theme_override_font_sizes/font_size = 48
+theme_override_font_sizes/font_size = 72
 text = "."
 
 [node name="Dot3" type="Label" parent="CenterPanel/VBoxContainer/MatchmakingScreen/LoaderContainer/Loader"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.95, 0.7, 1)
-theme_override_font_sizes/font_size = 48
+theme_override_font_sizes/font_size = 72
 text = "."
 
 [node name="MatchmakingBackButton" type="Button" parent="CenterPanel/VBoxContainer/MatchmakingScreen"]
-custom_minimum_size = Vector2(520, 72)
+custom_minimum_size = Vector2(780, 108)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.85, 0.78, 0.65, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 28
-theme_override_constants/icon_max_width = 48
+theme_override_font_sizes/font_size = 42
+theme_override_constants/icon_max_width = 72
 theme_override_styles/normal = SubResource("StyleBoxFlat_secondary")
 theme_override_styles/hover = SubResource("StyleBoxFlat_secondary_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_secondary")
