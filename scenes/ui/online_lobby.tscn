@@ -226,7 +226,7 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 16
 
-[node name="CreateRoomButton" type="Button" parent="CenterPanel/VBoxContainer/MainScreen"]
+[node name="QuickMatchButton" type="Button" parent="CenterPanel/VBoxContainer/MainScreen"]
 custom_minimum_size = Vector2(520, 72)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
@@ -235,7 +235,18 @@ theme_override_font_sizes/font_size = 28
 theme_override_styles/normal = SubResource("StyleBoxFlat_primary")
 theme_override_styles/hover = SubResource("StyleBoxFlat_primary_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_primary")
-text = "Create Room"
+text = "Quick Match"
+
+[node name="CreateRoomButton" type="Button" parent="CenterPanel/VBoxContainer/MainScreen"]
+custom_minimum_size = Vector2(520, 72)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
+theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_secondary")
+theme_override_styles/hover = SubResource("StyleBoxFlat_secondary_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_secondary")
+text = "Create Private Room"
 
 [node name="JoinRoomButton" type="Button" parent="CenterPanel/VBoxContainer/MainScreen"]
 custom_minimum_size = Vector2(520, 72)
@@ -547,5 +558,59 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_secondary_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_secondary")
 icon = ExtResource("3_back")
 text = "Back"
+alignment = 0
+expand_icon = true
+
+[node name="MatchmakingScreen" type="VBoxContainer" parent="CenterPanel/VBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 32
+
+[node name="MatchmakingLabel" type="Label" parent="CenterPanel/VBoxContainer/MatchmakingScreen"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.55, 0.48, 1)
+theme_override_font_sizes/font_size = 26
+text = "Finding Opponent"
+horizontal_alignment = 1
+
+[node name="LoaderContainer" type="CenterContainer" parent="CenterPanel/VBoxContainer/MatchmakingScreen"]
+layout_mode = 2
+
+[node name="Loader" type="HBoxContainer" parent="CenterPanel/VBoxContainer/MatchmakingScreen/LoaderContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Dot1" type="Label" parent="CenterPanel/VBoxContainer/MatchmakingScreen/LoaderContainer/Loader"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.95, 0.7, 1)
+theme_override_font_sizes/font_size = 48
+text = "."
+
+[node name="Dot2" type="Label" parent="CenterPanel/VBoxContainer/MatchmakingScreen/LoaderContainer/Loader"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.95, 0.7, 1)
+theme_override_font_sizes/font_size = 48
+text = "."
+
+[node name="Dot3" type="Label" parent="CenterPanel/VBoxContainer/MatchmakingScreen/LoaderContainer/Loader"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.95, 0.7, 1)
+theme_override_font_sizes/font_size = 48
+text = "."
+
+[node name="MatchmakingBackButton" type="Button" parent="CenterPanel/VBoxContainer/MatchmakingScreen"]
+custom_minimum_size = Vector2(520, 72)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.85, 0.78, 0.65, 1)
+theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
+theme_override_font_sizes/font_size = 28
+theme_override_constants/icon_max_width = 48
+theme_override_styles/normal = SubResource("StyleBoxFlat_secondary")
+theme_override_styles/hover = SubResource("StyleBoxFlat_secondary_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_secondary")
+icon = ExtResource("3_back")
+text = "Cancel"
 alignment = 0
 expand_icon = true

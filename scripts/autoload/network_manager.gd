@@ -9,6 +9,8 @@ signal room_error(message: String)
 signal peer_connected()
 signal peer_disconnected()
 signal move_received(from_pos: Vector2i, to_pos: Vector2i)
+signal matchmaking_started()
+signal matchmaking_found()
 
 # Firebase configuration
 const FIREBASE_PROJECT_ID = "shooting-chess"
@@ -35,9 +37,12 @@ var _http_create: HTTPRequest = null
 var _http_join: HTTPRequest = null
 var _http_poll: HTTPRequest = null
 var _http_send: HTTPRequest = null
+var _http_matchmaking: HTTPRequest = null
 var _force_rejoin: bool = false
 var _poll_failure_count: int = 0
 var _last_opponent_activity: float = 0.0
+var _is_matchmaking: bool = false
+var _matchmaking_room_code: String = ""
 
 func _ready():
 	_poll_timer = Timer.new()
@@ -303,6 +308,17 @@ func _on_poll_completed(result: int, response_code: int, headers: PackedStringAr
 			print("[Network] Guest connected!")
 			connection_state = ConnectionState.CONNECTED
 			_last_opponent_activity = Time.get_unix_time_from_system()
+
+			# Remove from matchmaking queue if we were matchmaking
+			if _is_matchmaking and _matchmaking_room_code != "":
+				var mm_url = "%s/matchmaking/%s.json" % [FIREBASE_DATABASE_URL, _matchmaking_room_code]
+				var mm_http = HTTPRequest.new()
+				add_child(mm_http)
+				mm_http.request_completed.connect(func(_r, _c, _h, _b): mm_http.queue_free())
+				mm_http.request(mm_url, [], HTTPClient.METHOD_DELETE)
+				_is_matchmaking = false
+				_matchmaking_room_code = ""
+
 			emit_signal("peer_connected")
 
 	# Check for new moves (Firebase stores as dict with auto-generated keys)
@@ -386,6 +402,17 @@ func leave_room() -> void:
 	if _http_poll != null:
 		_http_poll.queue_free()
 		_http_poll = null
+	if _http_matchmaking != null:
+		_http_matchmaking.queue_free()
+		_http_matchmaking = null
+
+	# Remove from matchmaking queue if we were waiting
+	if _is_matchmaking and _matchmaking_room_code != "":
+		var mm_url = "%s/matchmaking/%s.json" % [FIREBASE_DATABASE_URL, _matchmaking_room_code]
+		var mm_http = HTTPRequest.new()
+		add_child(mm_http)
+		mm_http.request_completed.connect(func(_r, _c, _h, _b): mm_http.queue_free())
+		mm_http.request(mm_url, [], HTTPClient.METHOD_DELETE)
 
 	# Delete room if host
 	if is_host and current_room_code != "":
@@ -401,6 +428,8 @@ func leave_room() -> void:
 	_processed_move_keys = []
 	_poll_failure_count = 0
 	_last_opponent_activity = 0.0
+	_is_matchmaking = false
+	_matchmaking_room_code = ""
 
 func _generate_room_code() -> String:
 	var code = ""
@@ -413,3 +442,183 @@ func is_online_game() -> bool:
 
 func get_local_color() -> GameManager.PieceColor:
 	return local_player_color
+
+# ============ MATCHMAKING ============
+
+func start_matchmaking() -> void:
+	"""Start looking for an opponent via matchmaking queue"""
+	if connection_state != ConnectionState.DISCONNECTED:
+		emit_signal("room_error", "Already in a room")
+		return
+
+	connection_state = ConnectionState.CONNECTING
+	_is_matchmaking = true
+	emit_signal("matchmaking_started")
+
+	# Check if there's anyone waiting in the matchmaking queue
+	var url = "%s/matchmaking.json" % FIREBASE_DATABASE_URL
+
+	_http_matchmaking = HTTPRequest.new()
+	_http_matchmaking.timeout = HTTP_TIMEOUT
+	add_child(_http_matchmaking)
+	_http_matchmaking.request_completed.connect(_on_matchmaking_check_completed)
+	_http_matchmaking.request(url, [], HTTPClient.METHOD_GET)
+
+func _on_matchmaking_check_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
+	if _http_matchmaking != null:
+		_http_matchmaking.queue_free()
+		_http_matchmaking = null
+
+	if result == HTTPRequest.RESULT_TIMEOUT:
+		emit_signal("room_error", "Connection timed out")
+		connection_state = ConnectionState.DISCONNECTED
+		_is_matchmaking = false
+		return
+
+	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
+		emit_signal("room_error", "Network error")
+		connection_state = ConnectionState.DISCONNECTED
+		_is_matchmaking = false
+		return
+
+	var json = JSON.parse_string(body.get_string_from_utf8())
+
+	# Check if there's a waiting player
+	if json != null and json is Dictionary and json.size() > 0:
+		# Get the first waiting player
+		var waiting_key = json.keys()[0]
+		var waiting_data = json[waiting_key]
+
+		if waiting_data is Dictionary and waiting_data.has("room_code"):
+			var room_code = waiting_data["room_code"]
+			print("[Network] Found waiting player with room: ", room_code)
+
+			# Remove them from queue first, then join their room
+			_remove_from_matchmaking_queue(waiting_key, room_code)
+			return
+
+	# No one waiting - create room and add ourselves to queue
+	print("[Network] No one waiting, creating room for matchmaking")
+	_create_matchmaking_room()
+
+func _remove_from_matchmaking_queue(key: String, room_code: String) -> void:
+	"""Remove a player from matchmaking queue and join their room"""
+	var url = "%s/matchmaking/%s.json" % [FIREBASE_DATABASE_URL, key]
+
+	var http = HTTPRequest.new()
+	http.timeout = HTTP_TIMEOUT
+	add_child(http)
+	http.request_completed.connect(_on_matchmaking_remove_completed.bind(http, room_code))
+	http.request(url, [], HTTPClient.METHOD_DELETE)
+
+func _on_matchmaking_remove_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray, http: HTTPRequest, room_code: String) -> void:
+	http.queue_free()
+
+	# Even if delete failed (race condition), try to join the room
+	# Reset state so join_room works
+	connection_state = ConnectionState.DISCONNECTED
+	_is_matchmaking = false
+
+	print("[Network] Joining matchmaking room: ", room_code)
+	emit_signal("matchmaking_found")
+	join_room(room_code)
+
+func _create_matchmaking_room() -> void:
+	"""Create a room and add ourselves to matchmaking queue"""
+	# Randomly assign color for matchmaking (host is white)
+	is_host = true
+	local_player_color = GameManager.PieceColor.WHITE
+	current_room_code = _generate_room_code()
+	_matchmaking_room_code = current_room_code
+	_processed_move_keys = []
+
+	# Create room in Firebase
+	var room_data = {
+		"host_joined": true,
+		"guest_joined": false,
+		"host_color": "white",
+		"created_at": Time.get_unix_time_from_system(),
+		"moves": [],
+		"current_turn": 0
+	}
+
+	var url = "%s/rooms/%s.json" % [FIREBASE_DATABASE_URL, current_room_code]
+	var json = JSON.stringify(room_data)
+	var headers = ["Content-Type: application/json"]
+
+	_http_create = HTTPRequest.new()
+	_http_create.timeout = HTTP_TIMEOUT
+	add_child(_http_create)
+	_http_create.request_completed.connect(_on_matchmaking_room_created)
+	_http_create.request(url, headers, HTTPClient.METHOD_PUT, json)
+
+func _on_matchmaking_room_created(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
+	if _http_create != null:
+		_http_create.queue_free()
+		_http_create = null
+
+	if result == HTTPRequest.RESULT_TIMEOUT:
+		emit_signal("room_error", "Connection timed out")
+		connection_state = ConnectionState.DISCONNECTED
+		_is_matchmaking = false
+		return
+
+	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
+		emit_signal("room_error", "Failed to create room")
+		connection_state = ConnectionState.DISCONNECTED
+		_is_matchmaking = false
+		return
+
+	print("[Network] Matchmaking room created: ", current_room_code)
+
+	# Add ourselves to matchmaking queue
+	var matchmaking_data = {
+		"room_code": current_room_code,
+		"created_at": Time.get_unix_time_from_system()
+	}
+
+	var url = "%s/matchmaking.json" % FIREBASE_DATABASE_URL
+	var json = JSON.stringify(matchmaking_data)
+	var http_headers = ["Content-Type: application/json"]
+
+	var http = HTTPRequest.new()
+	http.timeout = HTTP_TIMEOUT
+	add_child(http)
+	http.request_completed.connect(_on_added_to_matchmaking_queue.bind(http))
+	http.request(url, http_headers, HTTPClient.METHOD_POST, json)
+
+func _on_added_to_matchmaking_queue(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray, http: HTTPRequest) -> void:
+	http.queue_free()
+
+	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
+		emit_signal("room_error", "Failed to join matchmaking queue")
+		# Clean up the room we created
+		leave_room()
+		_is_matchmaking = false
+		return
+
+	# Parse the response to get our matchmaking key
+	var json = JSON.parse_string(body.get_string_from_utf8())
+	if json != null and json is Dictionary and json.has("name"):
+		_matchmaking_room_code = json["name"]  # Store the Firebase key for later removal
+
+	print("[Network] Added to matchmaking queue, waiting for opponent...")
+	connection_state = ConnectionState.WAITING_FOR_PEER
+	emit_signal("room_created", current_room_code)
+
+	# Start polling for guest to join
+	_poll_timer.start()
+
+func cancel_matchmaking() -> void:
+	"""Cancel matchmaking and clean up"""
+	if _is_matchmaking and _matchmaking_room_code != "":
+		# Remove from matchmaking queue
+		var url = "%s/matchmaking/%s.json" % [FIREBASE_DATABASE_URL, _matchmaking_room_code]
+		var http = HTTPRequest.new()
+		add_child(http)
+		http.request_completed.connect(func(_r, _c, _h, _b): http.queue_free())
+		http.request(url, [], HTTPClient.METHOD_DELETE)
+
+	_is_matchmaking = false
+	_matchmaking_room_code = ""
+	leave_room()
