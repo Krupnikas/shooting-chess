@@ -55,6 +55,10 @@ func _ready():
 	GameManager.hp_display_toggled.connect(_on_hp_display_toggled)
 	hp_label.visible = GameManager.show_hp_numbers
 
+	# Rotate black pieces 180 degrees in offline mode for 1v1 play
+	if color == GameManager.PieceColor.BLACK and not NetworkManager.is_online_game():
+		sprite.rotation_degrees = 180
+
 func _on_hp_display_toggled(show: bool):
 	hp_label.visible = show
 
