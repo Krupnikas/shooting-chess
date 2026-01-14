@@ -51,16 +51,11 @@ func _ready():
 	hp = base_hp
 	create_health_bar_segments()
 	update_display()
-	# Connect to HP display toggle signal
-	GameManager.hp_display_toggled.connect(_on_hp_display_toggled)
-	hp_label.visible = GameManager.show_hp_numbers
+	hp_label.visible = false  # HP numbers are never shown
 
 	# Rotate black pieces 180 degrees in offline mode for 1v1 play
 	if color == GameManager.PieceColor.BLACK and not NetworkManager.is_online_game():
 		sprite.rotation_degrees = 180
-
-func _on_hp_display_toggled(show: bool):
-	hp_label.visible = show
 
 func update_display():
 	# Load the appropriate texture for this piece

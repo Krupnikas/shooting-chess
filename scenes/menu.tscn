@@ -442,13 +442,6 @@ text = "Exit"
 expand_icon = true
 alignment = 0
 
-[node name="Footer" type="Label" parent="CenterPanel/VBoxContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.4, 0.38, 0.35, 1)
-theme_override_font_sizes/font_size = 27
-text = "Press H in-game to toggle HP numbers"
-horizontal_alignment = 1
-
 [node name="SettingsPopup" type="PopupPanel" parent="."]
 size = Vector2i(550, 350)
 theme_override_styles/panel = SubResource("StyleBoxEmpty_panel")
@@ -483,18 +476,6 @@ text = "Settings"
 [node name="Separator" type="HSeparator" parent="SettingsPopup/PanelContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxEmpty_panel")
-
-[node name="OptionsContainer" type="VBoxContainer" parent="SettingsPopup/PanelContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 24
-
-[node name="HPToggle" type="CheckBox" parent="SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_font_sizes/font_size = 28
-button_pressed = false
-text = "Show HP Numbers"
 
 [node name="CloseButton" type="Button" parent="SettingsPopup/PanelContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 64)

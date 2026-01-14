@@ -10,7 +10,6 @@ extends Control
 @onready var settings_popup = $SettingsPopup
 @onready var rules_popup = $RulesPopup
 @onready var color_popup = $ColorPopup
-@onready var hp_toggle = $SettingsPopup/PanelContainer/VBoxContainer/OptionsContainer/HPToggle
 @onready var close_button = $SettingsPopup/PanelContainer/VBoxContainer/CloseButton
 @onready var rules_close_button = $RulesPopup/PanelContainer/VBoxContainer/RulesCloseButton
 @onready var play_white_button = $ColorPopup/PanelContainer/VBoxContainer/ButtonContainer/PlayWhiteButton
@@ -28,7 +27,6 @@ func _ready():
 	exit_button.pressed.connect(_on_exit_pressed)
 	close_button.pressed.connect(_on_close_settings_pressed)
 	rules_close_button.pressed.connect(_on_close_rules_pressed)
-	hp_toggle.toggled.connect(_on_hp_toggle_changed)
 	ai_difficulty_slider.value_changed.connect(_on_difficulty_changed)
 
 	# Color selection buttons
@@ -38,9 +36,6 @@ func _ready():
 
 	# Enable online button
 	play_online_button.disabled = false
-
-	# Sync HP toggle with current state
-	hp_toggle.button_pressed = GameManager.show_hp_numbers
 
 	# Sync AI difficulty slider
 	ai_difficulty_slider.value = AIPlayer.difficulty
@@ -99,10 +94,6 @@ func _on_exit_pressed():
 
 func _on_close_settings_pressed():
 	settings_popup.hide()
-
-func _on_hp_toggle_changed(pressed: bool):
-	GameManager.show_hp_numbers = pressed
-	GameManager.emit_signal("hp_display_toggled", pressed)
 
 func _on_difficulty_changed(value: float):
 	var level = int(value)
