@@ -451,6 +451,7 @@ horizontal_alignment = 1
 
 [node name="SettingsPopup" type="PopupPanel" parent="."]
 size = Vector2i(550, 350)
+theme_override_styles/panel = SubResource("StyleBoxEmpty_panel")
 
 [node name="PanelContainer" type="PanelContainer" parent="SettingsPopup"]
 offset_right = 550.0
@@ -508,6 +509,7 @@ text = "OK"
 
 [node name="RulesPopup" type="PopupPanel" parent="."]
 size = Vector2i(750, 680)
+theme_override_styles/panel = SubResource("StyleBoxEmpty_panel")
 
 [node name="PanelContainer" type="PanelContainer" parent="RulesPopup"]
 offset_right = 750.0
@@ -592,6 +594,7 @@ text = "Got it!"
 
 [node name="ColorPopup" type="PopupPanel" parent="."]
 size = Vector2i(850, 680)
+theme_override_styles/panel = SubResource("StyleBoxEmpty_panel")
 
 [node name="PanelContainer" type="PanelContainer" parent="ColorPopup"]
 offset_right = 850.0
