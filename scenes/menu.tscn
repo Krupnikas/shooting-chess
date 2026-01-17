@@ -410,22 +410,6 @@ text = "Game Rules"
 alignment = 0
 expand_icon = true
 
-[node name="SettingsButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
-custom_minimum_size = Vector2(780, 108)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.85, 0.78, 0.65, 1)
-theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 42
-theme_override_constants/icon_max_width = 72
-theme_override_constants/h_separation = 24
-theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_normal")
-icon = ExtResource("6_gear")
-text = "Settings"
-alignment = 0
-expand_icon = true
-
 [node name="ExitButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(780, 108)
 layout_mode = 2
@@ -441,52 +425,6 @@ icon = ExtResource("7_exit")
 text = "Exit"
 expand_icon = true
 alignment = 0
-
-[node name="SettingsPopup" type="PopupPanel" parent="."]
-size = Vector2i(550, 350)
-theme_override_styles/panel = SubResource("StyleBoxEmpty_panel")
-
-[node name="PanelContainer" type="PanelContainer" parent="SettingsPopup"]
-offset_right = 550.0
-offset_bottom = 350.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_settings_panel")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="SettingsPopup/PanelContainer"]
-layout_mode = 2
-theme_override_constants/separation = 24
-
-[node name="Header" type="HBoxContainer" parent="SettingsPopup/PanelContainer/VBoxContainer"]
-layout_mode = 2
-theme_override_constants/separation = 16
-
-[node name="SettingsIcon" type="TextureRect" parent="SettingsPopup/PanelContainer/VBoxContainer/Header"]
-custom_minimum_size = Vector2(56, 56)
-layout_mode = 2
-texture = ExtResource("6_gear")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="SettingsTitle" type="Label" parent="SettingsPopup/PanelContainer/VBoxContainer/Header"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 48
-text = "Settings"
-
-[node name="Separator" type="HSeparator" parent="SettingsPopup/PanelContainer/VBoxContainer"]
-layout_mode = 2
-theme_override_styles/separator = SubResource("StyleBoxEmpty_panel")
-
-[node name="CloseButton" type="Button" parent="SettingsPopup/PanelContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 64)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 28
-theme_override_styles/normal = SubResource("StyleBoxFlat_close_button")
-theme_override_styles/hover = SubResource("StyleBoxFlat_close_button_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_close_button")
-text = "OK"
 
 [node name="RulesPopup" type="PopupPanel" parent="."]
 size = Vector2i(750, 680)

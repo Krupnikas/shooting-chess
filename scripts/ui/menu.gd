@@ -5,12 +5,9 @@ extends Control
 @onready var play_local_button = $CenterPanel/VBoxContainer/ButtonContainer/PlayLocalButton
 @onready var play_online_button = $CenterPanel/VBoxContainer/ButtonContainer/PlayOnlineButton
 @onready var rules_button = $CenterPanel/VBoxContainer/ButtonContainer/RulesButton
-@onready var settings_button = $CenterPanel/VBoxContainer/ButtonContainer/SettingsButton
 @onready var exit_button = $CenterPanel/VBoxContainer/ButtonContainer/ExitButton
-@onready var settings_popup = $SettingsPopup
 @onready var rules_popup = $RulesPopup
 @onready var color_popup = $ColorPopup
-@onready var close_button = $SettingsPopup/PanelContainer/VBoxContainer/CloseButton
 @onready var rules_close_button = $RulesPopup/PanelContainer/VBoxContainer/RulesCloseButton
 @onready var play_white_button = $ColorPopup/PanelContainer/VBoxContainer/ButtonContainer/PlayWhiteButton
 @onready var play_black_button = $ColorPopup/PanelContainer/VBoxContainer/ButtonContainer/PlayBlackButton
@@ -23,9 +20,7 @@ func _ready():
 	play_local_button.pressed.connect(_on_play_local_pressed)
 	play_online_button.pressed.connect(_on_play_online_pressed)
 	rules_button.pressed.connect(_on_rules_pressed)
-	settings_button.pressed.connect(_on_settings_pressed)
 	exit_button.pressed.connect(_on_exit_pressed)
-	close_button.pressed.connect(_on_close_settings_pressed)
 	rules_close_button.pressed.connect(_on_close_rules_pressed)
 	ai_difficulty_slider.value_changed.connect(_on_difficulty_changed)
 
@@ -79,9 +74,6 @@ func _on_rules_pressed():
 func _on_close_rules_pressed():
 	rules_popup.hide()
 
-func _on_settings_pressed():
-	_show_centered_popup(settings_popup)
-
 func _show_centered_popup(popup: PopupPanel):
 	var screen_size = get_viewport().get_visible_rect().size
 	var pos_x = int((screen_size.x - popup.size.x) / 2)
@@ -91,9 +83,6 @@ func _show_centered_popup(popup: PopupPanel):
 
 func _on_exit_pressed():
 	get_tree().quit()
-
-func _on_close_settings_pressed():
-	settings_popup.hide()
 
 func _on_difficulty_changed(value: float):
 	var level = int(value)
