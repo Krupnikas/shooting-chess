@@ -7,6 +7,11 @@ var board_position: Vector2i = Vector2i.ZERO
 var hp: int = 1
 var base_hp: int = 1
 var blink_tween: Tween = null
+var move_tween: Tween = null
+
+signal move_completed
+
+const MOVE_DURATION = 0.2  # Duration of move animation in seconds
 
 @onready var sprite = $Sprite
 @onready var hp_label = $HPLabel
@@ -154,6 +159,21 @@ func blink(blink_color: Color):
 func reset_hp():
 	hp = base_hp
 	update_hp_display()
+
+func move_to(target_position: Vector2):
+	# Kill any existing move tween
+	if move_tween and move_tween.is_valid():
+		move_tween.kill()
+
+	# Create smooth movement animation
+	move_tween = create_tween()
+	move_tween.set_ease(Tween.EASE_OUT)
+	move_tween.set_trans(Tween.TRANS_QUAD)
+	move_tween.tween_property(self, "position", target_position, MOVE_DURATION)
+	move_tween.tween_callback(_on_move_completed)
+
+func _on_move_completed():
+	emit_signal("move_completed")
 
 func die():
 	GameManager.remove_piece_at(board_position)

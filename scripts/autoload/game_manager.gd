@@ -154,7 +154,11 @@ func execute_move(piece, target_pos: Vector2i):
 	remove_piece_at(from_pos)
 	set_piece_at(target_pos, piece)
 	piece.board_position = target_pos
-	piece.position = board_to_screen(target_pos)
+
+	# Animate piece movement
+	var target_screen_pos = board_to_screen(target_pos)
+	piece.move_to(target_screen_pos)
+	await piece.move_completed
 
 	emit_signal("piece_moved", piece, from_pos, target_pos)
 	deselect_piece()
