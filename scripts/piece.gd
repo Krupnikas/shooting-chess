@@ -6,6 +6,7 @@ extends Node2D
 var board_position: Vector2i = Vector2i.ZERO
 var hp: int = 1
 var base_hp: int = 1
+var has_moved: bool = false  # Track if piece has moved (for castling)
 var blink_tween: Tween = null
 var move_tween: Tween = null
 

@@ -142,6 +142,24 @@ func execute_move(piece, target_pos: Vector2i):
 	var from_pos = piece.board_position
 	var captured_piece = get_piece_at(target_pos)
 	var king_captured = false
+	var is_castling = false
+	var castling_rook = null
+	var rook_from_pos = Vector2i.ZERO
+	var rook_to_pos = Vector2i.ZERO
+
+	# Check for castling (king moving 2 squares horizontally)
+	if piece.type == PieceType.KING and abs(target_pos.x - from_pos.x) == 2:
+		is_castling = true
+		var row = from_pos.y
+		if target_pos.x > from_pos.x:
+			# Kingside castling
+			rook_from_pos = Vector2i(7, row)
+			rook_to_pos = Vector2i(5, row)
+		else:
+			# Queenside castling
+			rook_from_pos = Vector2i(0, row)
+			rook_to_pos = Vector2i(3, row)
+		castling_rook = get_piece_at(rook_from_pos)
 
 	# Handle capture
 	if captured_piece != null:
@@ -150,14 +168,28 @@ func execute_move(piece, target_pos: Vector2i):
 		remove_piece_at(target_pos)
 		captured_piece.queue_free()
 
-	# Update board state
+	# Update board state for main piece
 	remove_piece_at(from_pos)
 	set_piece_at(target_pos, piece)
 	piece.board_position = target_pos
+	piece.has_moved = true
+
+	# Handle castling rook movement
+	if is_castling and castling_rook != null:
+		remove_piece_at(rook_from_pos)
+		set_piece_at(rook_to_pos, castling_rook)
+		castling_rook.board_position = rook_to_pos
+		castling_rook.has_moved = true
 
 	# Animate piece movement
 	var target_screen_pos = board_to_screen(target_pos)
 	piece.move_to(target_screen_pos)
+
+	# Animate rook movement simultaneously for castling
+	if is_castling and castling_rook != null:
+		var rook_screen_pos = board_to_screen(rook_to_pos)
+		castling_rook.move_to(rook_screen_pos)
+
 	await piece.move_completed
 
 	emit_signal("piece_moved", piece, from_pos, target_pos)
@@ -540,5 +572,22 @@ func get_king_moves(piece) -> Array[Vector2i]:
 				var target = get_piece_at(target_pos)
 				if target == null or target.color != piece.color:
 					moves.append(target_pos)
+
+	# Check for castling
+	if not piece.has_moved:
+		var row = pos.y
+		# Kingside castling (short) - king moves to g1/g8
+		var kingside_rook = get_piece_at(Vector2i(7, row))
+		if kingside_rook != null and kingside_rook.type == PieceType.ROOK and not kingside_rook.has_moved:
+			# Check if squares between king and rook are empty
+			if get_piece_at(Vector2i(5, row)) == null and get_piece_at(Vector2i(6, row)) == null:
+				moves.append(Vector2i(6, row))  # King's destination for kingside castling
+
+		# Queenside castling (long) - king moves to c1/c8
+		var queenside_rook = get_piece_at(Vector2i(0, row))
+		if queenside_rook != null and queenside_rook.type == PieceType.ROOK and not queenside_rook.has_moved:
+			# Check if squares between king and rook are empty
+			if get_piece_at(Vector2i(1, row)) == null and get_piece_at(Vector2i(2, row)) == null and get_piece_at(Vector2i(3, row)) == null:
+				moves.append(Vector2i(2, row))  # King's destination for queenside castling
 
 	return moves
