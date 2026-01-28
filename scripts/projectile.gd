@@ -17,6 +17,7 @@ var target_position: Vector2 = Vector2.ZERO
 var target_board_pos: Vector2i = Vector2i.ZERO
 
 var source_piece = null  # The piece that fired this projectile
+var skip_piece_check: bool = false  # For tutorial mode - don't check GameManager
 
 # For directional mode: track if we've found a target to stop at
 var stopping_at_cell: bool = false
@@ -88,11 +89,15 @@ func _process(delta):
 		# Use velocity-based threshold to prevent overshoot at high speeds
 		var stopping_threshold = maxf(25.0, current_speed * delta * 1.5)
 		if dist_to_target < stopping_threshold:
-			var piece = GameManager.get_piece_at(target_board_pos)
-			if piece != null and piece != source_piece:
-				emit_signal("finished", piece, is_white)
-			else:
+			if skip_piece_check:
+				# Tutorial mode - just finish without GameManager lookup
 				emit_signal("finished", null, is_white)
+			else:
+				var piece = GameManager.get_piece_at(target_board_pos)
+				if piece != null and piece != source_piece:
+					emit_signal("finished", piece, is_white)
+				else:
+					emit_signal("finished", null, is_white)
 			queue_free()
 			return
 		return

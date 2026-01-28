@@ -5,6 +5,7 @@ extends Control
 @onready var play_local_button = $CenterPanel/VBoxContainer/ButtonContainer/PlayLocalButton
 @onready var play_online_button = $CenterPanel/VBoxContainer/ButtonContainer/PlayOnlineButton
 @onready var rules_button = $CenterPanel/VBoxContainer/ButtonContainer/RulesButton
+@onready var tutorial_button = $CenterPanel/VBoxContainer/ButtonContainer/TutorialButton
 @onready var exit_button = $CenterPanel/VBoxContainer/ButtonContainer/ExitButton
 @onready var rules_popup = $RulesPopup
 @onready var color_popup = $ColorPopup
@@ -20,6 +21,7 @@ func _ready():
 	play_local_button.pressed.connect(_on_play_local_pressed)
 	play_online_button.pressed.connect(_on_play_online_pressed)
 	rules_button.pressed.connect(_on_rules_pressed)
+	tutorial_button.pressed.connect(_on_tutorial_pressed)
 	exit_button.pressed.connect(_on_exit_pressed)
 	rules_close_button.pressed.connect(_on_close_rules_pressed)
 	ai_difficulty_slider.value_changed.connect(_on_difficulty_changed)
@@ -70,6 +72,9 @@ func _on_play_online_pressed():
 
 func _on_rules_pressed():
 	_show_centered_popup(rules_popup)
+
+func _on_tutorial_pressed():
+	get_tree().change_scene_to_file("res://scenes/ui/tutorial.tscn")
 
 func _on_close_rules_pressed():
 	rules_popup.hide()
