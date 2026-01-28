@@ -269,6 +269,11 @@ content_margin_top = 12.0
 content_margin_right = 24.0
 content_margin_bottom = 12.0
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_separator"]
+bg_color = Color(0.35, 0.32, 0.28, 1)
+content_margin_top = 1.0
+content_margin_bottom = 1.0
+
 [node name="Menu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -306,16 +311,21 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_panel")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterPanel"]
+[node name="ScrollContainer" type="ScrollContainer" parent="CenterPanel"]
 layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterPanel/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 alignment = 1
 theme_override_constants/separation = 48
 
-[node name="TitleContainer" type="VBoxContainer" parent="CenterPanel/VBoxContainer"]
+[node name="TitleContainer" type="VBoxContainer" parent="CenterPanel/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="ChessIcon" type="TextureRect" parent="CenterPanel/VBoxContainer/TitleContainer"]
+[node name="ChessIcon" type="TextureRect" parent="CenterPanel/ScrollContainer/VBoxContainer/TitleContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 custom_minimum_size = Vector2(180, 180)
@@ -323,30 +333,28 @@ texture = ExtResource("2_pawn")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Title" type="Label" parent="CenterPanel/VBoxContainer/TitleContainer"]
+[node name="Title" type="Label" parent="CenterPanel/ScrollContainer/VBoxContainer/TitleContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_font_sizes/font_size = 108
-text = "Shooting Chess"
 horizontal_alignment = 1
 
-[node name="Subtitle" type="Label" parent="CenterPanel/VBoxContainer/TitleContainer"]
+[node name="Subtitle" type="Label" parent="CenterPanel/ScrollContainer/VBoxContainer/TitleContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.6, 0.55, 0.48, 1)
 theme_override_font_sizes/font_size = 39
-text = "Chess with HP and Projectiles"
 horizontal_alignment = 1
 
-[node name="Spacer" type="Control" parent="CenterPanel/VBoxContainer"]
+[node name="Spacer" type="Control" parent="CenterPanel/ScrollContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 
-[node name="ButtonContainer" type="VBoxContainer" parent="CenterPanel/VBoxContainer"]
+[node name="ButtonContainer" type="VBoxContainer" parent="CenterPanel/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 24
 
-[node name="PlayLocalButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
+[node name="PlayLocalButton" type="Button" parent="CenterPanel/ScrollContainer/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(780, 108)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
@@ -358,11 +366,10 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_local")
 theme_override_styles/hover = SubResource("StyleBoxFlat_local_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_local")
 icon = ExtResource("4_people")
-text = "Play 1v1 Offline"
 alignment = 0
 expand_icon = true
 
-[node name="PlayAIButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
+[node name="PlayAIButton" type="Button" parent="CenterPanel/ScrollContainer/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(780, 108)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
@@ -374,11 +381,10 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_normal")
 icon = ExtResource("3_robot")
-text = "Play vs AI"
 alignment = 0
 expand_icon = true
 
-[node name="PlayOnlineButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
+[node name="PlayOnlineButton" type="Button" parent="CenterPanel/ScrollContainer/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(780, 108)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
@@ -390,11 +396,10 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_normal")
 icon = ExtResource("5_globe")
-text = "Play Online"
 alignment = 0
 expand_icon = true
 
-[node name="RulesButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
+[node name="RulesButton" type="Button" parent="CenterPanel/ScrollContainer/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(780, 108)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.78, 0.65, 1)
@@ -406,11 +411,10 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_normal")
 icon = ExtResource("8_book")
-text = "Game Rules"
 alignment = 0
 expand_icon = true
 
-[node name="TutorialButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
+[node name="TutorialButton" type="Button" parent="CenterPanel/ScrollContainer/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(780, 108)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.78, 0.65, 1)
@@ -422,11 +426,25 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_normal")
 icon = ExtResource("8_book")
-text = "Tutorial"
 alignment = 0
 expand_icon = true
 
-[node name="ExitButton" type="Button" parent="CenterPanel/VBoxContainer/ButtonContainer"]
+[node name="SettingsButton" type="Button" parent="CenterPanel/ScrollContainer/VBoxContainer/ButtonContainer"]
+custom_minimum_size = Vector2(780, 108)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.78, 0.65, 1)
+theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
+theme_override_font_sizes/font_size = 42
+theme_override_constants/icon_max_width = 72
+theme_override_constants/h_separation = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_normal")
+icon = ExtResource("6_gear")
+alignment = 0
+expand_icon = true
+
+[node name="ExitButton" type="Button" parent="CenterPanel/ScrollContainer/VBoxContainer/ButtonContainer"]
 custom_minimum_size = Vector2(780, 108)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.5, 0.5, 1)
@@ -438,17 +456,16 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_exit")
 theme_override_styles/hover = SubResource("StyleBoxFlat_exit_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_exit")
 icon = ExtResource("7_exit")
-text = "Exit"
 expand_icon = true
 alignment = 0
 
 [node name="RulesPopup" type="PopupPanel" parent="."]
-size = Vector2i(750, 680)
+size = Vector2i(950, 1150)
 theme_override_styles/panel = SubResource("StyleBoxEmpty_panel")
 
 [node name="PanelContainer" type="PanelContainer" parent="RulesPopup"]
-offset_right = 750.0
-offset_bottom = 680.0
+offset_right = 950.0
+offset_bottom = 1150.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_settings_panel")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="RulesPopup/PanelContainer"]
@@ -460,7 +477,7 @@ layout_mode = 2
 theme_override_constants/separation = 16
 
 [node name="RulesIcon" type="TextureRect" parent="RulesPopup/PanelContainer/VBoxContainer/Header"]
-custom_minimum_size = Vector2(56, 56)
+custom_minimum_size = Vector2(72, 72)
 layout_mode = 2
 texture = ExtResource("8_book")
 expand_mode = 1
@@ -470,29 +487,31 @@ stretch_mode = 5
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
-theme_override_font_sizes/font_size = 48
+theme_override_font_sizes/font_size = 56
 text = "Game Rules"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="RulesPopup/PanelContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 480)
+custom_minimum_size = Vector2(0, 700)
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
 
 [node name="RulesText" type="RichTextLabel" parent="RulesPopup/PanelContainer/VBoxContainer/ScrollContainer"]
+custom_minimum_size = Vector2(850, 1200)
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
+size_flags_vertical = 0
 theme_override_colors/default_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_font_sizes/normal_font_size = 26
-theme_override_font_sizes/bold_font_size = 30
+theme_override_font_sizes/normal_font_size = 30
+theme_override_font_sizes/bold_font_size = 34
 bbcode_enabled = true
 text = "[b]Shooting Chess[/b] combines classic chess with HP and projectile combat.
 
-[font_size=30][b]Turn Structure[/b][/font_size]
+[font_size=34][b]Turn Structure[/b][/font_size]
 1. [color=#aaddaa]MOVE[/color] - Move one piece (standard chess rules)
 2. [color=#ffaaaa]SHOOT[/color] - All your pieces fire projectiles in attack directions
 
-[font_size=30][b]HP System[/b][/font_size]
+[font_size=34][b]HP System[/b][/font_size]
 Each piece has Hit Points based on type:
   - Pawn & King: 1 HP
   - Knight, Bishop, Rook: 2 HP
@@ -500,32 +519,106 @@ Each piece has Hit Points based on type:
 
 HP resets at the start of each player's turn.
 
-[font_size=30][b]Shooting[/b][/font_size]
+[font_size=34][b]Shooting[/b][/font_size]
 After moving, ALL your pieces fire projectiles in their attack directions:
   - [color=#ffaaaa]Enemy hit[/color]: -1 HP (damage)
   - [color=#aaddaa]Friendly hit[/color]: +1 HP (heal for this turn)
 
 Pieces at 0 HP are destroyed.
 
-[font_size=30][b]Victory[/b][/font_size]
+[font_size=34][b]Victory[/b][/font_size]
 Capture or destroy the enemy King to win!
 
-[font_size=30][b]Tips[/b][/font_size]
+[font_size=34][b]Tips[/b][/font_size]
 - Position pieces to shoot enemies and heal allies
 - The Queen is powerful but vulnerable (3 HP vs many attacks)
 - Kings have only 1 HP - protect them!"
-fit_content = true
 
 [node name="RulesCloseButton" type="Button" parent="RulesPopup/PanelContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 64)
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
 theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 36
 theme_override_styles/normal = SubResource("StyleBoxFlat_close_button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_close_button_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_close_button")
-text = "Got it!"
+
+[node name="SettingsPopup" type="PopupPanel" parent="."]
+size = Vector2i(750, 500)
+theme_override_styles/panel = SubResource("StyleBoxEmpty_panel")
+
+[node name="PanelContainer" type="PanelContainer" parent="SettingsPopup"]
+offset_right = 750.0
+offset_bottom = 500.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_settings_panel")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SettingsPopup/PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 32
+
+[node name="TitleContainer" type="HBoxContainer" parent="SettingsPopup/PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="SettingsIcon" type="TextureRect" parent="SettingsPopup/PanelContainer/VBoxContainer/TitleContainer"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("6_gear")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="SettingsPopup/PanelContainer/VBoxContainer/TitleContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
+theme_override_font_sizes/font_size = 56
+
+[node name="HSeparator" type="HSeparator" parent="SettingsPopup/PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 24
+theme_override_styles/separator = SubResource("StyleBoxFlat_separator")
+
+[node name="LanguageContainer" type="VBoxContainer" parent="SettingsPopup/PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="LanguageLabel" type="Label" parent="SettingsPopup/PanelContainer/VBoxContainer/LanguageContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.78, 0.65, 1)
+theme_override_font_sizes/font_size = 36
+
+[node name="LanguageOption" type="OptionButton" parent="SettingsPopup/PanelContainer/VBoxContainer/LanguageContainer"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.78, 0.65, 1)
+theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
+theme_override_constants/h_separation = 16
+theme_override_font_sizes/font_size = 34
+theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_normal")
+alignment = 1
+item_count = 2
+selected = 0
+popup/item_0/text = "English"
+popup/item_0/id = 0
+popup/item_1/text = "Русский"
+popup/item_1/id = 1
+
+[node name="Spacer" type="Control" parent="SettingsPopup/PanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="CloseButton" type="Button" parent="SettingsPopup/PanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.93, 0.86, 0.71, 1)
+theme_override_colors/font_hover_color = Color(1, 0.95, 0.85, 1)
+theme_override_font_sizes/font_size = 36
+theme_override_styles/normal = SubResource("StyleBoxFlat_close_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_close_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_close_button")
 
 [node name="ColorPopup" type="PopupPanel" parent="."]
 size = Vector2i(850, 680)

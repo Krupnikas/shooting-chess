@@ -1,5 +1,6 @@
 extends CanvasLayer
 
+@onready var title_label = $CenterContainer/Panel/VBoxContainer/TitleLabel
 @onready var winner_label = $CenterContainer/Panel/VBoxContainer/WinnerLabel
 @onready var play_again_button = $CenterContainer/Panel/VBoxContainer/ButtonContainer/PlayAgainButton
 @onready var menu_button = $CenterContainer/Panel/VBoxContainer/ButtonContainer/MenuButton
@@ -13,14 +14,19 @@ func _ready():
 	if GameManager.has_signal("game_over"):
 		GameManager.game_over.connect(_on_game_over)
 
-func show_game_over(winner_color: GameManager.PieceColor):
-	var winner_text = "White Wins!" if winner_color == GameManager.PieceColor.WHITE else "Black Wins!"
-	winner_label.text = winner_text
+	_update_translations()
 
-	# Set winner label color based on winner
+func _update_translations():
+	title_label.text = tr("GAME_OVER")
+	play_again_button.text = tr("BTN_PLAY_AGAIN")
+	menu_button.text = tr("BTN_MENU")
+
+func show_game_over(winner_color: GameManager.PieceColor):
 	if winner_color == GameManager.PieceColor.WHITE:
+		winner_label.text = tr("WHITE_WINS")
 		winner_label.add_theme_color_override("font_color", Color(1, 0.95, 0.8, 1))
 	else:
+		winner_label.text = tr("BLACK_WINS")
 		winner_label.add_theme_color_override("font_color", Color(0.3, 0.3, 0.35, 1))
 
 	show()

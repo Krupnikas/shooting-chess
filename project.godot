@@ -19,6 +19,7 @@ config/features=PackedStringArray("4.5", "Forward Plus")
 GameManager="*res://scripts/autoload/game_manager.gd"
 AIPlayer="*res://scripts/autoload/ai_player.gd"
 NetworkManager="*res://scripts/autoload/network_manager.gd"
+SettingsManager="*res://scripts/autoload/settings_manager.gd"
 
 [display]
 
@@ -45,3 +46,8 @@ environment/defaults/default_clear_color=Color(0.12, 0.1, 0.08, 1)
 [audio]
 
 driver/driver="Dummy"
+
+[internationalization]
+
+locale/translations=PackedStringArray("res://translations/translations.en.translation", "res://translations/translations.ru.translation")
+locale/fallback="en"

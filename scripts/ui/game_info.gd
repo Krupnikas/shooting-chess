@@ -27,26 +27,30 @@ func _on_phase_changed(_phase):
 	update_display()
 
 func _on_game_over(winner):
-	var winner_name = "White" if winner == GameManager.PieceColor.WHITE else "Black"
-	turn_label.text = winner_name + " Wins!"
-	turn_label.modulate = Color.GOLD  # Use modulate instead of add_theme_color_override
-	phase_label.text = "Game Over"
+	if winner == GameManager.PieceColor.WHITE:
+		turn_label.text = tr("WHITE_WINS")
+	else:
+		turn_label.text = tr("BLACK_WINS")
+	turn_label.modulate = Color.GOLD
+	phase_label.text = tr("PHASE_GAME_OVER")
 
 func update_display():
-	var player_name = "White" if GameManager.current_player == GameManager.PieceColor.WHITE else "Black"
-	turn_label.text = player_name + "'s Turn"
+	if GameManager.current_player == GameManager.PieceColor.WHITE:
+		turn_label.text = tr("TURN_WHITE")
+	else:
+		turn_label.text = tr("TURN_BLACK")
 
 	var phase_name = ""
 	var phase_color = Color.WHITE
 	match GameManager.game_phase:
 		GameManager.GamePhase.MOVING:
-			phase_name = "Move Phase"
+			phase_name = tr("PHASE_MOVE")
 			phase_color = Color(0.7, 0.8, 1.0)  # Light blue
 		GameManager.GamePhase.SHOOTING:
-			phase_name = "Shooting Phase"
+			phase_name = tr("PHASE_SHOOTING")
 			phase_color = Color(1.0, 0.5, 0.5)  # Light red
 		GameManager.GamePhase.GAME_OVER:
-			phase_name = "Game Over"
+			phase_name = tr("PHASE_GAME_OVER")
 			phase_color = Color.GOLD
 
 	phase_label.text = phase_name

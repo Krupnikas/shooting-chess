@@ -14,12 +14,14 @@ signal game_started()
 @onready var play_white_button = $CenterPanel/VBoxContainer/ColorScreen/PlayWhiteButton
 @onready var play_black_button = $CenterPanel/VBoxContainer/ColorScreen/PlayBlackButton
 @onready var color_back_button = $CenterPanel/VBoxContainer/ColorScreen/ColorBackButton
+@onready var color_label = $CenterPanel/VBoxContainer/ColorScreen/ColorLabel
 
 # Create screen
 @onready var create_screen = $CenterPanel/VBoxContainer/CreateScreen
 @onready var room_code_label = $CenterPanel/VBoxContainer/CreateScreen/RoomCodeContainer/RoomCodeLabel
 @onready var copy_button = $CenterPanel/VBoxContainer/CreateScreen/CopyButton
 @onready var create_back_button = $CenterPanel/VBoxContainer/CreateScreen/CreateBackButton
+@onready var code_label = $CenterPanel/VBoxContainer/CreateScreen/RoomCodeContainer/CodeLabel
 
 # Join screen
 @onready var join_screen = $CenterPanel/VBoxContainer/JoinScreen
@@ -27,6 +29,7 @@ signal game_started()
 @onready var numpad_container = $CenterPanel/VBoxContainer/JoinScreen/NumpadContainer
 @onready var join_submit_button = $CenterPanel/VBoxContainer/JoinScreen/NumpadContainer/JoinSubmitButton
 @onready var join_back_button = $CenterPanel/VBoxContainer/JoinScreen/JoinBackButton
+@onready var join_label = $CenterPanel/VBoxContainer/JoinScreen/JoinLabel
 
 # Matchmaking screen
 @onready var matchmaking_screen = $CenterPanel/VBoxContainer/MatchmakingScreen
@@ -38,6 +41,7 @@ signal game_started()
 
 # Shared
 @onready var status_label = $CenterPanel/VBoxContainer/Header/StatusLabel
+@onready var title_label = $CenterPanel/VBoxContainer/Header/Title
 @onready var center_panel = $CenterPanel
 
 var _current_scale: float = 1.0
@@ -87,12 +91,41 @@ func _ready():
 	_loader_timer.timeout.connect(_animate_loader)
 	add_child(_loader_timer)
 
+	_update_translations()
 	_show_main_screen()
 	_apply_responsive_scaling()
 	get_tree().root.size_changed.connect(_apply_responsive_scaling)
 
 	# Check URL for room reconnection (web only)
 	_check_url_params()
+
+func _update_translations():
+	# Title
+	title_label.text = tr("ONLINE_TITLE")
+
+	# Main screen
+	quick_match_button.text = tr("BTN_QUICK_MATCH")
+	create_room_button.text = tr("BTN_CREATE_ROOM")
+	join_room_button.text = tr("BTN_JOIN_ROOM")
+	back_to_menu_button.text = tr("BTN_BACK")
+
+	# Color screen
+	color_label.text = tr("CHOOSE_COLOR")
+	play_white_button.text = tr("BTN_PLAY_WHITE")
+	play_black_button.text = tr("BTN_PLAY_BLACK")
+	color_back_button.text = tr("BTN_BACK")
+
+	# Create screen
+	code_label.text = tr("YOUR_ROOM_CODE")
+	copy_button.text = tr("BTN_COPY_CODE")
+	create_back_button.text = tr("BTN_CANCEL")
+
+	# Join screen
+	join_label.text = tr("ENTER_ROOM_CODE")
+	join_back_button.text = tr("BTN_BACK")
+
+	# Matchmaking screen
+	matchmaking_back_button.text = tr("BTN_CANCEL")
 
 func _setup_numpad():
 	# Connect all numpad digit buttons (0-9)
@@ -144,7 +177,7 @@ func _show_main_screen():
 	create_screen.visible = false
 	join_screen.visible = false
 	matchmaking_screen.visible = false
-	status_label.text = "Create a room or join with a code"
+	status_label.text = tr("ONLINE_SUBTITLE")
 	_last_screen = "main"
 	_loader_timer.stop()
 
@@ -154,7 +187,7 @@ func _show_color_screen():
 	create_screen.visible = false
 	join_screen.visible = false
 	matchmaking_screen.visible = false
-	status_label.text = "Choose your color"
+	status_label.text = tr("CHOOSE_COLOR")
 	_last_screen = "color"
 	_loader_timer.stop()
 
@@ -176,7 +209,7 @@ func _show_join_screen():
 	matchmaking_screen.visible = false
 	room_code_input.text = ""
 	join_submit_button.disabled = true
-	status_label.text = "Enter room code"
+	status_label.text = tr("ENTER_ROOM_CODE")
 	_last_screen = "join"
 	_loader_timer.stop()
 
@@ -186,7 +219,8 @@ func _show_matchmaking_screen():
 	create_screen.visible = false
 	join_screen.visible = false
 	matchmaking_screen.visible = true
-	status_label.text = "Looking for opponent..."
+	status_label.text = tr("STATUS_FINDING")
+	matchmaking_label.text = tr("STATUS_FINDING")
 	_last_screen = "matchmaking"
 	_loader_step = 0
 	_update_loader_dots()
@@ -222,19 +256,19 @@ func _on_color_back_pressed():
 
 func _create_room_with_color(color: GameManager.PieceColor):
 	_show_create_screen()
-	status_label.text = "Creating room..."
+	status_label.text = tr("STATUS_CREATING")
 	NetworkManager.create_room(color)
 
 # ============ CREATE SCREEN ACTIONS ============
 
 func _on_copy_pressed():
 	DisplayServer.clipboard_set(room_code_label.text)
-	status_label.text = "Code copied!"
+	status_label.text = tr("STATUS_COPIED")
 	await get_tree().create_timer(1.5).timeout
 	if not is_inside_tree():
 		return  # Scene was changed
 	if create_screen.visible:
-		status_label.text = "Waiting for opponent..."
+		status_label.text = tr("STATUS_WAITING")
 
 func _on_create_back_pressed():
 	NetworkManager.leave_room()
@@ -257,10 +291,10 @@ func _on_code_input_changed(new_text: String):
 func _on_join_submit_pressed():
 	var code = room_code_input.text.strip_edges().to_upper()
 	if code.length() != 4:
-		status_label.text = "Enter a 4-digit code"
+		status_label.text = tr("STATUS_ENTER_CODE")
 		return
 
-	status_label.text = "Joining room..."
+	status_label.text = tr("STATUS_JOINING")
 	NetworkManager.join_room(code)
 
 func _on_join_back_pressed():
@@ -289,16 +323,16 @@ func _update_loader_dots():
 func _on_room_created(room_code: String):
 	if _last_screen == "matchmaking":
 		# In matchmaking mode, keep showing the matchmaking screen
-		status_label.text = "Waiting for opponent..."
+		status_label.text = tr("STATUS_WAITING")
 	else:
 		room_code_label.text = room_code
-		status_label.text = "Waiting for opponent..."
+		status_label.text = tr("STATUS_WAITING")
 
 func _on_room_joined(room_code: String):
-	status_label.text = "Connecting to host..."
+	status_label.text = tr("STATUS_CONNECTING")
 
 func _on_room_error(message: String):
-	status_label.text = "Error: " + message
+	status_label.text = tr("ERROR_PREFIX") % message
 	# Stay on the current screen, just show the error
 	# Re-enable UI elements based on which screen we're on
 	match _last_screen:
@@ -316,7 +350,7 @@ func _on_room_error(message: String):
 
 func _on_peer_connected():
 	print("[Lobby] Peer connected! Starting game in 1 second...")
-	status_label.text = "Connected! Starting game..."
+	status_label.text = tr("STATUS_CONNECTED")
 	await get_tree().create_timer(1.0).timeout
 	if not is_inside_tree():
 		return  # Scene was changed
@@ -326,7 +360,7 @@ func _on_peer_disconnected():
 	print("[Lobby] Peer disconnected while in lobby")
 	if not is_inside_tree():
 		return  # Scene was changed
-	status_label.text = "Connection lost"
+	status_label.text = tr("STATUS_LOST")
 	await get_tree().create_timer(1.5).timeout
 	if not is_inside_tree():
 		return  # Scene was changed
@@ -334,11 +368,12 @@ func _on_peer_disconnected():
 
 func _on_matchmaking_started():
 	print("[Lobby] Matchmaking started")
-	status_label.text = "Looking for opponent..."
+	status_label.text = tr("STATUS_FINDING")
 
 func _on_matchmaking_found():
 	print("[Lobby] Found opponent!")
-	status_label.text = "Found opponent! Connecting..."
+	status_label.text = tr("STATUS_FOUND")
+	matchmaking_label.text = tr("STATUS_FOUND")
 	_loader_timer.stop()
 
 func _start_game():
@@ -382,7 +417,7 @@ func _check_url_params():
 			_auto_reconnect(room_code, role)
 
 func _auto_reconnect(room_code: String, role: String):
-	status_label.text = "Reconnecting to room " + room_code + "..."
+	status_label.text = tr("STATUS_RECONNECTING") % room_code
 	main_screen.visible = false
 	create_screen.visible = false
 	join_screen.visible = false

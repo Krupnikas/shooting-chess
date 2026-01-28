@@ -1,0 +1,151 @@
+keys,en,ru
+GAME_TITLE,Shooting Chess,Shooting Chess
+GAME_SUBTITLE,Chess with HP and Projectiles,Шахматы стреляют
+MENU_PLAY_LOCAL,Play 1v1 Offline,Играть 1 на 1
+MENU_PLAY_AI,Play vs AI,Играть против ИИ
+MENU_PLAY_ONLINE,Play Online,Играть онлайн
+MENU_RULES,Game Rules,Правила игры
+MENU_TUTORIAL,Tutorial,Как играть?
+MENU_SETTINGS,Settings,Настройки
+MENU_EXIT,Exit,Выход
+POPUP_PLAY_VS_AI,Play vs AI,Играть против ИИ
+POPUP_CHOOSE_COLOR,Choose your color (White moves first),Выберите цвет (Белые ходят первыми)
+BTN_WHITE,White,Белые
+BTN_BLACK,Black,Чёрные
+BTN_CANCEL,Cancel,Отмена
+AI_DIFFICULTY,AI Difficulty: %s (%d),Сложность ИИ: %s (%d)
+HINT_EASY,Easy,Легко
+HINT_HARD,Hard,Сложно
+DIFF_BEGINNER,Beginner,Новичок
+DIFF_VERY_EASY,Very Easy,Очень легко
+DIFF_EASY,Easy,Легко
+DIFF_EASY_PLUS,Easy+,Легко+
+DIFF_MEDIUM,Medium,Средне
+DIFF_MEDIUM_PLUS,Medium+,Средне+
+DIFF_HARD,Hard,Сложно
+DIFF_HARD_PLUS,Hard+,Сложно+
+DIFF_EXPERT,Expert,Эксперт
+DIFF_MASTER,Master,Мастер
+RULES_TITLE,Game Rules,Правила игры
+RULES_TEXT,"[b]Shooting Chess[/b] combines classic chess with HP and projectile combat.
+
+[font_size=34][b]Turn Structure[/b][/font_size]
+1. [color=#aaddaa]MOVE[/color] - Move one piece (standard chess rules)
+2. [color=#ffaaaa]SHOOT[/color] - All your pieces fire projectiles in attack directions
+
+[font_size=34][b]HP System[/b][/font_size]
+Each piece has Hit Points based on type:
+  - Pawn & King: 1 HP
+  - Knight, Bishop, Rook: 2 HP
+  - Queen: 3 HP
+
+HP resets at the start of each player's turn.
+
+[font_size=34][b]Shooting[/b][/font_size]
+After moving, ALL your pieces fire projectiles in their attack directions:
+  - [color=#ffaaaa]Enemy hit[/color]: -1 HP (damage)
+  - [color=#aaddaa]Friendly hit[/color]: +1 HP (heal for this turn)
+
+Pieces at 0 HP are destroyed.
+
+[font_size=34][b]Victory[/b][/font_size]
+Capture or destroy the enemy King to win!
+
+[font_size=34][b]Tips[/b][/font_size]
+- Position pieces to shoot enemies and heal allies
+- The Queen is powerful but vulnerable (3 HP vs many attacks)
+- Kings have only 1 HP - protect them!","[b]Стреляющие Шахматы[/b] сочетают классические шахматы с системой HP и снарядами.
+
+[font_size=34][b]Структура хода[/b][/font_size]
+1. [color=#aaddaa]ХОД[/color] - Передвиньте одну фигуру (стандартные правила шахмат)
+2. [color=#ffaaaa]СТРЕЛЬБА[/color] - Все ваши фигуры стреляют в направлениях атаки
+
+[font_size=34][b]Система HP[/b][/font_size]
+У каждой фигуры есть очки здоровья:
+  - Пешка и Король: 1 HP
+  - Конь, Слон, Ладья: 2 HP
+  - Ферзь: 3 HP
+
+HP восстанавливается в начале каждого хода игрока.
+
+[font_size=34][b]Стрельба[/b][/font_size]
+После хода ВСЕ ваши фигуры стреляют в направлениях атаки:
+  - [color=#ffaaaa]Попадание по врагу[/color]: -1 HP (урон)
+  - [color=#aaddaa]Попадание по союзнику[/color]: +1 HP (лечение на этот ход)
+
+Фигуры с 0 HP уничтожаются.
+
+[font_size=34][b]Победа[/b][/font_size]
+Захватите или уничтожьте вражеского Короля!
+
+[font_size=34][b]Советы[/b][/font_size]
+- Располагайте фигуры так, чтобы стрелять по врагам и лечить союзников
+- Ферзь силён, но уязвим (3 HP против множества атак)
+- У Королей только 1 HP - защищайте их!"
+BTN_GOT_IT,Got it!,Понятно!
+BTN_CLOSE,Close,Закрыть
+SETTINGS_LANGUAGE,Language,Язык
+TUTORIAL_TITLE,Tutorial,Как играть?
+STEP_X_OF_Y,Step %d of %d,Шаг %d из %d
+STEP1_TITLE,Movement,Движение
+STEP1_DESC,"Pieces move and attack like in regular chess. Select a piece to see valid moves highlighted in green.","Фигуры двигаются и атакуют как в обычных шахматах. Выберите фигуру, чтобы увидеть возможные ходы, подсвеченные зелёным."
+STEP2_TITLE,HP System,Система HP
+STEP2_DESC,"Pieces have HP:
+[color=#aaddaa]Pawn & King: 1 HP
+Knight, Bishop, Rook: 2 HP
+Queen: 3 HP[/color]","У фигур есть HP:
+[color=#aaddaa]Пешка и Король: 1 HP
+Конь, Слон, Ладья: 2 HP
+Ферзь: 3 HP[/color]"
+STEP3_TITLE,Shooting Phase,Фаза стрельбы
+STEP3_DESC,"After a move, all pieces shoot.
+[color=#aaddaa]Hit ally = heal (+1 HP)[/color]
+[color=#ffaaaa]Hit enemy = damage (-1 HP)[/color]","После хода все фигуры стреляют.
+[color=#aaddaa]Попадание по союзнику = лечение (+1 HP)[/color]
+[color=#ffaaaa]Попадание по врагу = урон (-1 HP)[/color]"
+STEP4_TITLE,Death & Reset,Смерть и сброс
+STEP4_DESC,"When HP reaches 0, the piece [color=#ffaaaa]dies[/color].
+At the start of your turn, all your pieces' HP [color=#aaddaa]resets to default[/color].","Когда HP достигает 0, фигура [color=#ffaaaa]погибает[/color].
+В начале вашего хода HP всех ваших фигур [color=#aaddaa]восстанавливается[/color]."
+STEP5_TITLE,Win Condition,Условие победы
+STEP5_DESC,"Protect your King, attack the opponent's!
+[color=#ffdd88]Check can be ignored[/color], but if your King is captured - [color=#ffaaaa]Game Over[/color].","Защищайте своего Короля, атакуйте вражеского!
+[color=#ffdd88]Шах можно игнорировать[/color], но если ваш Король захвачен - [color=#ffaaaa]Игра окончена[/color]."
+BTN_PREVIOUS,Previous,Назад
+BTN_NEXT,Next,Далее
+BTN_DONE,Done,Готово
+BTN_BACK_TO_MENU,Back to Menu,В меню
+TURN_WHITE,White's Turn,Ход белых
+TURN_BLACK,Black's Turn,Ход чёрных
+PHASE_MOVE,Move Phase,Фаза хода
+PHASE_SHOOTING,Shooting Phase,Фаза стрельбы
+PHASE_GAME_OVER,Game Over,Игра окончена
+WHITE_WINS,White Wins!,Белые победили!
+BLACK_WINS,Black Wins!,Чёрные победили!
+GAME_OVER,Game Over,Игра окончена
+BTN_PLAY_AGAIN,Play Again,Играть снова
+BTN_MENU,Menu,Меню
+ONLINE_TITLE,Play Online,Играть онлайн
+ONLINE_SUBTITLE,Create a room or join with a code,Создайте комнату или присоединитесь по коду
+BTN_QUICK_MATCH,Quick Match,Быстрая игра
+BTN_CREATE_ROOM,Create Private Room,Создать комнату
+BTN_JOIN_ROOM,Join Room,Присоединиться
+BTN_BACK,Back to Menu,В меню
+CHOOSE_COLOR,Choose Your Color,Выберите цвет
+BTN_PLAY_WHITE,Play as White,Играть за белых
+BTN_PLAY_BLACK,Play as Black,Играть за чёрных
+YOUR_ROOM_CODE,Your Room Code,Код комнаты
+BTN_COPY_CODE,Copy Code,Копировать код
+ENTER_ROOM_CODE,Enter Room Code,Введите код комнаты
+STATUS_CREATING,Creating room...,Создание комнаты...
+STATUS_WAITING,Waiting for opponent...,Ожидание соперника...
+STATUS_COPIED,Code copied!,Код скопирован!
+STATUS_JOINING,Joining room...,Подключение...
+STATUS_ENTER_CODE,Enter a 4-digit code,Введите 4-значный код
+STATUS_FINDING,Looking for opponent...,Поиск соперника...
+STATUS_FOUND,Found opponent! Connecting...,Соперник найден! Подключение...
+STATUS_CONNECTED,Connected! Starting game...,Подключено! Запуск игры...
+STATUS_LOST,Connection lost,Соединение потеряно
+STATUS_RECONNECTING,Reconnecting to room %s...,Переподключение к комнате %s...
+ERROR_PREFIX,Error: %s,Ошибка: %s
+STATUS_CONNECTING,Connecting to host...,Подключение к хосту...

@@ -32,3 +32,16 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+
+# iOS builds and artifacts
+build/
+*.ipa
+*.xcarchive/
+*.xcodeproj/
+*.xcframework/
+assets/ios/
+DistributionSummary.plist
+ExportOptions.plist
+Packaging.log
+PrivacyInfo.xcprivacy
+sc-icon.png

@@ -4,7 +4,7 @@ const PieceScene = preload("res://scenes/piece.tscn")
 const ProjectileScene = preload("res://scenes/projectile.tscn")
 const ExplosionScene = preload("res://scenes/explosion.tscn")
 
-const SQUARE_SIZE = 80
+const SQUARE_SIZE = 96
 const BOARD_COLS = 4
 const BOARD_ROWS = 5
 
@@ -81,7 +81,7 @@ func _spawn_piece(type: int, color: int, pos: Vector2i) -> Node2D:
 	piece.color = color
 	piece.board_position = pos
 	piece.position = _board_to_screen(pos)
-	piece.scale = Vector2(0.5, 0.5)
+	piece.scale = Vector2(0.6, 0.6)
 	pieces_container.add_child(piece)
 	pieces[pos] = piece
 	return piece
@@ -471,7 +471,7 @@ func _spawn_projectile(from_pos: Vector2, target_cell: Vector2i, is_white: bool)
 	var bounds = Rect2(0, 0, BOARD_COLS * SQUARE_SIZE, BOARD_ROWS * SQUARE_SIZE)
 	projectile.setup_targeted(from_pos, target_pos, target_cell, is_white, bounds)
 	projectile.skip_piece_check = true  # Tutorial mode - don't use GameManager
-	projectile.scale = Vector2(0.5, 0.5)
+	projectile.scale = Vector2(0.6, 0.6)
 	projectile.finished.connect(_on_projectile_finished)
 	projectiles_container.add_child(projectile)
 	active_projectiles += 1
@@ -482,6 +482,6 @@ func _on_projectile_finished(_hit_piece, _is_white: bool):
 func _spawn_explosion(pos: Vector2, scale_multiplier: float = 1.0):
 	var explosion = ExplosionScene.instantiate()
 	explosion.position = pos
-	explosion.scale = Vector2(0.5, 0.5)
+	explosion.scale = Vector2(0.6, 0.6)
 	add_child(explosion)
 	explosion.explode(scale_multiplier)

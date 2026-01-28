@@ -8,28 +8,31 @@ extends Control
 @onready var next_button = $CenterContainer/PanelContainer/VBoxContainer/NavigationContainer/NextButton
 @onready var close_button = $CenterContainer/PanelContainer/VBoxContainer/CloseButton
 @onready var step_dots_container = $CenterContainer/PanelContainer/VBoxContainer/NavigationContainer/StepDots
+@onready var title_label = $CenterContainer/PanelContainer/VBoxContainer/Header/Title
 
 const TOTAL_STEPS = 5
 var current_step: int = 1
 var step_dots: Array = []
 
-const STEP_TITLES = [
-	"",
-	"Movement",
-	"HP System",
-	"Shooting Phase",
-	"Death & Reset",
-	"Win Condition"
-]
+func _get_step_titles() -> Array:
+	return [
+		"",
+		tr("STEP1_TITLE"),
+		tr("STEP2_TITLE"),
+		tr("STEP3_TITLE"),
+		tr("STEP4_TITLE"),
+		tr("STEP5_TITLE")
+	]
 
-const STEP_DESCRIPTIONS = [
-	"",
-	"Pieces move and attack like in regular chess. Select a piece to see valid moves highlighted in green.",
-	"Pieces have HP:\n[color=#aaddaa]Pawn & King: 1 HP\nKnight, Bishop, Rook: 2 HP\nQueen: 3 HP[/color]",
-	"After a move, all pieces shoot.\n[color=#aaddaa]Hit ally = heal (+1 HP)[/color]\n[color=#ffaaaa]Hit enemy = damage (-1 HP)[/color]",
-	"When HP reaches 0, the piece [color=#ffaaaa]dies[/color].\nAt the start of your turn, all your pieces' HP [color=#aaddaa]resets to default[/color].",
-	"Protect your King, attack the opponent's!\n[color=#ffdd88]Check can be ignored[/color], but if your King is captured - [color=#ffaaaa]Game Over[/color]."
-]
+func _get_step_descriptions() -> Array:
+	return [
+		"",
+		tr("STEP1_DESC"),
+		tr("STEP2_DESC"),
+		tr("STEP3_DESC"),
+		tr("STEP4_DESC"),
+		tr("STEP5_DESC")
+	]
 
 func _ready():
 	prev_button.pressed.connect(_on_previous_pressed)
@@ -42,7 +45,7 @@ func _ready():
 func _create_step_dots():
 	for i in range(TOTAL_STEPS):
 		var dot = ColorRect.new()
-		dot.custom_minimum_size = Vector2(12, 12)
+		dot.custom_minimum_size = Vector2(16, 16)
 		dot.color = Color(0.3, 0.3, 0.28)
 		step_dots_container.add_child(dot)
 		step_dots.append(dot)
@@ -53,11 +56,20 @@ func _show_step(step: int):
 	tutorial_board.play_step(step)
 
 func _update_ui():
-	step_indicator.text = "Step %d of %d" % [current_step, TOTAL_STEPS]
-	step_title.text = STEP_TITLES[current_step]
-	step_description.text = STEP_DESCRIPTIONS[current_step]
+	# Update title
+	title_label.text = tr("TUTORIAL_TITLE")
+
+	# Update step content
+	step_indicator.text = tr("STEP_X_OF_Y") % [current_step, TOTAL_STEPS]
+	step_title.text = _get_step_titles()[current_step]
+	step_description.text = _get_step_descriptions()[current_step]
+
+	# Update buttons
 	prev_button.disabled = (current_step == 1)
-	next_button.text = "Done" if current_step == TOTAL_STEPS else "Next"
+	prev_button.text = tr("BTN_PREVIOUS")
+	next_button.text = tr("BTN_DONE") if current_step == TOTAL_STEPS else tr("BTN_NEXT")
+	close_button.text = tr("BTN_BACK_TO_MENU")
+
 	_update_dots()
 
 func _update_dots():

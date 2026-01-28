@@ -11,18 +11,18 @@ var ai_color: GameManager.PieceColor = GameManager.PieceColor.BLACK
 var difficulty: int = 5  # 1-10 scale
 var think_time_ms: int = 1000  # Time to think in milliseconds
 
-# Difficulty names for display
-const DIFFICULTY_NAMES = {
-	1: "Beginner",
-	2: "Very Easy",
-	3: "Easy",
-	4: "Easy+",
-	5: "Medium",
-	6: "Medium+",
-	7: "Hard",
-	8: "Hard+",
-	9: "Expert",
-	10: "Master"
+# Difficulty translation keys
+const DIFFICULTY_KEYS = {
+	1: "DIFF_BEGINNER",
+	2: "DIFF_VERY_EASY",
+	3: "DIFF_EASY",
+	4: "DIFF_EASY_PLUS",
+	5: "DIFF_MEDIUM",
+	6: "DIFF_MEDIUM_PLUS",
+	7: "DIFF_HARD",
+	8: "DIFF_HARD_PLUS",
+	9: "DIFF_EXPERT",
+	10: "DIFF_MASTER"
 }
 
 var _stockfish_process: int = -1
@@ -52,10 +52,11 @@ func disable_ai():
 
 func set_difficulty(level: int):
 	difficulty = clampi(level, 1, 10)
-	print("[AI] Difficulty set to: ", DIFFICULTY_NAMES[difficulty])
+	print("[AI] Difficulty set to: ", get_difficulty_name())
 
 func get_difficulty_name() -> String:
-	return DIFFICULTY_NAMES.get(difficulty, "Medium")
+	var key = DIFFICULTY_KEYS.get(difficulty, "DIFF_MEDIUM")
+	return tr(key)
 
 func set_think_time(ms: int):
 	think_time_ms = maxi(100, ms)
