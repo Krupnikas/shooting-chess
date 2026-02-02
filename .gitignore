@@ -40,8 +40,10 @@ build/
 *.xcodeproj/
 *.xcframework/
 assets/ios/
+ShootingChess/
 DistributionSummary.plist
 ExportOptions.plist
 Packaging.log
 PrivacyInfo.xcprivacy
 sc-icon.png
+sc-icon.png.import
