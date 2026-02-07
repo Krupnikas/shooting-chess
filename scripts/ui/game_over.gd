@@ -3,11 +3,13 @@ extends CanvasLayer
 @onready var winner_label = $CenterContainer/Panel/VBoxContainer/WinnerLabel
 @onready var play_again_button = $CenterContainer/Panel/VBoxContainer/ButtonContainer/PlayAgainButton
 @onready var menu_button = $CenterContainer/Panel/VBoxContainer/ButtonContainer/MenuButton
+@onready var close_button = $CenterContainer/Panel/CloseButton
 
 func _ready():
 	hide()
 	play_again_button.pressed.connect(_on_play_again_pressed)
 	menu_button.pressed.connect(_on_menu_pressed)
+	close_button.pressed.connect(_on_close_pressed)
 
 	# Connect to game over signal
 	if GameManager.has_signal("game_over"):
@@ -57,3 +59,6 @@ func _on_menu_pressed():
 	hide()
 	AIPlayer.disable_ai()
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
+
+func _on_close_pressed():
+	hide()

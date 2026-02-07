@@ -8,13 +8,6 @@ border_width_top = 2
 border_color = Color(0.4, 0.35, 0.3, 1)
 
 [node name="GameLogPanel" type="PanelContainer"]
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -250.0
-offset_bottom = -100.0
-grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 script = ExtResource("1_script")
 
@@ -24,26 +17,3 @@ theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 8
-
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="Title" type="Label" parent="MarginContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 1
-theme_override_colors/font_color = Color(0.7, 0.65, 0.55, 1)
-theme_override_font_sizes/font_size = 24
-text = "Moves:"
-
-[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-horizontal_scroll_mode = 3
-vertical_scroll_mode = 0
-
-[node name="MovesContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/ScrollContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 24
