@@ -1,7 +1,7 @@
 extends PanelContainer
 
-@onready var moves_container: VBoxContainer = $MarginContainer/VBoxContainer/ScrollContainer/MovesContainer
-@onready var scroll_container: ScrollContainer = $MarginContainer/VBoxContainer/ScrollContainer
+@onready var moves_container: HBoxContainer = $MarginContainer/HBoxContainer/ScrollContainer/MovesContainer
+@onready var scroll_container: ScrollContainer = $MarginContainer/HBoxContainer/ScrollContainer
 
 func _ready():
 	GameLog.move_logged.connect(_on_move_logged)
@@ -9,9 +9,9 @@ func _ready():
 
 func _on_move_logged(_record):
 	refresh_display()
-	# Auto-scroll to bottom
+	# Auto-scroll to right (latest move)
 	await get_tree().process_frame
-	scroll_container.scroll_vertical = scroll_container.get_v_scroll_bar().max_value
+	scroll_container.scroll_horizontal = scroll_container.get_h_scroll_bar().max_value
 
 func _on_history_cleared():
 	clear_display()
@@ -27,13 +27,14 @@ func refresh_display():
 	for entry in formatted:
 		var label = Label.new()
 		label.add_theme_font_size_override("font_size", 28)
+		label.add_theme_color_override("font_color", Color(0.9, 0.85, 0.75, 1))
 
 		var turn_str = str(entry["turn"]) + "."
 		var white_str = entry["white"] if entry["white"] != "" else "..."
 		var black_str = entry["black"] if entry["black"] != "" else ""
 
 		if black_str != "":
-			label.text = "%s %s  %s" % [turn_str, white_str, black_str]
+			label.text = "%s %s %s" % [turn_str, white_str, black_str]
 		else:
 			label.text = "%s %s" % [turn_str, white_str]
 
