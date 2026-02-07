@@ -40,8 +40,17 @@ func _on_game_over(winner_color: GameManager.PieceColor):
 
 func _on_play_again_pressed():
 	hide()
+	# For online games, preserve board orientation based on player's color
+	var is_online = NetworkManager.is_online_game()
+	var local_color = NetworkManager.get_local_color() if is_online else GameManager.PieceColor.WHITE
+
 	# Reset game
 	GameManager.reset_game()
+
+	# Restore board flip for online games (player's color doesn't change)
+	if is_online:
+		GameManager.is_board_flipped = local_color == GameManager.PieceColor.BLACK
+
 	get_tree().reload_current_scene()
 
 func _on_menu_pressed():
