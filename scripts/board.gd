@@ -23,6 +23,7 @@ var is_shutting_down: bool = false
 
 func _ready():
 	print("[Board] _ready called, is_online_game=", NetworkManager.is_online_game())
+	GameLog.clear_history()
 	draw_board()
 	setup_pieces()
 
