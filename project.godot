@@ -14,6 +14,8 @@ config/name="Shooting Chess"
 config/icon="res://sc-icon.png"
 run/main_scene="res://scenes/menu.tscn"
 config/features=PackedStringArray("4.5", "Forward Plus")
+boot_splash/bg_color=Color(0.12, 0.1, 0.08, 1)
+boot_splash/show_image=false
 
 [autoload]
 
