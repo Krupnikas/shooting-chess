@@ -676,21 +676,85 @@ func _animate_step_8(my_id: int):
 	w_pawn2.reset_hp()  # HP 3 -> 1
 
 	await get_tree().create_timer(1.0).timeout
-	if not _should_continue(my_id) or not is_instance_valid(w_king) or not is_instance_valid(b_king):
+	if not _should_continue(my_id) or not is_instance_valid(w_king):
 		return
 
-	# Reset positions for loop
+	# === White's turn: king returns ===
+	_show_selected(Vector2i(2, 3))
+	_show_highlights([Vector2i(3, 4)])
+
+	await get_tree().create_timer(0.8).timeout
+	if not _should_continue(my_id) or not is_instance_valid(w_king):
+		return
+
+	_clear_highlights()
 	w_king.move_to(_board_to_screen(Vector2i(3, 4)))
 	pieces.erase(Vector2i(2, 3))
 	pieces[Vector2i(3, 4)] = w_king
 	w_king.board_position = Vector2i(3, 4)
 
+	await get_tree().create_timer(0.3).timeout
+	if not _should_continue(my_id) or not is_instance_valid(w_king):
+		return
+
+	# All white pieces shoot
+	# King at (3,4): 3 valid adjacents
+	_spawn_projectile(w_king.position, Vector2i(2, 3), true)
+	_spawn_projectile(w_king.position, Vector2i(3, 3), true)
+	_spawn_projectile(w_king.position, Vector2i(2, 4), true)
+	# Pawn at (0,4): diag
+	_spawn_projectile(w_pawn1.position, Vector2i(1, 3), true)  # heals pawn
+	# Pawn at (1,3): diags
+	_spawn_projectile(w_pawn2.position, Vector2i(0, 2), true)
+	_spawn_projectile(w_pawn2.position, Vector2i(2, 2), true)
+
+	await get_tree().create_timer(0.4).timeout
+	if not _should_continue(my_id) or not is_instance_valid(w_pawn2):
+		return
+
+	w_pawn2.heal(1)  # from pawn → HP 1→2
+
+	await get_tree().create_timer(1.2).timeout
+	if not _should_continue(my_id) or not is_instance_valid(b_king):
+		return
+
+	# === Black's turn: king returns ===
+	_show_selected(Vector2i(0, 0))
+	_show_highlights([Vector2i(1, 0)])
+
+	await get_tree().create_timer(0.8).timeout
+	if not _should_continue(my_id) or not is_instance_valid(b_king):
+		return
+
+	_clear_highlights()
 	b_king.move_to(_board_to_screen(Vector2i(1, 0)))
 	pieces.erase(Vector2i(0, 0))
 	pieces[Vector2i(1, 0)] = b_king
 	b_king.board_position = Vector2i(1, 0)
 
 	await get_tree().create_timer(0.3).timeout
+	if not _should_continue(my_id) or not is_instance_valid(b_king):
+		return
+
+	# Black king at (1,0): 5 valid adjacents
+	_spawn_projectile(b_king.position, Vector2i(0, 0), false)
+	_spawn_projectile(b_king.position, Vector2i(2, 0), false)
+	_spawn_projectile(b_king.position, Vector2i(0, 1), false)
+	_spawn_projectile(b_king.position, Vector2i(1, 1), false)
+	_spawn_projectile(b_king.position, Vector2i(2, 1), false)
+
+	await get_tree().create_timer(1.0).timeout
+	if not _should_continue(my_id) or not is_instance_valid(w_pawn2):
+		return
+
+	# HP resets again before loop
+	w_pawn2.blink(Color(1.0, 1.0, 1.0))
+	await get_tree().create_timer(0.3).timeout
+	if not _should_continue(my_id) or not is_instance_valid(w_pawn2):
+		return
+	w_pawn2.reset_hp()  # HP 2→1
+
+	await get_tree().create_timer(0.5).timeout
 
 # Step 9: Protect your King — kill the enemy King!
 func _setup_step_9():
