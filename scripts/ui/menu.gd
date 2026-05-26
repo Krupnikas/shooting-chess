@@ -63,6 +63,20 @@ func _ready():
 	# Enable online button
 	play_online_button.disabled = false
 
+	# Hide rules button (tutorial is enough)
+	rules_button.visible = false
+
+	# Hide exit button on mobile (quit doesn't work on iOS/Android)
+	if OS.get_name() in ["iOS", "Android"]:
+		exit_button.visible = false
+
+	# Move tutorial button to top with double spacing
+	var btn_container = tutorial_button.get_parent()
+	btn_container.move_child(tutorial_button, 0)
+	var tut_spacer = Control.new()
+	btn_container.add_child(tut_spacer)
+	btn_container.move_child(tut_spacer, 1)
+
 	# Sync AI difficulty slider
 	ai_difficulty_slider.value = AIPlayer.difficulty
 	_update_difficulty_label(AIPlayer.difficulty)

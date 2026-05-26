@@ -74,6 +74,10 @@ func _setup_step(step: int):
 		3: _setup_step_3()
 		4: _setup_step_4()
 		5: _setup_step_5()
+		6: _setup_step_6()
+		7: _setup_step_7()
+		8: _setup_step_8()
+		9: _setup_step_9()
 
 func _spawn_piece(type: int, color: int, pos: Vector2i) -> Node2D:
 	var piece = PieceScene.instantiate()
@@ -103,338 +107,347 @@ func _play_step_animation(step: int, my_animation_id: int):
 		3: await _animate_step_3(my_animation_id)
 		4: await _animate_step_4(my_animation_id)
 		5: await _animate_step_5(my_animation_id)
+		6: await _animate_step_6(my_animation_id)
+		7: await _animate_step_7(my_animation_id)
+		8: await _animate_step_8(my_animation_id)
+		9: await _animate_step_9(my_animation_id)
 
-# Step 1: Basic Movement
+# Step 1: Pieces shoot in attack directions after a move
 func _setup_step_1():
-	_spawn_piece(GameManager.PieceType.KNIGHT, GameManager.PieceColor.WHITE, Vector2i(1, 2))
+	_spawn_piece(GameManager.PieceType.PAWN, GameManager.PieceColor.WHITE, Vector2i(1, 3))
 
 func _animate_step_1(my_id: int):
 	if not _should_continue(my_id):
 		return
 
-	var knight = pieces.get(Vector2i(1, 2))
-	if not is_instance_valid(knight):
+	var pawn = pieces.get(Vector2i(1, 3))
+	if not is_instance_valid(pawn):
 		return
 
-	# Show valid moves (L-shaped from position 1,2)
-	var knight_moves = [Vector2i(0, 0), Vector2i(2, 0), Vector2i(3, 1), Vector2i(3, 3), Vector2i(2, 4), Vector2i(0, 4)]
-	_show_highlights(knight_moves)
-	_show_selected(Vector2i(1, 2))
+	_show_selected(Vector2i(1, 3))
+	_show_highlights([Vector2i(1, 2)])
 
 	await get_tree().create_timer(0.8).timeout
-	if not _should_continue(my_id):
+	if not _should_continue(my_id) or not is_instance_valid(pawn):
 		return
 
-	# Move knight
+	# Move pawn forward
 	_clear_highlights()
-	var target = Vector2i(3, 1)
-	knight.move_to(_board_to_screen(target))
+	pawn.move_to(_board_to_screen(Vector2i(1, 2)))
+	pieces.erase(Vector2i(1, 3))
+	pieces[Vector2i(1, 2)] = pawn
+	pawn.board_position = Vector2i(1, 2)
+
+	await get_tree().create_timer(0.3).timeout
+	if not _should_continue(my_id) or not is_instance_valid(pawn):
+		return
+
+	# Pawn shoots diagonally (attack directions)
+	_spawn_projectile(pawn.position, Vector2i(0, 1), true)
+	_spawn_projectile(pawn.position, Vector2i(2, 1), true)
+
+	await get_tree().create_timer(1.2).timeout
+	if not _should_continue(my_id) or not is_instance_valid(pawn):
+		return
+
+	# Reset
+	pawn.move_to(_board_to_screen(Vector2i(1, 3)))
 	pieces.erase(Vector2i(1, 2))
-	pieces[target] = knight
-	knight.board_position = target
-
-	await get_tree().create_timer(0.5).timeout
-	if not _should_continue(my_id):
-		return
-
-	# Show new valid moves from 3,1
-	var new_moves = [Vector2i(1, 0), Vector2i(2, 3), Vector2i(1, 2)]
-	_show_highlights(new_moves)
-	_show_selected(target)
-
-	await get_tree().create_timer(0.8).timeout
-	if not _should_continue(my_id):
-		return
-
-	# Move back
-	_clear_highlights()
-	knight.move_to(_board_to_screen(Vector2i(1, 2)))
-	pieces.erase(target)
-	pieces[Vector2i(1, 2)] = knight
-	knight.board_position = Vector2i(1, 2)
+	pieces[Vector2i(1, 3)] = pawn
+	pawn.board_position = Vector2i(1, 3)
 
 	await get_tree().create_timer(0.3).timeout
 
-# Step 2: HP System
+# Step 2: ALL your pieces shoot after a move
 func _setup_step_2():
-	_spawn_piece(GameManager.PieceType.PAWN, GameManager.PieceColor.WHITE, Vector2i(0, 4))
-	_spawn_piece(GameManager.PieceType.KNIGHT, GameManager.PieceColor.WHITE, Vector2i(1, 4))
-	_spawn_piece(GameManager.PieceType.ROOK, GameManager.PieceColor.WHITE, Vector2i(2, 4))
-	_spawn_piece(GameManager.PieceType.QUEEN, GameManager.PieceColor.WHITE, Vector2i(3, 4))
-	_spawn_piece(GameManager.PieceType.KING, GameManager.PieceColor.BLACK, Vector2i(1, 0))
+	_spawn_piece(GameManager.PieceType.PAWN, GameManager.PieceColor.WHITE, Vector2i(1, 3))
+	_spawn_piece(GameManager.PieceType.BISHOP, GameManager.PieceColor.WHITE, Vector2i(3, 3))
 
 func _animate_step_2(my_id: int):
 	if not _should_continue(my_id):
 		return
 
-	var positions = [Vector2i(0, 4), Vector2i(1, 4), Vector2i(2, 4), Vector2i(3, 4), Vector2i(1, 0)]
+	var pawn = pieces.get(Vector2i(1, 3))
+	var bishop = pieces.get(Vector2i(3, 3))
+	if not is_instance_valid(pawn) or not is_instance_valid(bishop):
+		return
 
-	for i in range(positions.size()):
-		if not _should_continue(my_id):
-			return
+	_show_selected(Vector2i(1, 3))
+	_show_highlights([Vector2i(1, 2)])
 
-		_clear_highlights()
-		_show_selected(positions[i])
+	await get_tree().create_timer(0.8).timeout
+	if not _should_continue(my_id) or not is_instance_valid(pawn):
+		return
 
-		await get_tree().create_timer(1.0).timeout
+	# Move pawn forward
+	_clear_highlights()
+	pawn.move_to(_board_to_screen(Vector2i(1, 2)))
+	pieces.erase(Vector2i(1, 3))
+	pieces[Vector2i(1, 2)] = pawn
+	pawn.board_position = Vector2i(1, 2)
 
-# Step 3: Shooting
-# Rook moves and shoots - first cycle heals pawn, second cycle damages knight
+	await get_tree().create_timer(0.3).timeout
+	if not _should_continue(my_id) or not is_instance_valid(pawn) or not is_instance_valid(bishop):
+		return
+
+	# BOTH pieces shoot — bishop projectiles reach borders
+	_spawn_projectile(pawn.position, Vector2i(0, 1), true)
+	_spawn_projectile(pawn.position, Vector2i(2, 1), true)
+	_spawn_projectile(bishop.position, Vector2i(0, 0), true)
+	_spawn_projectile(bishop.position, Vector2i(2, 4), true)
+
+	await get_tree().create_timer(1.2).timeout
+	if not _should_continue(my_id) or not is_instance_valid(pawn):
+		return
+
+	# Reset
+	pawn.move_to(_board_to_screen(Vector2i(1, 3)))
+	pieces.erase(Vector2i(1, 2))
+	pieces[Vector2i(1, 3)] = pawn
+	pawn.board_position = Vector2i(1, 3)
+
+	await get_tree().create_timer(0.3).timeout
+
+# Step 3: Heal allies, damage enemies
 func _setup_step_3():
-	# White rook that will move and shoot
-	_spawn_piece(GameManager.PieceType.ROOK, GameManager.PieceColor.WHITE, Vector2i(1, 4))
-	# Friendly pawn that will be healed (first cycle)
-	_spawn_piece(GameManager.PieceType.PAWN, GameManager.PieceColor.WHITE, Vector2i(1, 2))
-	# Enemy knight that will be damaged (second cycle)
-	_spawn_piece(GameManager.PieceType.KNIGHT, GameManager.PieceColor.BLACK, Vector2i(3, 2))
+	_spawn_piece(GameManager.PieceType.BISHOP, GameManager.PieceColor.WHITE, Vector2i(0, 4))
+	_spawn_piece(GameManager.PieceType.KNIGHT, GameManager.PieceColor.WHITE, Vector2i(0, 2))
+	_spawn_piece(GameManager.PieceType.KNIGHT, GameManager.PieceColor.BLACK, Vector2i(3, 1))
 
 func _animate_step_3(my_id: int):
 	if not _should_continue(my_id):
 		return
 
-	var rook = pieces.get(Vector2i(1, 4))
-	var pawn = pieces.get(Vector2i(1, 2))
-	var enemy_knight = pieces.get(Vector2i(3, 2))
+	var bishop = pieces.get(Vector2i(0, 4))
+	var white_knight = pieces.get(Vector2i(0, 2))
+	var black_knight = pieces.get(Vector2i(3, 1))
 
-	if not is_instance_valid(rook) or not is_instance_valid(pawn) or not is_instance_valid(enemy_knight):
+	if not is_instance_valid(bishop) or not is_instance_valid(white_knight) or not is_instance_valid(black_knight):
 		return
 
-	# Initial pause to read the text
-	await get_tree().create_timer(2.0).timeout
-	if not _should_continue(my_id) or not is_instance_valid(rook):
-		return
+	_show_selected(Vector2i(0, 4))
+	_show_highlights([Vector2i(1, 3)])
 
-	# === Cycle 1: Rook heals friendly pawn ===
-	_show_selected(Vector2i(1, 4))
-	_show_highlights([Vector2i(1, 3), Vector2i(1, 2)])
 	await get_tree().create_timer(0.8).timeout
-	if not _should_continue(my_id) or not is_instance_valid(rook):
+	if not _should_continue(my_id) or not is_instance_valid(bishop):
 		return
 
-	# Rook moves up to (1,3)
+	# Bishop moves to (1,3)
 	_clear_highlights()
-	var rook_pos1 = Vector2i(1, 3)
-	rook.move_to(_board_to_screen(rook_pos1))
-	pieces.erase(Vector2i(1, 4))
-	pieces[rook_pos1] = rook
-	rook.board_position = rook_pos1
+	bishop.move_to(_board_to_screen(Vector2i(1, 3)))
+	pieces.erase(Vector2i(0, 4))
+	pieces[Vector2i(1, 3)] = bishop
+	bishop.board_position = Vector2i(1, 3)
 
-	await get_tree().create_timer(0.4).timeout
-	if not _should_continue(my_id) or not is_instance_valid(rook):
+	await get_tree().create_timer(0.3).timeout
+	if not _should_continue(my_id) or not is_instance_valid(bishop):
 		return
 
-	# Rook shoots up, hits friendly pawn at (1,2)
-	_spawn_projectile(rook.position, Vector2i(1, 2), true)
+	# Bishop at (1,3) shoots all 4 diagonals
+	_spawn_projectile(bishop.position, Vector2i(0, 2), true)   # up-left → white knight HEAL
+	_spawn_projectile(bishop.position, Vector2i(3, 1), true)   # up-right → black knight DMG
+	_spawn_projectile(bishop.position, Vector2i(0, 4), true)   # down-left → border
+	_spawn_projectile(bishop.position, Vector2i(2, 4), true)   # down-right → border
+	# White knight at (0,2) shoots all L-shapes
+	if is_instance_valid(white_knight):
+		_spawn_projectile(white_knight.position, Vector2i(1, 0), true)
+		_spawn_projectile(white_knight.position, Vector2i(1, 4), true)
+		_spawn_projectile(white_knight.position, Vector2i(2, 1), true)
+		_spawn_projectile(white_knight.position, Vector2i(2, 3), true)
 
 	await get_tree().create_timer(0.4).timeout
-	if not _should_continue(my_id) or not is_instance_valid(pawn):
+	if not _should_continue(my_id) or not is_instance_valid(white_knight) or not is_instance_valid(black_knight):
 		return
 
-	# Pawn heals (green blink)
-	pawn.heal(1)
+	# White knight heals, black knight takes damage
+	white_knight.heal(1)
+	black_knight.take_damage(1)
 
 	await get_tree().create_timer(1.5).timeout
-	if not _should_continue(my_id) or not is_instance_valid(rook) or not is_instance_valid(pawn):
+	if not _should_continue(my_id) or not is_instance_valid(bishop):
 		return
 
-	# Reset rook position for cycle 2
-	rook.move_to(_board_to_screen(Vector2i(1, 4)))
-	pieces.erase(rook_pos1)
-	pieces[Vector2i(1, 4)] = rook
-	rook.board_position = Vector2i(1, 4)
-	pawn.reset_hp()
+	# Reset
+	bishop.move_to(_board_to_screen(Vector2i(0, 4)))
+	pieces.erase(Vector2i(1, 3))
+	pieces[Vector2i(0, 4)] = bishop
+	bishop.board_position = Vector2i(0, 4)
+	if is_instance_valid(white_knight):
+		white_knight.reset_hp()
+	if is_instance_valid(black_knight):
+		black_knight.reset_hp()
 
-	await get_tree().create_timer(0.5).timeout
-	if not _should_continue(my_id) or not is_instance_valid(rook):
-		return
+	await get_tree().create_timer(0.3).timeout
 
-	# === Cycle 2: Rook damages enemy knight ===
-	_show_selected(Vector2i(1, 4))
-	_show_highlights([Vector2i(2, 4), Vector2i(3, 4)])
-	await get_tree().create_timer(0.8).timeout
-	if not _should_continue(my_id) or not is_instance_valid(rook):
-		return
-
-	# Rook moves right to (3,4)
-	_clear_highlights()
-	var rook_pos2 = Vector2i(3, 4)
-	rook.move_to(_board_to_screen(rook_pos2))
-	pieces.erase(Vector2i(1, 4))
-	pieces[rook_pos2] = rook
-	rook.board_position = rook_pos2
-
-	await get_tree().create_timer(0.4).timeout
-	if not _should_continue(my_id) or not is_instance_valid(rook):
-		return
-
-	# Rook shoots up, hits enemy knight at (3,2)
-	_spawn_projectile(rook.position, Vector2i(3, 2), true)
-
-	await get_tree().create_timer(0.4).timeout
-	if not _should_continue(my_id) or not is_instance_valid(enemy_knight):
-		return
-
-	# Enemy knight takes damage (red blink)
-	enemy_knight.take_damage(1)
-
-	await get_tree().create_timer(1.5).timeout
-	if not _should_continue(my_id) or not is_instance_valid(rook) or not is_instance_valid(enemy_knight):
-		return
-
-	# Reset for loop
-	rook.move_to(_board_to_screen(Vector2i(1, 4)))
-	pieces.erase(rook_pos2)
-	pieces[Vector2i(1, 4)] = rook
-	rook.board_position = Vector2i(1, 4)
-	enemy_knight.reset_hp()
-
-	await get_tree().create_timer(0.5).timeout
-
-# Step 4: Death and HP Reset
-# Knight moves, then shoots at pawn which dies
+# Step 4: Pieces have different HP
 func _setup_step_4():
-	# White knight that will move and shoot
+	# Row y=1: HP 1 pieces + Queen
+	_spawn_piece(GameManager.PieceType.PAWN, GameManager.PieceColor.WHITE, Vector2i(0, 1))
+	_spawn_piece(GameManager.PieceType.KING, GameManager.PieceColor.WHITE, Vector2i(1, 1))
+	_spawn_piece(GameManager.PieceType.QUEEN, GameManager.PieceColor.WHITE, Vector2i(2, 1))
+	# Row y=3: HP 2 pieces
+	_spawn_piece(GameManager.PieceType.BISHOP, GameManager.PieceColor.WHITE, Vector2i(0, 3))
 	_spawn_piece(GameManager.PieceType.KNIGHT, GameManager.PieceColor.WHITE, Vector2i(1, 3))
-	# Black pawn that will be killed (HP 1)
-	_spawn_piece(GameManager.PieceType.PAWN, GameManager.PieceColor.BLACK, Vector2i(2, 0))
+	_spawn_piece(GameManager.PieceType.ROOK, GameManager.PieceColor.WHITE, Vector2i(2, 3))
 
 func _animate_step_4(my_id: int):
 	if not _should_continue(my_id):
 		return
 
-	var knight = pieces.get(Vector2i(1, 3))
-	var pawn = pieces.get(Vector2i(2, 0))
+	var positions = [
+		Vector2i(0, 1), Vector2i(1, 1), Vector2i(2, 1),
+		Vector2i(0, 3), Vector2i(1, 3), Vector2i(2, 3)
+	]
 
-	if not is_instance_valid(knight) or not is_instance_valid(pawn):
-		return
+	for pos in positions:
+		if not _should_continue(my_id):
+			return
+		_clear_highlights()
+		_show_selected(pos)
+		await get_tree().create_timer(1.0).timeout
 
-	# Show knight selected with valid moves
-	_show_selected(Vector2i(1, 3))
-	var knight_moves = [Vector2i(0, 1), Vector2i(2, 1), Vector2i(3, 2), Vector2i(3, 4)]
-	_show_highlights(knight_moves)
-
-	await get_tree().create_timer(0.6).timeout
-	if not _should_continue(my_id) or not is_instance_valid(knight):
-		return
-
-	# Knight moves to position where it can shoot pawn
 	_clear_highlights()
-	var target = Vector2i(0, 1)
-	knight.move_to(_board_to_screen(target))
-	pieces.erase(Vector2i(1, 3))
-	pieces[target] = knight
-	knight.board_position = target
 
-	await get_tree().create_timer(0.4).timeout
-	if not _should_continue(my_id) or not is_instance_valid(knight):
-		return
-
-	# Shooting phase - knight shoots at pawn (L-shaped attack)
-	_spawn_projectile(knight.position, Vector2i(2, 0), true)
-
-	await get_tree().create_timer(0.4).timeout
-	if not _should_continue(my_id) or not is_instance_valid(pawn):
-		return
-
-	# Pawn takes damage and dies (HP 1 -> 0)
-	pawn.take_damage(1)
-
-	await get_tree().create_timer(0.3).timeout
-	if not _should_continue(my_id) or not is_instance_valid(pawn):
-		return
-
-	# Pawn dies with explosion
-	_spawn_explosion(pawn.position, 0.5)
-	pawn.queue_free()
-	pieces.erase(Vector2i(2, 0))
-
-	await get_tree().create_timer(1.0).timeout
-	if not _should_continue(my_id) or not is_instance_valid(knight):
-		return
-
-	# Show HP reset text moment - knight's HP resets at start of next turn
-	knight.heal(1)  # Show heal effect to indicate HP reset
-
-	await get_tree().create_timer(1.0).timeout
-	if not _should_continue(my_id) or not is_instance_valid(knight):
-		return
-
-	# Reset for loop - move knight back and respawn pawn
-	knight.move_to(_board_to_screen(Vector2i(1, 3)))
-	pieces.erase(target)
-	pieces[Vector2i(1, 3)] = knight
-	knight.board_position = Vector2i(1, 3)
-	knight.reset_hp()
-
-	_spawn_piece(GameManager.PieceType.PAWN, GameManager.PieceColor.BLACK, Vector2i(2, 0))
-
-	await get_tree().create_timer(0.3).timeout
-
-# Step 5: Win Condition
-# Queen moves, then shoots and kills enemy king
+# Step 5: When HP reaches 0, the piece dies
 func _setup_step_5():
-	_spawn_piece(GameManager.PieceType.KING, GameManager.PieceColor.BLACK, Vector2i(2, 0))
-	_spawn_piece(GameManager.PieceType.QUEEN, GameManager.PieceColor.WHITE, Vector2i(2, 4))
+	_spawn_piece(GameManager.PieceType.KNIGHT, GameManager.PieceColor.BLACK, Vector2i(2, 1))
+	_spawn_piece(GameManager.PieceType.BISHOP, GameManager.PieceColor.WHITE, Vector2i(0, 3))
+	_spawn_piece(GameManager.PieceType.KNIGHT, GameManager.PieceColor.WHITE, Vector2i(1, 4))
 
 func _animate_step_5(my_id: int):
 	if not _should_continue(my_id):
 		return
 
-	var king = pieces.get(Vector2i(2, 0))
-	var queen = pieces.get(Vector2i(2, 4))
+	var black_knight = pieces.get(Vector2i(2, 1))
+	var bishop = pieces.get(Vector2i(0, 3))
+	var white_knight = pieces.get(Vector2i(1, 4))
 
-	if not is_instance_valid(king) or not is_instance_valid(queen):
+	if not is_instance_valid(black_knight) or not is_instance_valid(bishop) or not is_instance_valid(white_knight):
 		return
 
-	# Show queen selected with valid moves
-	_show_selected(Vector2i(2, 4))
-	_show_highlights([Vector2i(2, 3), Vector2i(2, 2), Vector2i(2, 1), Vector2i(1, 3), Vector2i(3, 3), Vector2i(1, 4), Vector2i(3, 4)])
-	await get_tree().create_timer(1.0).timeout
-	if not _should_continue(my_id) or not is_instance_valid(queen):
+	_show_selected(Vector2i(1, 4))
+	_show_highlights([Vector2i(0, 2)])
+
+	await get_tree().create_timer(0.8).timeout
+	if not _should_continue(my_id) or not is_instance_valid(white_knight):
 		return
 
-	# Queen moves closer to king
+	# White knight moves to (0,2) — L-shape attacks (2,1)
 	_clear_highlights()
-	var target = Vector2i(2, 2)
-	queen.move_to(_board_to_screen(target))
-	pieces.erase(Vector2i(2, 4))
-	pieces[target] = queen
-	queen.board_position = target
+	white_knight.move_to(_board_to_screen(Vector2i(0, 2)))
+	pieces.erase(Vector2i(1, 4))
+	pieces[Vector2i(0, 2)] = white_knight
+	white_knight.board_position = Vector2i(0, 2)
+
+	await get_tree().create_timer(0.3).timeout
+	if not _should_continue(my_id) or not is_instance_valid(white_knight) or not is_instance_valid(bishop):
+		return
+
+	# All white pieces shoot in attack directions
+	# Knight at (0,2): all L-shapes on board
+	_spawn_projectile(white_knight.position, Vector2i(2, 1), true)  # black knight → DMG
+	_spawn_projectile(white_knight.position, Vector2i(1, 0), true)  # border
+	_spawn_projectile(white_knight.position, Vector2i(1, 4), true)  # border
+	_spawn_projectile(white_knight.position, Vector2i(2, 3), true)  # border
+	# Bishop at (0,3): 2 valid diagonals (up-left/down-left OOB)
+	_spawn_projectile(bishop.position, Vector2i(2, 1), true)        # up-right → black knight DMG
+	_spawn_projectile(bishop.position, Vector2i(1, 4), true)        # down-right → border
 
 	await get_tree().create_timer(0.4).timeout
-	if not _should_continue(my_id) or not is_instance_valid(queen):
+	if not _should_continue(my_id) or not is_instance_valid(black_knight):
 		return
 
-	# Shooting phase - queen shoots at king
-	_spawn_projectile(queen.position, Vector2i(2, 0), true)
+	# Black knight takes 2 damage (2 HP -> 0)
+	black_knight.take_damage(1)
+	await get_tree().create_timer(0.15).timeout
+	if not _should_continue(my_id) or not is_instance_valid(black_knight):
+		return
+	black_knight.take_damage(1)
+
+	await get_tree().create_timer(0.3).timeout
+	if not _should_continue(my_id) or not is_instance_valid(black_knight):
+		return
+
+	# Black knight dies
+	_spawn_explosion(black_knight.position, 0.5)
+	black_knight.queue_free()
+	pieces.erase(Vector2i(2, 1))
+
+	await get_tree().create_timer(1.5).timeout
+	if not _should_continue(my_id) or not is_instance_valid(white_knight):
+		return
+
+	# Reset
+	white_knight.move_to(_board_to_screen(Vector2i(1, 4)))
+	pieces.erase(Vector2i(0, 2))
+	pieces[Vector2i(1, 4)] = white_knight
+	white_knight.board_position = Vector2i(1, 4)
+
+	_spawn_piece(GameManager.PieceType.KNIGHT, GameManager.PieceColor.BLACK, Vector2i(2, 1))
+
+	await get_tree().create_timer(0.3).timeout
+
+# Step 6: Kill the enemy King to win
+func _setup_step_6():
+	_spawn_piece(GameManager.PieceType.KING, GameManager.PieceColor.BLACK, Vector2i(2, 0))
+	_spawn_piece(GameManager.PieceType.PAWN, GameManager.PieceColor.WHITE, Vector2i(1, 2))
+
+func _animate_step_6(my_id: int):
+	if not _should_continue(my_id):
+		return
+
+	var king = pieces.get(Vector2i(2, 0))
+	var pawn = pieces.get(Vector2i(1, 2))
+
+	if not is_instance_valid(king) or not is_instance_valid(pawn):
+		return
+
+	_show_selected(Vector2i(1, 2))
+	_show_highlights([Vector2i(1, 1)])
+
+	await get_tree().create_timer(0.8).timeout
+	if not _should_continue(my_id) or not is_instance_valid(pawn):
+		return
+
+	# Pawn moves forward
+	_clear_highlights()
+	pawn.move_to(_board_to_screen(Vector2i(1, 1)))
+	pieces.erase(Vector2i(1, 2))
+	pieces[Vector2i(1, 1)] = pawn
+	pawn.board_position = Vector2i(1, 1)
+
+	await get_tree().create_timer(0.3).timeout
+	if not _should_continue(my_id) or not is_instance_valid(pawn):
+		return
+
+	# Pawn shoots both diags
+	_spawn_projectile(pawn.position, Vector2i(0, 0), true)    # left diag → border
+	_spawn_projectile(pawn.position, Vector2i(2, 0), true)    # right diag → king DMG
 
 	await get_tree().create_timer(0.4).timeout
 	if not _should_continue(my_id) or not is_instance_valid(king):
 		return
 
-	# King takes damage (HP 1 -> 0)
+	# King dies
 	king.take_damage(1)
 
 	await get_tree().create_timer(0.3).timeout
 	if not _should_continue(my_id) or not is_instance_valid(king):
 		return
 
-	# King dies - big explosion
-	var king_pos = king.position
-	_spawn_explosion(king_pos, 1.5)
+	_spawn_explosion(king.position, 1.5)
 	king.queue_free()
 	pieces.erase(Vector2i(2, 0))
 
-	# Wait longer for dramatic effect
 	await get_tree().create_timer(3.0).timeout
-	if not _should_continue(my_id) or not is_instance_valid(queen):
+	if not _should_continue(my_id) or not is_instance_valid(pawn):
 		return
 
-	# Reset for loop - move queen back and respawn king
-	queen.move_to(_board_to_screen(Vector2i(2, 4)))
-	pieces.erase(target)
-	pieces[Vector2i(2, 4)] = queen
-	queen.board_position = Vector2i(2, 4)
+	# Reset
+	pawn.move_to(_board_to_screen(Vector2i(1, 2)))
+	pieces.erase(Vector2i(1, 1))
+	pieces[Vector2i(1, 2)] = pawn
+	pawn.board_position = Vector2i(1, 2)
 
 	await get_tree().create_timer(0.5).timeout
 	if not _should_continue(my_id):
@@ -442,7 +455,368 @@ func _animate_step_5(my_id: int):
 
 	_spawn_piece(GameManager.PieceType.KING, GameManager.PieceColor.BLACK, Vector2i(2, 0))
 
+	await get_tree().create_timer(0.5).timeout
+
+# Step 7: Check is allowed if King is protected
+func _setup_step_7():
+	_spawn_piece(GameManager.PieceType.PAWN, GameManager.PieceColor.WHITE, Vector2i(1, 3))
+	_spawn_piece(GameManager.PieceType.KING, GameManager.PieceColor.BLACK, Vector2i(2, 1))
+	# Rook starts on the side
+	_spawn_piece(GameManager.PieceType.ROOK, GameManager.PieceColor.BLACK, Vector2i(0, 0))
+
+func _animate_step_7(my_id: int):
+	if not _should_continue(my_id):
+		return
+
+	var pawn = pieces.get(Vector2i(1, 3))
+	var king = pieces.get(Vector2i(2, 1))
+	var rook = pieces.get(Vector2i(0, 0))
+
+	if not is_instance_valid(pawn) or not is_instance_valid(king) or not is_instance_valid(rook):
+		return
+
+	# === Black's turn: rook moves behind king to protect it ===
+	_show_selected(Vector2i(0, 0))
+	_show_highlights([Vector2i(2, 0)])
+
+	await get_tree().create_timer(0.8).timeout
+	if not _should_continue(my_id) or not is_instance_valid(rook):
+		return
+
+	_clear_highlights()
+	rook.move_to(_board_to_screen(Vector2i(2, 0)))
+	pieces.erase(Vector2i(0, 0))
+	pieces[Vector2i(2, 0)] = rook
+	rook.board_position = Vector2i(2, 0)
+
+	await get_tree().create_timer(0.3).timeout
+	if not _should_continue(my_id) or not is_instance_valid(rook) or not is_instance_valid(king):
+		return
+
+	# All black pieces shoot
+	# Rook at (2,0): 3 directions (up OOB)
+	_spawn_projectile(rook.position, Vector2i(0, 0), false)    # left → border
+	_spawn_projectile(rook.position, Vector2i(3, 0), false)    # right → border
+	_spawn_projectile(rook.position, Vector2i(2, 1), false)    # down → king HEAL
+	# King at (2,1): 8 adjacent cells
+	if is_instance_valid(king):
+		_spawn_projectile(king.position, Vector2i(1, 0), false)
+		_spawn_projectile(king.position, Vector2i(2, 0), false)   # rook → HEAL
+		_spawn_projectile(king.position, Vector2i(3, 0), false)
+		_spawn_projectile(king.position, Vector2i(1, 1), false)
+		_spawn_projectile(king.position, Vector2i(3, 1), false)
+		_spawn_projectile(king.position, Vector2i(1, 2), false)
+		_spawn_projectile(king.position, Vector2i(2, 2), false)
+		_spawn_projectile(king.position, Vector2i(3, 2), false)
+
+	await get_tree().create_timer(0.4).timeout
+	if not _should_continue(my_id) or not is_instance_valid(king) or not is_instance_valid(rook):
+		return
+
+	king.heal(1)   # from rook → HP 1→2
+	rook.heal(1)   # from king → HP 2→3
+
 	await get_tree().create_timer(1.0).timeout
+	if not _should_continue(my_id) or not is_instance_valid(pawn):
+		return
+
+	# === White's turn: pawn approaches king ===
+	_show_selected(Vector2i(1, 3))
+	_show_highlights([Vector2i(1, 2)])
+
+	await get_tree().create_timer(0.8).timeout
+	if not _should_continue(my_id) or not is_instance_valid(pawn):
+		return
+
+	_clear_highlights()
+	pawn.move_to(_board_to_screen(Vector2i(1, 2)))
+	pieces.erase(Vector2i(1, 3))
+	pieces[Vector2i(1, 2)] = pawn
+	pawn.board_position = Vector2i(1, 2)
+
+	await get_tree().create_timer(0.3).timeout
+	if not _should_continue(my_id) or not is_instance_valid(pawn):
+		return
+
+	# Pawn shoots both diags
+	_spawn_projectile(pawn.position, Vector2i(0, 1), true)    # left diag → border
+	_spawn_projectile(pawn.position, Vector2i(2, 1), true)    # right diag → king DMG
+
+	await get_tree().create_timer(0.4).timeout
+	if not _should_continue(my_id) or not is_instance_valid(king):
+		return
+
+	king.take_damage(1)  # HP 2 -> 1, survives
+
+	await get_tree().create_timer(1.5).timeout
+	if not _should_continue(my_id) or not is_instance_valid(rook) or not is_instance_valid(king):
+		return
+
+	# Reset: move rook back, pawn back, king HP back to 1
+	rook.move_to(_board_to_screen(Vector2i(0, 0)))
+	pieces.erase(Vector2i(2, 0))
+	pieces[Vector2i(0, 0)] = rook
+	rook.board_position = Vector2i(0, 0)
+
+	pawn.move_to(_board_to_screen(Vector2i(1, 3)))
+	pieces.erase(Vector2i(1, 2))
+	pieces[Vector2i(1, 3)] = pawn
+	pawn.board_position = Vector2i(1, 3)
+
+	king.reset_hp()
+	rook.reset_hp()
+
+	await get_tree().create_timer(0.5).timeout
+
+# Step 8: HP resets each turn — doesn't accumulate
+func _setup_step_8():
+	# White: two pawns in diagonal + king
+	_spawn_piece(GameManager.PieceType.PAWN, GameManager.PieceColor.WHITE, Vector2i(0, 4))
+	_spawn_piece(GameManager.PieceType.PAWN, GameManager.PieceColor.WHITE, Vector2i(1, 3))
+	_spawn_piece(GameManager.PieceType.KING, GameManager.PieceColor.WHITE, Vector2i(3, 4))
+	# Black: just a king that moves left-right
+	_spawn_piece(GameManager.PieceType.KING, GameManager.PieceColor.BLACK, Vector2i(1, 0))
+
+func _animate_step_8(my_id: int):
+	if not _should_continue(my_id):
+		return
+
+	var w_pawn1 = pieces.get(Vector2i(0, 4))  # shoots at (1,3) — heals
+	var w_pawn2 = pieces.get(Vector2i(1, 3))  # the one that gets healed
+	var w_king = pieces.get(Vector2i(3, 4))
+	var b_king = pieces.get(Vector2i(1, 0))
+
+	if not is_instance_valid(w_pawn1) or not is_instance_valid(w_pawn2):
+		return
+	if not is_instance_valid(w_king) or not is_instance_valid(b_king):
+		return
+
+	# === White's turn: king approaches pawns ===
+	# King moves (3,4) -> (2,3), now adjacent to pawn at (1,3)
+	_show_selected(Vector2i(3, 4))
+	_show_highlights([Vector2i(2, 3)])
+
+	await get_tree().create_timer(0.8).timeout
+	if not _should_continue(my_id) or not is_instance_valid(w_king):
+		return
+
+	_clear_highlights()
+	w_king.move_to(_board_to_screen(Vector2i(2, 3)))
+	pieces.erase(Vector2i(3, 4))
+	pieces[Vector2i(2, 3)] = w_king
+	w_king.board_position = Vector2i(2, 3)
+
+	await get_tree().create_timer(0.3).timeout
+	if not _should_continue(my_id) or not is_instance_valid(w_king):
+		return
+
+	# All white pieces shoot
+	# King at (2,3) shoots all 8 adjacent cells
+	_spawn_projectile(w_king.position, Vector2i(1, 2), true)
+	_spawn_projectile(w_king.position, Vector2i(2, 2), true)
+	_spawn_projectile(w_king.position, Vector2i(3, 2), true)
+	_spawn_projectile(w_king.position, Vector2i(1, 3), true)  # hits ally pawn — heal
+	_spawn_projectile(w_king.position, Vector2i(3, 3), true)
+	_spawn_projectile(w_king.position, Vector2i(1, 4), true)
+	_spawn_projectile(w_king.position, Vector2i(2, 4), true)
+	_spawn_projectile(w_king.position, Vector2i(3, 4), true)
+	# Pawn at (0,4) shoots diag
+	_spawn_projectile(w_pawn1.position, Vector2i(1, 3), true)  # hits ally pawn — heal
+	# Pawn at (1,3) shoots diag
+	_spawn_projectile(w_pawn2.position, Vector2i(0, 2), true)
+	_spawn_projectile(w_pawn2.position, Vector2i(2, 2), true)
+
+	await get_tree().create_timer(0.4).timeout
+	if not _should_continue(my_id) or not is_instance_valid(w_pawn2):
+		return
+
+	# Pawn at (1,3) healed by king + pawn = +2 HP (1 -> 3)
+	w_pawn2.heal(1)
+	await get_tree().create_timer(0.15).timeout
+	if not _should_continue(my_id) or not is_instance_valid(w_pawn2):
+		return
+	w_pawn2.heal(1)  # HP now 3
+
+	await get_tree().create_timer(1.2).timeout
+	if not _should_continue(my_id) or not is_instance_valid(b_king):
+		return
+
+	# === Black's turn: king moves sideways (just passes the turn) ===
+	_show_selected(Vector2i(1, 0))
+	_show_highlights([Vector2i(0, 0)])
+
+	await get_tree().create_timer(0.8).timeout
+	if not _should_continue(my_id) or not is_instance_valid(b_king):
+		return
+
+	_clear_highlights()
+	b_king.move_to(_board_to_screen(Vector2i(0, 0)))
+	pieces.erase(Vector2i(1, 0))
+	pieces[Vector2i(0, 0)] = b_king
+	b_king.board_position = Vector2i(0, 0)
+
+	await get_tree().create_timer(0.3).timeout
+	if not _should_continue(my_id) or not is_instance_valid(b_king):
+		return
+
+	# Black king shoots adjacent cells
+	_spawn_projectile(b_king.position, Vector2i(1, 0), false)
+	_spawn_projectile(b_king.position, Vector2i(0, 1), false)
+	_spawn_projectile(b_king.position, Vector2i(1, 1), false)
+
+	await get_tree().create_timer(1.0).timeout
+	if not _should_continue(my_id) or not is_instance_valid(w_pawn2):
+		return
+
+	# === Start of white's next turn: HP resets ===
+	w_pawn2.blink(Color(1.0, 1.0, 1.0))
+	await get_tree().create_timer(0.3).timeout
+	if not _should_continue(my_id) or not is_instance_valid(w_pawn2):
+		return
+	w_pawn2.reset_hp()  # HP 3 -> 1
+
+	await get_tree().create_timer(1.0).timeout
+	if not _should_continue(my_id) or not is_instance_valid(w_king) or not is_instance_valid(b_king):
+		return
+
+	# Reset positions for loop
+	w_king.move_to(_board_to_screen(Vector2i(3, 4)))
+	pieces.erase(Vector2i(2, 3))
+	pieces[Vector2i(3, 4)] = w_king
+	w_king.board_position = Vector2i(3, 4)
+
+	b_king.move_to(_board_to_screen(Vector2i(1, 0)))
+	pieces.erase(Vector2i(0, 0))
+	pieces[Vector2i(1, 0)] = b_king
+	b_king.board_position = Vector2i(1, 0)
+
+	await get_tree().create_timer(0.3).timeout
+
+# Step 9: Protect your King — kill the enemy King!
+func _setup_step_9():
+	_spawn_piece(GameManager.PieceType.KING, GameManager.PieceColor.BLACK, Vector2i(2, 1))
+	_spawn_piece(GameManager.PieceType.QUEEN, GameManager.PieceColor.WHITE, Vector2i(1, 4))
+	_spawn_piece(GameManager.PieceType.ROOK, GameManager.PieceColor.WHITE, Vector2i(0, 3))
+	_spawn_piece(GameManager.PieceType.KING, GameManager.PieceColor.WHITE, Vector2i(0, 4))
+	_spawn_piece(GameManager.PieceType.KNIGHT, GameManager.PieceColor.WHITE, Vector2i(3, 3))
+	_spawn_piece(GameManager.PieceType.PAWN, GameManager.PieceColor.WHITE, Vector2i(1, 3))
+
+func _animate_step_9(my_id: int):
+	if not _should_continue(my_id):
+		return
+
+	var b_king = pieces.get(Vector2i(2, 1))
+	var pawn = pieces.get(Vector2i(1, 3))
+	var knight = pieces.get(Vector2i(3, 3))
+	var queen = pieces.get(Vector2i(1, 4))
+	var rook = pieces.get(Vector2i(0, 3))
+	var w_king = pieces.get(Vector2i(0, 4))
+
+	if not is_instance_valid(b_king) or not is_instance_valid(pawn):
+		return
+
+	_show_selected(Vector2i(1, 3))
+	_show_highlights([Vector2i(1, 2)])
+
+	await get_tree().create_timer(0.8).timeout
+	if not _should_continue(my_id) or not is_instance_valid(pawn):
+		return
+
+	# Pawn moves forward
+	_clear_highlights()
+	pawn.move_to(_board_to_screen(Vector2i(1, 2)))
+	pieces.erase(Vector2i(1, 3))
+	pieces[Vector2i(1, 2)] = pawn
+	pawn.board_position = Vector2i(1, 2)
+
+	await get_tree().create_timer(0.3).timeout
+	if not _should_continue(my_id) or not is_instance_valid(pawn):
+		return
+
+	# ALL white pieces shoot in all attack directions
+	# Pawn at (1,2): diags forward
+	_spawn_projectile(pawn.position, Vector2i(0, 1), true)   # border
+	_spawn_projectile(pawn.position, Vector2i(2, 1), true)   # black king → DMG
+	# Knight at (3,3): L-shapes hitting 3 valid cells
+	if is_instance_valid(knight):
+		_spawn_projectile(knight.position, Vector2i(2, 1), true)  # black king → DMG
+		_spawn_projectile(knight.position, Vector2i(1, 2), true)  # pawn → HEAL
+		_spawn_projectile(knight.position, Vector2i(1, 4), true)  # queen → HEAL
+	# Queen at (1,4): 5 directions (down/down-left/down-right OOB)
+	if is_instance_valid(queen):
+		_spawn_projectile(queen.position, Vector2i(1, 2), true)   # up → pawn HEAL
+		_spawn_projectile(queen.position, Vector2i(0, 4), true)   # left → king HEAL
+		_spawn_projectile(queen.position, Vector2i(3, 4), true)   # right → border
+		_spawn_projectile(queen.position, Vector2i(0, 3), true)   # up-left → rook HEAL
+		_spawn_projectile(queen.position, Vector2i(3, 2), true)   # up-right → border
+	# Rook at (0,3): 3 directions (left OOB)
+	if is_instance_valid(rook):
+		_spawn_projectile(rook.position, Vector2i(0, 0), true)    # up → border
+		_spawn_projectile(rook.position, Vector2i(0, 4), true)    # down → king HEAL
+		_spawn_projectile(rook.position, Vector2i(3, 3), true)    # right → knight HEAL
+	# King at (0,4): 3 valid adjacent cells
+	if is_instance_valid(w_king):
+		_spawn_projectile(w_king.position, Vector2i(0, 3), true)  # rook → HEAL
+		_spawn_projectile(w_king.position, Vector2i(1, 3), true)  # empty
+		_spawn_projectile(w_king.position, Vector2i(1, 4), true)  # queen → HEAL
+
+	await get_tree().create_timer(0.4).timeout
+	if not _should_continue(my_id) or not is_instance_valid(b_king):
+		return
+
+	# Apply damage and heals
+	b_king.take_damage(1)  # king HP 1→0, dies
+	if is_instance_valid(pawn):
+		pawn.heal(1)   # from knight
+		pawn.heal(1)   # from queen → HP 1→3
+	if is_instance_valid(queen):
+		queen.heal(1)  # from w_king
+		queen.heal(1)  # from knight → HP 3→5
+	if is_instance_valid(rook):
+		rook.heal(1)   # from queen
+		rook.heal(1)   # from w_king → HP 2→4
+	if is_instance_valid(knight):
+		knight.heal(1) # from rook → HP 2→3
+	if is_instance_valid(w_king):
+		w_king.heal(1) # from queen
+		w_king.heal(1) # from rook → HP 1→3
+
+	await get_tree().create_timer(0.3).timeout
+	if not _should_continue(my_id) or not is_instance_valid(b_king):
+		return
+
+	# King dies — big explosion
+	_spawn_explosion(b_king.position, 2.0)
+	b_king.queue_free()
+	pieces.erase(Vector2i(2, 1))
+
+	await get_tree().create_timer(3.0).timeout
+	if not _should_continue(my_id) or not is_instance_valid(pawn):
+		return
+
+	# Reset positions and HP
+	pawn.move_to(_board_to_screen(Vector2i(1, 3)))
+	pieces.erase(Vector2i(1, 2))
+	pieces[Vector2i(1, 3)] = pawn
+	pawn.board_position = Vector2i(1, 3)
+	if is_instance_valid(pawn):
+		pawn.reset_hp()
+	if is_instance_valid(queen):
+		queen.reset_hp()
+	if is_instance_valid(rook):
+		rook.reset_hp()
+	if is_instance_valid(knight):
+		knight.reset_hp()
+	if is_instance_valid(w_king):
+		w_king.reset_hp()
+
+	await get_tree().create_timer(0.5).timeout
+	if not _should_continue(my_id):
+		return
+
+	_spawn_piece(GameManager.PieceType.KING, GameManager.PieceColor.BLACK, Vector2i(2, 1))
+
+	await get_tree().create_timer(0.5).timeout
 
 func _show_highlights(positions: Array):
 	for pos in positions:

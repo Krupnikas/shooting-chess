@@ -87,33 +87,38 @@ BTN_CLOSE,Close,Закрыть
 SETTINGS_LANGUAGE,Language,Язык
 TUTORIAL_TITLE,Tutorial,Как играть?
 STEP_X_OF_Y,Step %d of %d,Шаг %d из %d
-STEP1_TITLE,Movement,Движение
-STEP1_DESC,"Pieces move and attack like in regular chess. Select a piece to see valid moves highlighted in green.","Фигуры двигаются и атакуют как в обычных шахматах. Выберите фигуру, чтобы увидеть возможные ходы, подсвеченные зелёным."
-STEP2_TITLE,HP System,Система HP
-STEP2_DESC,"Pieces have HP:
+STEP1_TITLE,Shooting,Стрельба
+STEP1_DESC,"At the end of a turn, your piece shoots in its attack directions.","В конце хода ваша фигура стреляет в направлениях атаки."
+STEP2_TITLE,All Pieces Shoot,Стреляют все
+STEP2_DESC,"Not just the moved piece — [color=#ffdd88]ALL[/color] your pieces shoot after a move.","Стреляет не только фигура, которой вы походили — [color=#ffdd88]ВСЕ[/color] ваши фигуры стреляют после хода."
+STEP3_TITLE,Heal & Damage,Лечение и урон
+STEP3_DESC,"[color=#aaddaa]Hit ally = heal (+1 HP)[/color]
+[color=#ffaaaa]Hit enemy = damage (-1 HP)[/color]","[color=#aaddaa]Попадание по союзнику = лечение (+1 HP)[/color]
+[color=#ffaaaa]Попадание по врагу = урон (-1 HP)[/color]"
+STEP4_TITLE,Piece HP,HP фигур
+STEP4_DESC,"Pieces have different HP:
 [color=#aaddaa]Pawn & King: 1 HP
 Knight, Bishop, Rook: 2 HP
-Queen: 3 HP[/color]","У фигур есть HP:
+Queen: 3 HP[/color]","У фигур разное HP:
 [color=#aaddaa]Пешка и Король: 1 HP
 Конь, Слон, Ладья: 2 HP
 Ферзь: 3 HP[/color]"
-STEP3_TITLE,Shooting Phase,Фаза стрельбы
-STEP3_DESC,"After a move, all pieces shoot.
-[color=#aaddaa]Hit ally = heal (+1 HP)[/color]
-[color=#ffaaaa]Hit enemy = damage (-1 HP)[/color]","После хода все фигуры стреляют.
-[color=#aaddaa]Попадание по союзнику = лечение (+1 HP)[/color]
-[color=#ffaaaa]Попадание по врагу = урон (-1 HP)[/color]"
-STEP4_TITLE,Death & Reset,Смерть и сброс
-STEP4_DESC,"When HP reaches 0, the piece [color=#ffaaaa]dies[/color].
-At the start of your turn, all your pieces' HP [color=#aaddaa]resets to default[/color].","Когда HP достигает 0, фигура [color=#ffaaaa]погибает[/color].
-В начале вашего хода HP всех ваших фигур [color=#aaddaa]восстанавливается[/color]."
-STEP5_TITLE,Win Condition,Условие победы
-STEP5_DESC,"Protect your King, attack the opponent's!
-[color=#ffdd88]Check can be ignored[/color], but if your King is captured - [color=#ffaaaa]Game Over[/color].","Защищайте своего Короля, атакуйте вражеского!
-[color=#ffdd88]Шах можно игнорировать[/color], но если ваш Король захвачен - [color=#ffaaaa]Игра окончена[/color]."
+STEP5_TITLE,Death,Гибель
+STEP5_DESC,"When HP reaches 0, the piece [color=#ffaaaa]dies[/color].","Когда HP достигает 0, фигура [color=#ffaaaa]погибает[/color]."
+STEP6_TITLE,Win Condition,Условие победы
+STEP6_DESC,"Kill the enemy [color=#ffdd88]King[/color] to win!","Убейте вражеского [color=#ffdd88]Короля[/color], чтобы победить!"
+STEP7_TITLE,Check,Шах
+STEP7_DESC,"Check is allowed — the King can survive if [color=#aaddaa]protected by allies[/color].","Шах допустим — Король может пережить удар, если [color=#aaddaa]защищён союзниками[/color]."
+STEP8_TITLE,HP Reset,Сброс HP
+STEP8_DESC,"HP resets each turn. Healing [color=#ffdd88]doesn't accumulate[/color].","HP восстанавливается каждый ход. Лечение [color=#ffdd88]не накапливается[/color]."
+STEP9_TITLE,Victory!,Победа!
+STEP9_DESC,"Protect your King and destroy the enemy King!
+Ready to play?","Защищайте своего Короля и уничтожьте вражеского!
+Готовы играть?"
 BTN_PREVIOUS,Previous,Назад
 BTN_NEXT,Next,Далее
 BTN_DONE,Done,Готово
+BTN_PLAY_VS_AI,Play vs AI!,Играть против ИИ!
 BTN_BACK_TO_MENU,Back to Menu,В меню
 TURN_WHITE,White's Turn,Ход белых
 TURN_BLACK,Black's Turn,Ход чёрных

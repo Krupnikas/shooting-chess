@@ -10,7 +10,7 @@ extends Control
 @onready var step_dots_container = $CenterContainer/PanelContainer/VBoxContainer/NavigationContainer/StepDots
 @onready var title_label = $CenterContainer/PanelContainer/VBoxContainer/Header/Title
 
-const TOTAL_STEPS = 5
+const TOTAL_STEPS = 9
 var current_step: int = 1
 var step_dots: Array = []
 
@@ -21,7 +21,11 @@ func _get_step_titles() -> Array:
 		tr("STEP2_TITLE"),
 		tr("STEP3_TITLE"),
 		tr("STEP4_TITLE"),
-		tr("STEP5_TITLE")
+		tr("STEP5_TITLE"),
+		tr("STEP6_TITLE"),
+		tr("STEP7_TITLE"),
+		tr("STEP8_TITLE"),
+		tr("STEP9_TITLE")
 	]
 
 func _get_step_descriptions() -> Array:
@@ -31,7 +35,11 @@ func _get_step_descriptions() -> Array:
 		tr("STEP2_DESC"),
 		tr("STEP3_DESC"),
 		tr("STEP4_DESC"),
-		tr("STEP5_DESC")
+		tr("STEP5_DESC"),
+		tr("STEP6_DESC"),
+		tr("STEP7_DESC"),
+		tr("STEP8_DESC"),
+		tr("STEP9_DESC")
 	]
 
 func _ready():
@@ -45,7 +53,7 @@ func _ready():
 func _create_step_dots():
 	for i in range(TOTAL_STEPS):
 		var dot = ColorRect.new()
-		dot.custom_minimum_size = Vector2(16, 16)
+		dot.custom_minimum_size = Vector2(12, 12)
 		dot.color = Color(0.3, 0.3, 0.28)
 		step_dots_container.add_child(dot)
 		step_dots.append(dot)
@@ -67,7 +75,7 @@ func _update_ui():
 	# Update buttons
 	prev_button.disabled = (current_step == 1)
 	prev_button.text = tr("BTN_PREVIOUS")
-	next_button.text = tr("BTN_DONE") if current_step == TOTAL_STEPS else tr("BTN_NEXT")
+	next_button.text = tr("BTN_PLAY_VS_AI") if current_step == TOTAL_STEPS else tr("BTN_NEXT")
 	close_button.text = tr("BTN_BACK_TO_MENU")
 
 	_update_dots()
@@ -87,7 +95,7 @@ func _on_next_pressed():
 	if current_step < TOTAL_STEPS:
 		_transition_to_step(current_step + 1)
 	else:
-		_on_close_pressed()
+		_start_ai_game()
 
 func _transition_to_step(new_step: int):
 	tutorial_board.stop_animation()
@@ -101,3 +109,10 @@ func _transition_to_step(new_step: int):
 func _on_close_pressed():
 	tutorial_board.stop_animation()
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
+
+func _start_ai_game():
+	tutorial_board.stop_animation()
+	AIPlayer.enable_ai(GameManager.PieceColor.BLACK)
+	GameManager.player_color = GameManager.PieceColor.WHITE
+	GameManager.is_board_flipped = false
+	get_tree().change_scene_to_file("res://scenes/main.tscn")

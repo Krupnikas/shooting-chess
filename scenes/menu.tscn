@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://menu123"]
+[gd_scene load_steps=21 format=3 uid="uid://menu123"]
 
 [ext_resource type="Script" path="res://scripts/ui/menu.gd" id="1_menu"]
 [ext_resource type="Texture2D" path="res://assets/icons/pawn.svg" id="2_pawn"]
@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" path="res://assets/icons/book.svg" id="8_book"]
 [ext_resource type="Texture2D" path="res://assets/icons/pawn_white.svg" id="9_pawn_white"]
 [ext_resource type="Texture2D" path="res://assets/icons/pawn_black.svg" id="10_pawn_black"]
+[ext_resource type="Texture2D" path="res://assets/icons/question.svg" id="11_question"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_local"]
 bg_color = Color(0.22, 0.32, 0.18, 1)
@@ -426,7 +427,7 @@ theme_override_constants/h_separation = 24
 theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_normal")
-icon = ExtResource("8_book")
+icon = ExtResource("11_question")
 alignment = 0
 expand_icon = true
 
